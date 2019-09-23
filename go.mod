@@ -11,6 +11,6 @@ require (
 	github.com/google/go-cmp v0.3.1
 	github.com/julienschmidt/httprouter v1.2.0
 	github.com/leodido/go-urn v1.1.0 // indirect
-	golang.org/x/crypto v0.0.0-20190911031432-227b76d455e7
+	golang.org/x/crypto v0.0.0-20190923035154-9ee001bba392
 	gopkg.in/go-playground/validator.v9 v9.29.1
 )

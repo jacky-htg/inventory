@@ -11,16 +11,12 @@ import (
 	health "github.com/jacky-htg/inventory/packages/profiling/controllers"
 )
 
-func mid(db *sql.DB, log *log.Logger) []api.Middleware {
-	var mw []api.Middleware
-	mw = append(mw, middleware.Auths(db, log, []string{"/login", "/health"}))
-
-	return mw
-}
-
 //API : hanlder api
 func API(db *sql.DB, log *log.Logger) http.Handler {
-	app := api.NewApp(log, mid(db, log)...)
+	app := api.NewApp(
+		log,
+		middleware.Auths(db, log, []string{"/login", "/health"}),
+	)
 
 	// Health Routing
 	{

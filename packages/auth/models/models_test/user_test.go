@@ -25,7 +25,12 @@ func (u *User) Crud(t *testing.T) {
 		IsActive: true,
 	}
 
-	err := u0.Create(ctx, u.Db)
+	tx, err := u.Db.Begin()
+	if err != nil {
+		t.Fatalf("begin transaction: %s", err)
+	}
+
+	err = u0.Create(ctx, tx)
 	if err != nil {
 		t.Fatalf("creating user u0: %s", err)
 	}
@@ -44,7 +49,7 @@ func (u *User) Crud(t *testing.T) {
 	}
 
 	u1.IsActive = false
-	err = u1.Update(ctx, u.Db)
+	err = u1.Update(ctx, tx)
 	if err != nil {
 		t.Fatalf("update user u1: %s", err)
 	}
