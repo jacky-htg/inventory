@@ -2,3 +2,4 @@
 go.mod
 go.sum
 inventory.code-workspace
+.idea/*
