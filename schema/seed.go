@@ -19,8 +19,8 @@ import (
 // may need to be broken up.
 
 const seedUsers string = `
-INSERT INTO users (id, username, password, email, is_active) VALUES
-	(1, 'jackyhtg', '$2y$10$ekouPwVdtMEy5AFbogzfSeRloxHzUwEAsM7SyNJXnso/F9ds/XUYy', 'admin@admin.com', 1);
+INSERT INTO users (id, username, password, email, is_active, company_id) VALUES
+	(1, 'jackyhtg', '$2y$10$ekouPwVdtMEy5AFbogzfSeRloxHzUwEAsM7SyNJXnso/F9ds/XUYy', 'admin@admin.com', 1, 1);
 `
 
 const seedAccess string = `
@@ -40,23 +40,19 @@ INSERT INTO roles_users (role_id, user_id) VALUES (1, 1);
 `
 
 const seedCompanies string = `
-INSERT INTO companies (code, name) VALUES ("DM", "Dummy");
-`
-const seedUserCompanies string = `
-UPDATE users SET company_id=1 WHERE id=1;
+INSERT INTO companies (id, code, name) VALUES (1, "DM", "Dummy");
 `
 
 // Seed runs the set of seed-data queries against db. The queries are ran in a
 // transaction and rolled back if any fail.
 func Seed(db *sql.DB) error {
 	seeds := []string{
+		seedCompanies,
 		seedUsers,
 		seedAccess,
 		seedRoles,
 		seedAccessRoles,
 		seedRolesUsers,
-		seedCompanies,
-		seedUserCompanies,
 	}
 
 	tx, err := db.Begin()
