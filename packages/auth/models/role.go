@@ -62,6 +62,8 @@ func (u *Role) Create(ctx context.Context, db *sql.DB) error {
 		return err
 	}
 
+	defer stmt.Close()
+
 	res, err := stmt.ExecContext(ctx, u.Name)
 	if err != nil {
 		return err
@@ -89,6 +91,8 @@ func (u *Role) Update(ctx context.Context, db *sql.DB) error {
 		return err
 	}
 
+	defer stmt.Close()
+
 	_, err = stmt.ExecContext(ctx, u.Name, u.ID)
 	return err
 }
@@ -100,6 +104,8 @@ func (u *Role) Delete(ctx context.Context, db *sql.DB) error {
 		return err
 	}
 
+	defer stmt.Close()
+
 	_, err = stmt.ExecContext(ctx, u.ID)
 	return err
 }
@@ -110,6 +116,9 @@ func (u *Role) Grant(ctx context.Context, db *sql.DB, accessID uint32) error {
 	if err != nil {
 		return err
 	}
+
+	defer stmt.Close()
+
 	_, err = stmt.ExecContext(ctx, accessID, u.ID)
 	return err
 }
@@ -120,13 +129,16 @@ func (u *Role) Revoke(ctx context.Context, db *sql.DB, accessID uint32) error {
 	if err != nil {
 		return err
 	}
+
+	defer stmt.Close()
+
 	_, err = stmt.ExecContext(ctx, accessID, u.ID)
 	return err
 }
 
-func (a *Role) getArgs() []interface{} {
+func (u *Role) getArgs() []interface{} {
 	var args []interface{}
-	args = append(args, &a.ID)
-	args = append(args, &a.Name)
+	args = append(args, &u.ID)
+	args = append(args, &u.Name)
 	return args
 }

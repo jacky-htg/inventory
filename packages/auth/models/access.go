@@ -19,6 +19,7 @@ type Access struct {
 
 const qAccess = `SELECT id, parent_id, name, alias FROM access`
 
+//List of access
 func (u *Access) List(ctx context.Context, tx *sql.Tx) ([]Access, error) {
 	list := []Access{}
 
@@ -76,6 +77,8 @@ func (u *Access) Create(ctx context.Context, tx *sql.Tx) error {
 		return err
 	}
 
+	defer stmt.Close()
+
 	res, err := stmt.ExecContext(ctx, u.ParentID, u.Name, u.Alias)
 	if err != nil {
 		return err
@@ -91,12 +94,14 @@ func (u *Access) Create(ctx context.Context, tx *sql.Tx) error {
 	return nil
 }
 
-//Delete : delete user
+//Delete : delete access
 func (u *Access) Delete(ctx context.Context, tx *sql.Tx) error {
 	stmt, err := tx.PrepareContext(ctx, `DELETE FROM access WHERE id = ?`)
 	if err != nil {
 		return err
 	}
+
+	defer stmt.Close()
 
 	_, err = stmt.ExecContext(ctx, u.ID)
 	return err
@@ -125,7 +130,7 @@ func (u *Access) GetIDs(ctx context.Context, db *sql.DB) ([]uint32, error) {
 	return access, rows.Err()
 }
 
-// IsAUth for check user authorization
+// IsAuth for check user authorization
 func (u *Access) IsAuth(ctx context.Context, db *sql.DB, tokenparam interface{}, controller string, route string) (bool, error) {
 	query := `
 	SELECT true
@@ -160,11 +165,11 @@ func (u *Access) IsAuth(ctx context.Context, db *sql.DB, tokenparam interface{},
 	return isAuth, err
 }
 
-func (a *Access) getArgs() []interface{} {
+func (u *Access) getArgs() []interface{} {
 	var args []interface{}
-	args = append(args, &a.ID)
-	args = append(args, &a.ParentID)
-	args = append(args, &a.Name)
-	args = append(args, &a.Alias)
+	args = append(args, &u.ID)
+	args = append(args, &u.ParentID)
+	args = append(args, &u.Name)
+	args = append(args, &u.Alias)
 	return args
 }

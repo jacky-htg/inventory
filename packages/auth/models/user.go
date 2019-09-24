@@ -7,6 +7,7 @@ import (
 	"errors"
 
 	"github.com/jacky-htg/inventory/libraries/array"
+	master "github.com/jacky-htg/inventory/packages/master/models"
 )
 
 //User : struct of User
@@ -17,12 +18,21 @@ type User struct {
 	Email    string
 	IsActive bool
 	Roles    []Role
+	Company  master.Company
+	Region   master.Region
+	Branch   master.Branch
 }
 
 const qUsers = `
 SELECT users.id, users.username, users.password, users.email, users.is_active, 
-	JSON_ARRAYAGG(roles.id) as roles_id, JSON_ARRAYAGG(roles.name) as roles_name
+	JSON_ARRAYAGG(roles.id) as roles_id, JSON_ARRAYAGG(roles.name) as roles_name,
+	companies.id, companies.code, companies.name, companies.address,
+	regions.id, regions.code, regions.name,
+	branches.id, branches.code, branches.name, branches.type, branches.address
 FROM users
+JOIN companies ON users.company_id = companies.id
+LEFT JOIN regions ON users.region_id = regions.id
+LEFT JOIN branches ON users.branch_id = branches.id
 LEFT JOIN roles_users ON users.id=roles_users.user_id
 LEFT JOIN roles ON roles_users.role_id=roles.id
 `
@@ -49,6 +59,18 @@ func (u *User) List(ctx context.Context, db *sql.DB) ([]User, error) {
 			&user.IsActive,
 			&roleIDs,
 			&roleNames,
+			&user.Company.ID,
+			&user.Company.Code,
+			&user.Company.Name,
+			&user.Company.Address,
+			&user.Region.ID,
+			&user.Region.Code,
+			&user.Region.Name,
+			&user.Branch.ID,
+			&user.Branch.Code,
+			&user.Branch.Name,
+			&user.Branch.Type,
+			&user.Branch.Address,
 		)
 		if err != nil {
 			return list, err
@@ -96,6 +118,18 @@ func (u *User) Get(ctx context.Context, db *sql.DB) error {
 		&u.IsActive,
 		&roleIDs,
 		&roleNames,
+		&u.Company.ID,
+		&u.Company.Code,
+		&u.Company.Name,
+		&u.Company.Address,
+		&u.Region.ID,
+		&u.Region.Code,
+		&u.Region.Name,
+		&u.Branch.ID,
+		&u.Branch.Code,
+		&u.Branch.Name,
+		&u.Branch.Type,
+		&u.Branch.Address,
 	)
 	if err != nil {
 		return err
@@ -132,6 +166,18 @@ func (u *User) GetByUsername(ctx context.Context, db *sql.DB) error {
 		&u.IsActive,
 		&roleIDs,
 		&roleNames,
+		&u.Company.ID,
+		&u.Company.Code,
+		&u.Company.Name,
+		&u.Company.Address,
+		&u.Region.ID,
+		&u.Region.Code,
+		&u.Region.Name,
+		&u.Branch.ID,
+		&u.Branch.Code,
+		&u.Branch.Name,
+		&u.Branch.Type,
+		&u.Branch.Address,
 	)
 	if err != nil {
 		return err
@@ -290,6 +336,8 @@ func (u *User) AddRole(ctx context.Context, tx *sql.Tx, r Role) error {
 		return err
 	}
 
+	defer stmt.Close()
+
 	_, err = stmt.ExecContext(ctx, r.ID, u.ID)
 	return err
 }
@@ -300,6 +348,8 @@ func (u *User) DeleteRole(ctx context.Context, tx *sql.Tx, roleID uint32) error 
 	if err != nil {
 		return err
 	}
+
+	defer stmt.Close()
 
 	_, err = stmt.ExecContext(ctx, roleID, u.ID)
 	return err
