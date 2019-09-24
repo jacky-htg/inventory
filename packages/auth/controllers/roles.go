@@ -42,8 +42,9 @@ func (u *Roles) List(w http.ResponseWriter, r *http.Request) {
 
 //View : http handler for retrieve role by id
 func (u *Roles) View(w http.ResponseWriter, r *http.Request) {
+	// TODO : filter content by user login company id
 	ctx := r.Context()
-	paramID := ctx.Value("ps").(httprouter.Params).ByName("id")
+	paramID := ctx.Value(api.Ctx("ps")).(httprouter.Params).ByName("id")
 
 	id, err := strconv.Atoi(paramID)
 	if err != nil {
@@ -75,6 +76,7 @@ func (u *Roles) View(w http.ResponseWriter, r *http.Request) {
 
 //Create : http handler for create new role
 func (u *Roles) Create(w http.ResponseWriter, r *http.Request) {
+	// TODO : set auto company id with  user login company id
 	var roleRequest request.NewRoleRequest
 	err := api.Decode(r, &roleRequest)
 	if err != nil {
@@ -98,8 +100,9 @@ func (u *Roles) Create(w http.ResponseWriter, r *http.Request) {
 
 //Update : http handler for update role by id
 func (u *Roles) Update(w http.ResponseWriter, r *http.Request) {
+	// TODO : filter content by user login company id
 	ctx := r.Context()
-	paramID := ctx.Value("ps").(httprouter.Params).ByName("id")
+	paramID := ctx.Value(api.Ctx("ps")).(httprouter.Params).ByName("id")
 
 	id, err := strconv.Atoi(paramID)
 	if err != nil {
@@ -143,8 +146,9 @@ func (u *Roles) Update(w http.ResponseWriter, r *http.Request) {
 
 // Delete : http handler for delete role by id
 func (u *Roles) Delete(w http.ResponseWriter, r *http.Request) {
+	// TODO : filter content by user login company id
 	ctx := r.Context()
-	paramID := ctx.Value("ps").(httprouter.Params).ByName("id")
+	paramID := ctx.Value(api.Ctx("ps")).(httprouter.Params).ByName("id")
 
 	id, err := strconv.Atoi(paramID)
 	if err != nil {
@@ -174,8 +178,9 @@ func (u *Roles) Delete(w http.ResponseWriter, r *http.Request) {
 
 //Grant : http handler for grant access to role
 func (u *Roles) Grant(w http.ResponseWriter, r *http.Request) {
+	// TODO : filter content by user login company id
 	ctx := r.Context()
-	ps := ctx.Value("ps").(httprouter.Params)
+	ps := ctx.Value(api.Ctx("ps")).(httprouter.Params)
 	paramID := ps.ByName("id")
 	paramAccessID := ps.ByName("access_id")
 
@@ -218,22 +223,25 @@ func (u *Roles) Grant(w http.ResponseWriter, r *http.Request) {
 		api.ResponseError(w, fmt.Errorf("Get access: %v", err))
 		return
 	}
-	tx.Commit()
 
 	err = role.Grant(ctx, u.Db, access.ID)
 	if err != nil {
+		tx.Rollback()
 		u.Log.Printf("ERROR : %+v", err)
 		api.ResponseError(w, fmt.Errorf("Grant role: %v", err))
 		return
 	}
+
+	tx.Commit()
 
 	api.ResponseOK(w, nil, http.StatusOK)
 }
 
 //Revoke : http handler for revoke access from role
 func (u *Roles) Revoke(w http.ResponseWriter, r *http.Request) {
+	// TODO : filter content by user login company id
 	ctx := r.Context()
-	ps := ctx.Value("ps").(httprouter.Params)
+	ps := ctx.Value(api.Ctx("ps")).(httprouter.Params)
 	paramID := ps.ByName("id")
 	paramAccessID := ps.ByName("access_id")
 
@@ -276,14 +284,16 @@ func (u *Roles) Revoke(w http.ResponseWriter, r *http.Request) {
 		api.ResponseError(w, fmt.Errorf("Get access: %v", err))
 		return
 	}
-	tx.Commit()
 
 	err = role.Revoke(ctx, u.Db, access.ID)
 	if err != nil {
+		tx.Rollback()
 		u.Log.Printf("ERROR : %+v", err)
 		api.ResponseError(w, fmt.Errorf("Revoke role: %v", err))
 		return
 	}
+
+	tx.Commit()
 
 	api.ResponseOK(w, nil, http.StatusNoContent)
 }

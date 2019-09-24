@@ -169,6 +169,23 @@ ALTER TABLE users
 	ADD CONSTRAINT fk_users_to_companies FOREIGN KEY (company_id) REFERENCES companies(id)
 ;`,
 	},
+	{
+		Version:     12,
+		Description: "Alter roles with company_id",
+		Script: `
+ALTER TABLE roles
+	ADD company_id  INT(10) UNSIGNED NOT NULL AFTER name,
+	ADD KEY roles_company_id (company_id)
+;`,
+	},
+	{
+		Version:     13,
+		Description: "Alter roles with companies constraint",
+		Script: `
+ALTER TABLE roles
+	ADD CONSTRAINT fk_roles_to_companies FOREIGN KEY (company_id) REFERENCES companies(id)
+;`,
+	},
 }
 
 // Migrate attempts to bring the schema for db up to date with the migrations

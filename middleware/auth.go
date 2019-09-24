@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"context"
 	"database/sql"
 	"errors"
 	"log"
@@ -12,15 +13,17 @@ import (
 	"github.com/jacky-htg/inventory/packages/auth/models"
 )
 
+// Auths middleware to auhtorization checking
 func Auths(db *sql.DB, log *log.Logger, allow []string) api.Middleware {
 	fn := func(before api.Handler) api.Handler {
 		h := func(w http.ResponseWriter, r *http.Request) {
 			var isAuth bool
 			var str array.ArrString
+			var user models.User
 			isAuth = true
 
 			ctx := r.Context()
-			curRoute := ctx.Value("url").(string)
+			curRoute := ctx.Value(api.Ctx("url")).(string)
 
 			inArray, _ := str.InArray(curRoute, allow)
 			if !inArray {
@@ -29,7 +32,7 @@ func Auths(db *sql.DB, log *log.Logger, allow []string) api.Middleware {
 				url := r.URL.String()
 				controller := strings.Split(url, "/")[1]
 
-				isAuth, err = access.IsAuth(
+				isAuth, user, err = access.IsAuth(
 					ctx,
 					db,
 					r.Header.Get("Token"),
@@ -56,7 +59,8 @@ func Auths(db *sql.DB, log *log.Logger, allow []string) api.Middleware {
 				return
 			}
 
-			before(w, r)
+			ctx = context.WithValue(ctx, api.Ctx("auth"), user)
+			before(w, r.WithContext(ctx))
 		}
 
 		return h

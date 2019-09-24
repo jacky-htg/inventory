@@ -131,7 +131,7 @@ func (u *Access) GetIDs(ctx context.Context, db *sql.DB) ([]uint32, error) {
 }
 
 // IsAuth for check user authorization
-func (u *Access) IsAuth(ctx context.Context, db *sql.DB, tokenparam interface{}, controller string, route string) (bool, error) {
+func (u *Access) IsAuth(ctx context.Context, db *sql.DB, tokenparam interface{}, controller string, route string) (bool, User, error) {
 	query := `
 	SELECT true
 	FROM users
@@ -146,23 +146,23 @@ func (u *Access) IsAuth(ctx context.Context, db *sql.DB, tokenparam interface{},
 	var err error
 
 	if tokenparam == nil {
-		return isAuth, api.ErrBadRequest(errors.New("Bad request for token"), "")
+		return isAuth, User{}, api.ErrBadRequest(errors.New("Bad request for token"), "")
 	}
 
 	isValid, username := token.ValidateToken(tokenparam.(string))
 	if !isValid {
-		return isAuth, api.ErrBadRequest(errors.New("Bad request for invalid token"), "")
+		return isAuth, User{}, api.ErrBadRequest(errors.New("Bad request for invalid token"), "")
 	}
 
 	user := User{Username: username}
 	err = user.GetByUsername(ctx, db)
 	if err != nil {
-		return isAuth, err
+		return isAuth, User{}, err
 	}
 
 	err = db.QueryRowContext(ctx, query, controller, route, user.ID).Scan(&isAuth)
 
-	return isAuth, err
+	return isAuth, user, err
 }
 
 func (u *Access) getArgs() []interface{} {

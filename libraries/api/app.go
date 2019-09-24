@@ -16,7 +16,11 @@ type App struct {
 	mw  []Middleware
 }
 
+// Handler type for force httprouter into standard http handler
 type Handler func(http.ResponseWriter, *http.Request)
+
+// Ctx type for encapsulated context key
+type Ctx string
 
 // Handle associates a httprouter Handle function with an HTTP Method and URL pattern.
 func (a *App) Handle(method, url string, h Handler) {
@@ -24,8 +28,8 @@ func (a *App) Handle(method, url string, h Handler) {
 	h = wrapMiddleware(a.mw, h)
 
 	fn := func(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-		ctx := context.WithValue(r.Context(), "ps", ps)
-		ctx = context.WithValue(ctx, "url", url)
+		ctx := context.WithValue(r.Context(), Ctx("ps"), ps)
+		ctx = context.WithValue(ctx, Ctx("url"), url)
 		h(w, r.WithContext(ctx))
 	}
 

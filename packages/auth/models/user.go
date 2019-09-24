@@ -253,9 +253,20 @@ func (u *User) GetByUsername(ctx context.Context, db *sql.DB) error {
 
 //Create new user
 func (u *User) Create(ctx context.Context, tx *sql.Tx) error {
+	var regionID, branchID sql.NullInt64
+	if u.Region.ID > 0 {
+		regionID.Valid = true
+		regionID.Int64 = int64(u.Region.ID)
+	}
+
+	if u.Branch.ID > 0 {
+		branchID.Valid = true
+		branchID.Int64 = int64(u.Branch.ID)
+	}
+
 	const query = `
-		INSERT INTO users (username, password, email, is_active, created, updated)
-		VALUES (?, ?, ?, ?, NOW(), NOW())
+		INSERT INTO users (username, password, email, is_active, company_id, region_id, branch_id, created, updated)
+		VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
 	`
 	stmt, err := tx.PrepareContext(ctx, query)
 	if err != nil {
@@ -264,7 +275,7 @@ func (u *User) Create(ctx context.Context, tx *sql.Tx) error {
 
 	defer stmt.Close()
 
-	res, err := stmt.ExecContext(ctx, u.Username, u.Password, u.Email, u.IsActive)
+	res, err := stmt.ExecContext(ctx, u.Username, u.Password, u.Email, u.IsActive, u.Company.ID, regionID, branchID)
 	if err != nil {
 		return err
 	}
@@ -290,12 +301,25 @@ func (u *User) Create(ctx context.Context, tx *sql.Tx) error {
 
 //Update : update user
 func (u *User) Update(ctx context.Context, tx *sql.Tx) error {
+	var regionID, branchID sql.NullInt64
+
+	if u.Region.ID > 0 {
+		regionID.Valid = true
+		regionID.Int64 = int64(u.Region.ID)
+	}
+
+	if u.Branch.ID > 0 {
+		branchID.Valid = true
+		branchID.Int64 = int64(u.Branch.ID)
+	}
 
 	stmt, err := tx.PrepareContext(ctx, `
 		UPDATE users 
 		SET username = ?,
 			password = ?,
 			is_active = ?,
+			region_id = ?,
+			branch_id = ?,
 			updated = NOW()
 		WHERE id = ?
 	`)
@@ -306,7 +330,7 @@ func (u *User) Update(ctx context.Context, tx *sql.Tx) error {
 
 	defer stmt.Close()
 
-	_, err = stmt.ExecContext(ctx, u.Username, u.Password, u.IsActive, u.ID)
+	_, err = stmt.ExecContext(ctx, u.Username, u.Password, u.IsActive, regionID, branchID, u.ID)
 	if err != nil {
 		return err
 	}

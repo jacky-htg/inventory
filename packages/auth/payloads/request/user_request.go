@@ -12,6 +12,9 @@ type NewUserRequest struct {
 	RePassword string        `json:"re_password" validate:"required"`
 	IsActive   bool          `json:"is_active"`
 	Roles      []models.Role `json:"roles"`
+	CompanyID  uint32        `json:"company" validate:"required"`
+	RegionID   uint32        `json:"region,omitempty"`
+	BranchID   uint32        `json:"branch,omitempty"`
 }
 
 //Transform NewUserRequest to User
@@ -22,6 +25,15 @@ func (u *NewUserRequest) Transform() *models.User {
 	user.Password = u.Password
 	user.IsActive = u.IsActive
 	user.Roles = u.Roles
+	user.Company.ID = u.CompanyID
+
+	if u.RegionID > 0 {
+		user.Region.ID = u.RegionID
+	}
+
+	if u.BranchID > 0 {
+		user.Branch.ID = u.BranchID
+	}
 
 	return &user
 }
@@ -35,6 +47,8 @@ type UserRequest struct {
 	RePassword string        `json:"re_password,omitempty" validate:"required"`
 	IsActive   bool          `json:"is_active,omitempty"`
 	Roles      []models.Role `json:"roles,omitempty"`
+	RegionID   uint32        `json:"region,omitempty"`
+	BranchID   uint32        `json:"branch,omitempty"`
 }
 
 //Transform NewUserRequest to User
@@ -56,6 +70,8 @@ func (u *UserRequest) Transform(user *models.User) *models.User {
 			user.Roles = u.Roles
 		}
 
+		user.Region.ID = u.RegionID
+		user.Branch.ID = u.BranchID
 		user.IsActive = u.IsActive
 	}
 	return user

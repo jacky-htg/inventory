@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+
+	"github.com/jacky-htg/inventory/libraries/api"
 )
 
 //Role : struct of Role
@@ -18,7 +20,7 @@ const qRoles = `SELECT id, name FROM roles`
 func (u *Role) List(ctx context.Context, db *sql.DB) ([]Role, error) {
 	list := []Role{}
 
-	rows, err := db.QueryContext(ctx, qRoles)
+	rows, err := db.QueryContext(ctx, qRoles+" WHERE company_id=?", ctx.Value(api.Ctx("auth")).(User).Company.ID)
 	if err != nil {
 		return list, err
 	}
@@ -48,14 +50,14 @@ func (u *Role) List(ctx context.Context, db *sql.DB) ([]Role, error) {
 
 //Get role by id
 func (u *Role) Get(ctx context.Context, db *sql.DB) error {
-	return db.QueryRowContext(ctx, qRoles+" WHERE id=?", u.ID).Scan(u.getArgs()...)
+	return db.QueryRowContext(ctx, qRoles+" WHERE id=? AND company_id=?", u.ID, ctx.Value(api.Ctx("auth")).(User).Company.ID).Scan(u.getArgs()...)
 }
 
 //Create new role
 func (u *Role) Create(ctx context.Context, db *sql.DB) error {
 	const query = `
-		INSERT INTO roles (name, created)
-		VALUES (?, NOW())
+		INSERT INTO roles (name, company_id, created)
+		VALUES (?, ?, NOW())
 	`
 	stmt, err := db.PrepareContext(ctx, query)
 	if err != nil {
@@ -64,7 +66,7 @@ func (u *Role) Create(ctx context.Context, db *sql.DB) error {
 
 	defer stmt.Close()
 
-	res, err := stmt.ExecContext(ctx, u.Name)
+	res, err := stmt.ExecContext(ctx, u.Name, ctx.Value(api.Ctx("auth")).(User).Company.ID)
 	if err != nil {
 		return err
 	}
@@ -86,6 +88,7 @@ func (u *Role) Update(ctx context.Context, db *sql.DB) error {
 		UPDATE roles 
 		SET name = ?
 		WHERE id = ?
+		AND company_id = ?
 	`)
 	if err != nil {
 		return err
@@ -93,20 +96,20 @@ func (u *Role) Update(ctx context.Context, db *sql.DB) error {
 
 	defer stmt.Close()
 
-	_, err = stmt.ExecContext(ctx, u.Name, u.ID)
+	_, err = stmt.ExecContext(ctx, u.Name, u.ID, ctx.Value(api.Ctx("auth")).(User).Company.ID)
 	return err
 }
 
 //Delete role
 func (u *Role) Delete(ctx context.Context, db *sql.DB) error {
-	stmt, err := db.PrepareContext(ctx, `DELETE FROM roles WHERE id = ?`)
+	stmt, err := db.PrepareContext(ctx, `DELETE FROM roles WHERE id = ? AND company_id = ?`)
 	if err != nil {
 		return err
 	}
 
 	defer stmt.Close()
 
-	_, err = stmt.ExecContext(ctx, u.ID)
+	_, err = stmt.ExecContext(ctx, u.ID, ctx.Value(api.Ctx("auth")).(User).Company.ID)
 	return err
 }
 

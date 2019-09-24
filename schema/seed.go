@@ -28,7 +28,7 @@ INSERT INTO access (id, name, alias, created) VALUES (1, 'root', 'root', NOW());
 `
 
 const seedRoles string = `
-INSERT INTO roles (id, name, created) VALUES (1, 'superadmin', NOW());
+INSERT INTO roles (id, name, company_id, created) VALUES (1, 'superadmin', 1, NOW());
 `
 
 const seedAccessRoles string = `

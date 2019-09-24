@@ -23,6 +23,7 @@ type Users struct {
 
 //List : http handler for returning list of users
 func (u *Users) List(w http.ResponseWriter, r *http.Request) {
+	// TODO : filter content by user login company id, region id or branch id
 	var user models.User
 	list, err := user.List(r.Context(), u.Db)
 	if err != nil {
@@ -43,8 +44,9 @@ func (u *Users) List(w http.ResponseWriter, r *http.Request) {
 
 //View : http handler for retrieve user by id
 func (u *Users) View(w http.ResponseWriter, r *http.Request) {
+	// TODO : filter content by user login company id, region id or branch id
 	ctx := r.Context()
-	paramID := ctx.Value("ps").(httprouter.Params).ByName("id")
+	paramID := ctx.Value(api.Ctx("ps")).(httprouter.Params).ByName("id")
 
 	id, err := strconv.Atoi(paramID)
 	if err != nil {
@@ -68,6 +70,7 @@ func (u *Users) View(w http.ResponseWriter, r *http.Request) {
 
 //Create : http handler for create new user
 func (u *Users) Create(w http.ResponseWriter, r *http.Request) {
+	// TODO : set auto company id with user login company id
 	var userRequest request.NewUserRequest
 	err := api.Decode(r, &userRequest)
 	if err != nil {
@@ -116,8 +119,9 @@ func (u *Users) Create(w http.ResponseWriter, r *http.Request) {
 
 //Update : http handler for update user by id
 func (u *Users) Update(w http.ResponseWriter, r *http.Request) {
+	// TODO : filter content by user login company id
 	ctx := r.Context()
-	paramID := ctx.Value("ps").(httprouter.Params).ByName("id")
+	paramID := ctx.Value(api.Ctx("ps")).(httprouter.Params).ByName("id")
 
 	id, err := strconv.Atoi(paramID)
 	if err != nil {
@@ -187,8 +191,9 @@ func (u *Users) Update(w http.ResponseWriter, r *http.Request) {
 
 //Delete : http handler for delete user by id
 func (u *Users) Delete(w http.ResponseWriter, r *http.Request) {
+	// TODO : filter content by user login company id, region id or branch id
 	ctx := r.Context()
-	paramID := ctx.Value("ps").(httprouter.Params).ByName("id")
+	paramID := ctx.Value(api.Ctx("ps")).(httprouter.Params).ByName("id")
 
 	id, err := strconv.Atoi(paramID)
 	if err != nil {
