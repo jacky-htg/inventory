@@ -11,7 +11,7 @@ type Company struct {
 	ID      uint32
 	Code    string
 	Name    string
-	Address string
+	Address sql.NullString
 }
 
 const qCompanies = `SELECT id, code, name, address FROM companies`

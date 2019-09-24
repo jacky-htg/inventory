@@ -51,6 +51,8 @@ func (u *User) List(ctx context.Context, db *sql.DB) ([]User, error) {
 	for rows.Next() {
 		var user User
 		var roleIDs, roleNames string
+		var regionID, branchID sql.NullInt64
+		var regionCode, regionName, branchCode, branchName, branchType sql.NullString
 		err = rows.Scan(
 			&user.ID,
 			&user.Username,
@@ -63,17 +65,31 @@ func (u *User) List(ctx context.Context, db *sql.DB) ([]User, error) {
 			&user.Company.Code,
 			&user.Company.Name,
 			&user.Company.Address,
-			&user.Region.ID,
-			&user.Region.Code,
-			&user.Region.Name,
-			&user.Branch.ID,
-			&user.Branch.Code,
-			&user.Branch.Name,
-			&user.Branch.Type,
+			&regionID,
+			&regionCode,
+			&regionName,
+			&branchID,
+			&branchCode,
+			&branchName,
+			&branchType,
 			&user.Branch.Address,
 		)
 		if err != nil {
 			return list, err
+		}
+
+		if regionID.Int64 > 0 {
+			user.Region = master.Region{ID: uint32(regionID.Int64), Code: regionCode.String, Name: regionName.String}
+		}
+
+		if branchID.Int64 > 0 {
+			user.Branch = master.Branch{
+				ID:      uint32(branchID.Int64),
+				Code:    branchCode.String,
+				Name:    branchName.String,
+				Type:    branchType.String,
+				Address: user.Branch.Address,
+			}
 		}
 
 		if len(roleIDs) > 0 {
@@ -110,6 +126,8 @@ func (u *User) List(ctx context.Context, db *sql.DB) ([]User, error) {
 //Get : get user by id
 func (u *User) Get(ctx context.Context, db *sql.DB) error {
 	var roleIDs, roleNames string
+	var regionID, branchID sql.NullInt64
+	var regionCode, regionName, branchCode, branchName, branchType sql.NullString
 	err := db.QueryRowContext(ctx, qUsers+" WHERE users.id=? GROUP BY users.id", u.ID).Scan(
 		&u.ID,
 		&u.Username,
@@ -122,17 +140,31 @@ func (u *User) Get(ctx context.Context, db *sql.DB) error {
 		&u.Company.Code,
 		&u.Company.Name,
 		&u.Company.Address,
-		&u.Region.ID,
-		&u.Region.Code,
-		&u.Region.Name,
-		&u.Branch.ID,
-		&u.Branch.Code,
-		&u.Branch.Name,
-		&u.Branch.Type,
+		&regionID,
+		&regionCode,
+		&regionName,
+		&branchID,
+		&branchCode,
+		&branchName,
+		&branchType,
 		&u.Branch.Address,
 	)
 	if err != nil {
 		return err
+	}
+
+	if regionID.Int64 > 0 {
+		u.Region = master.Region{ID: uint32(regionID.Int64), Code: regionCode.String, Name: regionName.String}
+	}
+
+	if branchID.Int64 > 0 {
+		u.Branch = master.Branch{
+			ID:      uint32(branchID.Int64),
+			Code:    branchCode.String,
+			Name:    branchName.String,
+			Type:    branchType.String,
+			Address: u.Branch.Address,
+		}
 	}
 
 	if len(roleIDs) > 0 {
@@ -158,6 +190,8 @@ func (u *User) Get(ctx context.Context, db *sql.DB) error {
 //GetByUsername : get user by username
 func (u *User) GetByUsername(ctx context.Context, db *sql.DB) error {
 	var roleIDs, roleNames string
+	var regionID, branchID sql.NullInt64
+	var regionCode, regionName, branchCode, branchName, branchType sql.NullString
 	err := db.QueryRowContext(ctx, qUsers+" WHERE users.username=? GROUP BY users.id", u.Username).Scan(
 		&u.ID,
 		&u.Username,
@@ -170,17 +204,31 @@ func (u *User) GetByUsername(ctx context.Context, db *sql.DB) error {
 		&u.Company.Code,
 		&u.Company.Name,
 		&u.Company.Address,
-		&u.Region.ID,
-		&u.Region.Code,
-		&u.Region.Name,
-		&u.Branch.ID,
-		&u.Branch.Code,
-		&u.Branch.Name,
-		&u.Branch.Type,
+		&regionID,
+		&regionCode,
+		&regionName,
+		&branchID,
+		&branchCode,
+		&branchName,
+		&branchType,
 		&u.Branch.Address,
 	)
 	if err != nil {
 		return err
+	}
+
+	if regionID.Int64 > 0 {
+		u.Region = master.Region{ID: uint32(regionID.Int64), Code: regionCode.String, Name: regionName.String}
+	}
+
+	if branchID.Int64 > 0 {
+		u.Branch = master.Branch{
+			ID:      uint32(branchID.Int64),
+			Code:    branchCode.String,
+			Name:    branchName.String,
+			Type:    branchType.String,
+			Address: u.Branch.Address,
+		}
 	}
 
 	if len(roleIDs) > 0 {
