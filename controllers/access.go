@@ -7,8 +7,8 @@ import (
 	"net/http"
 
 	"github.com/jacky-htg/inventory/libraries/api"
-	"github.com/jacky-htg/inventory/packages/auth/models"
-	"github.com/jacky-htg/inventory/packages/auth/payloads/response"
+	"github.com/jacky-htg/inventory/models"
+	"github.com/jacky-htg/inventory/payloads/response"
 )
 
 //Access : struct for set Access Dependency Injection

@@ -1,10 +1,10 @@
 package response
 
 import (
-	"github.com/jacky-htg/inventory/packages/auth/models"
+	"github.com/jacky-htg/inventory/models"
 )
 
-//UserResponse : format json response for user
+//AccessResponse : format json response for user
 type AccessResponse struct {
 	ID       uint32 `json:"id"`
 	ParentID uint32 `json:"parent_id,omitempty"`

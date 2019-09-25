@@ -5,9 +5,10 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
+	"strings"
 
+	"github.com/jacky-htg/inventory/libraries/api"
 	"github.com/jacky-htg/inventory/libraries/array"
-	master "github.com/jacky-htg/inventory/packages/master/models"
 )
 
 //User : struct of User
@@ -18,9 +19,9 @@ type User struct {
 	Email    string
 	IsActive bool
 	Roles    []Role
-	Company  master.Company
-	Region   master.Region
-	Branch   master.Branch
+	Company  Company
+	Region   Region
+	Branch   Branch
 }
 
 const qUsers = `
@@ -40,8 +41,50 @@ LEFT JOIN roles ON roles_users.role_id=roles.id
 //List : List of users
 func (u *User) List(ctx context.Context, db *sql.DB) ([]User, error) {
 	list := []User{}
+	var err error
+	var where []string
+	var query string
+	var branches []uint32
+	var params []interface{}
 
-	rows, err := db.QueryContext(ctx, qUsers+" GROUP BY users.id")
+	userLogin := ctx.Value(api.Ctx("auth")).(User)
+
+	where = append(where, "users.company_id=?")
+	params = append(params, userLogin.Company.ID)
+
+	query = qUsers
+	if userLogin.Region.ID > 0 {
+		tx, err := db.Begin()
+		if err != nil {
+			return list, err
+		}
+
+		branches, err = u.Region.GetIDBranches(ctx, tx)
+		if err != nil {
+			tx.Rollback()
+			return list, err
+		}
+		tx.Commit()
+	} else {
+		if userLogin.Branch.ID > 0 {
+			branches = append(branches, userLogin.Branch.ID)
+		}
+	}
+
+	if len(branches) > 0 {
+		var oRBranchConditions []string
+		for _, b := range branches {
+			oRBranchConditions = append(oRBranchConditions, "users.branch_id=?")
+			params = append(params, b)
+		}
+		if len(oRBranchConditions) > 0 {
+			where = append(where, "("+strings.Join(oRBranchConditions, " OR ")+")")
+		}
+	}
+
+	query += " WHERE " + strings.Join(where, " AND ") + " GROUP BY users.id"
+
+	rows, err := db.QueryContext(ctx, query, params...)
 	if err != nil {
 		return list, err
 	}
@@ -79,11 +122,11 @@ func (u *User) List(ctx context.Context, db *sql.DB) ([]User, error) {
 		}
 
 		if regionID.Int64 > 0 {
-			user.Region = master.Region{ID: uint32(regionID.Int64), Code: regionCode.String, Name: regionName.String}
+			user.Region = Region{ID: uint32(regionID.Int64), Code: regionCode.String, Name: regionName.String}
 		}
 
 		if branchID.Int64 > 0 {
-			user.Branch = master.Branch{
+			user.Branch = Branch{
 				ID:      uint32(branchID.Int64),
 				Code:    branchCode.String,
 				Name:    branchName.String,
@@ -125,10 +168,56 @@ func (u *User) List(ctx context.Context, db *sql.DB) ([]User, error) {
 
 //Get : get user by id
 func (u *User) Get(ctx context.Context, db *sql.DB) error {
+	var err error
+	var where []string
+	var query string
+	var branches []uint32
+	var params []interface{}
+
+	userLogin := ctx.Value(api.Ctx("auth")).(User)
+
+	where = append(where, "users.id=?")
+	params = append(params, u.ID)
+
+	where = append(where, "users.company_id=?")
+	params = append(params, userLogin.Company.ID)
+
+	query = qUsers
+	if userLogin.Region.ID > 0 {
+		tx, err := db.Begin()
+		if err != nil {
+			return err
+		}
+
+		branches, err = u.Region.GetIDBranches(ctx, tx)
+		if err != nil {
+			tx.Rollback()
+			return err
+		}
+		tx.Commit()
+	} else {
+		if userLogin.Branch.ID > 0 {
+			branches = append(branches, userLogin.Branch.ID)
+		}
+	}
+
+	if len(branches) > 0 {
+		var oRBranchConditions []string
+		for _, b := range branches {
+			oRBranchConditions = append(oRBranchConditions, "users.branch_id=?")
+			params = append(params, b)
+		}
+		if len(oRBranchConditions) > 0 {
+			where = append(where, "("+strings.Join(oRBranchConditions, " OR ")+")")
+		}
+	}
+
+	query += " WHERE " + strings.Join(where, " AND ") + " GROUP BY users.id"
+
 	var roleIDs, roleNames string
 	var regionID, branchID sql.NullInt64
 	var regionCode, regionName, branchCode, branchName, branchType sql.NullString
-	err := db.QueryRowContext(ctx, qUsers+" WHERE users.id=? GROUP BY users.id", u.ID).Scan(
+	err = db.QueryRowContext(ctx, query, params...).Scan(
 		&u.ID,
 		&u.Username,
 		&u.Password,
@@ -154,11 +243,11 @@ func (u *User) Get(ctx context.Context, db *sql.DB) error {
 	}
 
 	if regionID.Int64 > 0 {
-		u.Region = master.Region{ID: uint32(regionID.Int64), Code: regionCode.String, Name: regionName.String}
+		u.Region = Region{ID: uint32(regionID.Int64), Code: regionCode.String, Name: regionName.String}
 	}
 
 	if branchID.Int64 > 0 {
-		u.Branch = master.Branch{
+		u.Branch = Branch{
 			ID:      uint32(branchID.Int64),
 			Code:    branchCode.String,
 			Name:    branchName.String,
@@ -187,7 +276,9 @@ func (u *User) Get(ctx context.Context, db *sql.DB) error {
 	return nil
 }
 
-//GetByUsername : get user by username
+// GetByUsername : get user by username
+// BEWARE : DONT CALL THIS FUNCTION
+// this function just call in login only
 func (u *User) GetByUsername(ctx context.Context, db *sql.DB) error {
 	var roleIDs, roleNames string
 	var regionID, branchID sql.NullInt64
@@ -218,11 +309,11 @@ func (u *User) GetByUsername(ctx context.Context, db *sql.DB) error {
 	}
 
 	if regionID.Int64 > 0 {
-		u.Region = master.Region{ID: uint32(regionID.Int64), Code: regionCode.String, Name: regionName.String}
+		u.Region = Region{ID: uint32(regionID.Int64), Code: regionCode.String, Name: regionName.String}
 	}
 
 	if branchID.Int64 > 0 {
-		u.Branch = master.Branch{
+		u.Branch = Branch{
 			ID:      uint32(branchID.Int64),
 			Code:    branchCode.String,
 			Name:    branchName.String,
@@ -254,14 +345,53 @@ func (u *User) GetByUsername(ctx context.Context, db *sql.DB) error {
 //Create new user
 func (u *User) Create(ctx context.Context, tx *sql.Tx) error {
 	var regionID, branchID sql.NullInt64
-	if u.Region.ID > 0 {
-		regionID.Valid = true
-		regionID.Int64 = int64(u.Region.ID)
+	var branches, regions []uint32
+	var err error
+	userLogin := ctx.Value(api.Ctx("auth")).(User)
+
+	switch {
+	case userLogin.Branch.ID <= 0 && userLogin.Region.ID <= 0:
+		branches, err = u.Company.GetIDBranches(ctx, tx)
+		if err != nil {
+			return err
+		}
+
+		regions, err = u.Company.GetIDRegions(ctx, tx)
+		if err != nil {
+			return err
+		}
+	case userLogin.Region.ID > 0:
+		branches, err = u.Region.GetIDBranches(ctx, tx)
+		if err != nil {
+			return err
+		}
+
+		regions = []uint32{}
+	case userLogin.Branch.ID > 0:
+		branches = []uint32{userLogin.Branch.ID}
+		regions = []uint32{}
 	}
 
 	if u.Branch.ID > 0 {
+		var arr array.ArrUint32
+		isExist, _ := arr.InArray(u.Branch.ID, branches)
+
+		if !isExist {
+			return api.ErrForbidden(errors.New("Forbidden data owner"), "")
+		}
 		branchID.Valid = true
 		branchID.Int64 = int64(u.Branch.ID)
+	}
+
+	if u.Region.ID > 0 {
+		var arr array.ArrUint32
+		isExist, _ := arr.InArray(u.Region.ID, regions)
+
+		if !isExist {
+			return api.ErrForbidden(errors.New("Forbidden data owner"), "")
+		}
+		regionID.Valid = true
+		regionID.Int64 = int64(u.Region.ID)
 	}
 
 	const query = `
@@ -275,7 +405,7 @@ func (u *User) Create(ctx context.Context, tx *sql.Tx) error {
 
 	defer stmt.Close()
 
-	res, err := stmt.ExecContext(ctx, u.Username, u.Password, u.Email, u.IsActive, u.Company.ID, regionID, branchID)
+	res, err := stmt.ExecContext(ctx, u.Username, u.Password, u.Email, u.IsActive, userLogin.Company.ID, regionID, branchID)
 	if err != nil {
 		return err
 	}
@@ -302,15 +432,53 @@ func (u *User) Create(ctx context.Context, tx *sql.Tx) error {
 //Update : update user
 func (u *User) Update(ctx context.Context, tx *sql.Tx) error {
 	var regionID, branchID sql.NullInt64
+	var branches, regions []uint32
+	var err error
+	userLogin := ctx.Value(api.Ctx("auth")).(User)
 
-	if u.Region.ID > 0 {
-		regionID.Valid = true
-		regionID.Int64 = int64(u.Region.ID)
+	switch {
+	case userLogin.Branch.ID <= 0 && userLogin.Region.ID <= 0:
+		branches, err = u.Company.GetIDBranches(ctx, tx)
+		if err != nil {
+			return err
+		}
+
+		regions, err = u.Company.GetIDRegions(ctx, tx)
+		if err != nil {
+			return err
+		}
+	case userLogin.Region.ID > 0:
+		branches, err = u.Region.GetIDBranches(ctx, tx)
+		if err != nil {
+			return err
+		}
+
+		regions = []uint32{}
+	case userLogin.Branch.ID > 0:
+		branches = []uint32{userLogin.Branch.ID}
+		regions = []uint32{}
 	}
 
 	if u.Branch.ID > 0 {
+		var arr array.ArrUint32
+		isExist, _ := arr.InArray(u.Branch.ID, branches)
+
+		if !isExist {
+			return api.ErrForbidden(errors.New("Forbidden data owner"), "")
+		}
 		branchID.Valid = true
 		branchID.Int64 = int64(u.Branch.ID)
+	}
+
+	if u.Region.ID > 0 {
+		var arr array.ArrUint32
+		isExist, _ := arr.InArray(u.Region.ID, regions)
+
+		if !isExist {
+			return api.ErrForbidden(errors.New("Forbidden data owner"), "")
+		}
+		regionID.Valid = true
+		regionID.Int64 = int64(u.Region.ID)
 	}
 
 	stmt, err := tx.PrepareContext(ctx, `

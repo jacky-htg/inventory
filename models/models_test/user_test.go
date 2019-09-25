@@ -6,7 +6,7 @@ import (
 	"testing"
 
 	"github.com/google/go-cmp/cmp"
-	"github.com/jacky-htg/inventory/packages/auth/models"
+	"github.com/jacky-htg/inventory/models"
 )
 
 // User struct for test users

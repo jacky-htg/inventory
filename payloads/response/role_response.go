@@ -1,7 +1,7 @@
 package response
 
 import (
-	"github.com/jacky-htg/inventory/packages/auth/models"
+	"github.com/jacky-htg/inventory/models"
 )
 
 //RoleResponse : format json response for role

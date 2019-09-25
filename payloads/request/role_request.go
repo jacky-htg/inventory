@@ -1,7 +1,7 @@
 package request
 
 import (
-	"github.com/jacky-htg/inventory/packages/auth/models"
+	"github.com/jacky-htg/inventory/models"
 )
 
 //NewRoleRequest : format json request for new role

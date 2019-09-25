@@ -1,7 +1,7 @@
 package request
 
 import (
-	"github.com/jacky-htg/inventory/packages/master/models"
+	"github.com/jacky-htg/inventory/models"
 )
 
 //NewRegionRequest : format json request for new region

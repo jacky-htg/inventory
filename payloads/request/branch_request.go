@@ -3,7 +3,7 @@ package request
 import (
 	"database/sql"
 
-	"github.com/jacky-htg/inventory/packages/master/models"
+	"github.com/jacky-htg/inventory/models"
 )
 
 //NewBranchRequest : format json request for new branch

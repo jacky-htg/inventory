@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+
+	"github.com/jacky-htg/inventory/libraries/api"
 )
 
 //Region : struct of Region
@@ -30,7 +32,7 @@ JOIN companies ON regions.company_id = companies.id
 func (u *Region) List(ctx context.Context, db *sql.DB) ([]Region, error) {
 	list := []Region{}
 
-	rows, err := db.QueryContext(ctx, qRegions)
+	rows, err := db.QueryContext(ctx, qRegions+" WHERE companies.id=?", ctx.Value(api.Ctx("auth")).(User).Company.ID)
 	if err != nil {
 		return list, err
 	}
@@ -60,7 +62,7 @@ func (u *Region) List(ctx context.Context, db *sql.DB) ([]Region, error) {
 
 //Get region by id
 func (u *Region) Get(ctx context.Context, db *sql.DB) error {
-	return db.QueryRowContext(ctx, qRegions+" WHERE regions.id=?", u.ID).Scan(u.getArgs()...)
+	return db.QueryRowContext(ctx, qRegions+" WHERE regions.id=? AND companies.id=?", u.ID, ctx.Value(api.Ctx("auth")).(User).Company.ID).Scan(u.getArgs()...)
 }
 
 //Create new region
@@ -76,7 +78,7 @@ func (u *Region) Create(ctx context.Context, db *sql.DB) error {
 
 	defer stmt.Close()
 
-	res, err := stmt.ExecContext(ctx, u.Company.ID, u.Code, u.Name)
+	res, err := stmt.ExecContext(ctx, ctx.Value(api.Ctx("auth")).(User).Company.ID, u.Code, u.Name)
 	if err != nil {
 		return err
 	}
@@ -99,6 +101,7 @@ func (u *Region) Update(ctx context.Context, db *sql.DB) error {
 		SET name = ?,
 			updated = NOW()
 		WHERE id = ?
+		AND company_id = ?
 	`)
 	if err != nil {
 		return err
@@ -106,20 +109,20 @@ func (u *Region) Update(ctx context.Context, db *sql.DB) error {
 
 	defer stmt.Close()
 
-	_, err = stmt.ExecContext(ctx, u.Name, u.ID)
+	_, err = stmt.ExecContext(ctx, u.Name, u.ID, ctx.Value(api.Ctx("auth")).(User).Company.ID)
 	return err
 }
 
 //Delete region
 func (u *Region) Delete(ctx context.Context, db *sql.DB) error {
-	stmt, err := db.PrepareContext(ctx, `DELETE FROM regions WHERE id = ?`)
+	stmt, err := db.PrepareContext(ctx, `DELETE FROM regions WHERE id = ? AND company_id = ?`)
 	if err != nil {
 		return err
 	}
 
 	defer stmt.Close()
 
-	_, err = stmt.ExecContext(ctx, u.ID)
+	_, err = stmt.ExecContext(ctx, u.ID, ctx.Value(api.Ctx("auth")).(User).Company.ID)
 	return err
 }
 
@@ -141,6 +144,31 @@ func (u *Region) DeleteBranch(ctx context.Context, db *sql.DB, branchID uint32) 
 	}
 	_, err = stmt.ExecContext(ctx, branchID, u.ID)
 	return err
+}
+
+// GetIDBranches by region id
+func (u *Region) GetIDBranches(ctx context.Context, tx *sql.Tx) ([]uint32, error) {
+	var list []uint32
+	var err error
+
+	rows, err := tx.QueryContext(ctx, "SELECT branch_id FROM branches_regions WHERE region_id=?", u.ID)
+	if err != nil {
+		return list, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var temp uint32
+		err = rows.Scan(&temp)
+		if err != nil {
+			return list, err
+		}
+
+		list = append(list, temp)
+	}
+
+	return list, rows.Err()
 }
 
 func (u *Region) getArgs() []interface{} {

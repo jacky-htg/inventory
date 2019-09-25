@@ -8,9 +8,9 @@ import (
 	"strconv"
 
 	"github.com/jacky-htg/inventory/libraries/api"
-	"github.com/jacky-htg/inventory/packages/auth/models"
-	"github.com/jacky-htg/inventory/packages/auth/payloads/request"
-	"github.com/jacky-htg/inventory/packages/auth/payloads/response"
+	"github.com/jacky-htg/inventory/models"
+	"github.com/jacky-htg/inventory/payloads/request"
+	"github.com/jacky-htg/inventory/payloads/response"
 	"github.com/julienschmidt/httprouter"
 )
 
@@ -42,7 +42,6 @@ func (u *Roles) List(w http.ResponseWriter, r *http.Request) {
 
 //View : http handler for retrieve role by id
 func (u *Roles) View(w http.ResponseWriter, r *http.Request) {
-	// TODO : filter content by user login company id
 	ctx := r.Context()
 	paramID := ctx.Value(api.Ctx("ps")).(httprouter.Params).ByName("id")
 
@@ -76,7 +75,6 @@ func (u *Roles) View(w http.ResponseWriter, r *http.Request) {
 
 //Create : http handler for create new role
 func (u *Roles) Create(w http.ResponseWriter, r *http.Request) {
-	// TODO : set auto company id with  user login company id
 	var roleRequest request.NewRoleRequest
 	err := api.Decode(r, &roleRequest)
 	if err != nil {
@@ -100,7 +98,6 @@ func (u *Roles) Create(w http.ResponseWriter, r *http.Request) {
 
 //Update : http handler for update role by id
 func (u *Roles) Update(w http.ResponseWriter, r *http.Request) {
-	// TODO : filter content by user login company id
 	ctx := r.Context()
 	paramID := ctx.Value(api.Ctx("ps")).(httprouter.Params).ByName("id")
 
@@ -146,7 +143,6 @@ func (u *Roles) Update(w http.ResponseWriter, r *http.Request) {
 
 // Delete : http handler for delete role by id
 func (u *Roles) Delete(w http.ResponseWriter, r *http.Request) {
-	// TODO : filter content by user login company id
 	ctx := r.Context()
 	paramID := ctx.Value(api.Ctx("ps")).(httprouter.Params).ByName("id")
 
@@ -178,7 +174,6 @@ func (u *Roles) Delete(w http.ResponseWriter, r *http.Request) {
 
 //Grant : http handler for grant access to role
 func (u *Roles) Grant(w http.ResponseWriter, r *http.Request) {
-	// TODO : filter content by user login company id
 	ctx := r.Context()
 	ps := ctx.Value(api.Ctx("ps")).(httprouter.Params)
 	paramID := ps.ByName("id")
@@ -239,7 +234,6 @@ func (u *Roles) Grant(w http.ResponseWriter, r *http.Request) {
 
 //Revoke : http handler for revoke access from role
 func (u *Roles) Revoke(w http.ResponseWriter, r *http.Request) {
-	// TODO : filter content by user login company id
 	ctx := r.Context()
 	ps := ctx.Value(api.Ctx("ps")).(httprouter.Params)
 	paramID := ps.ByName("id")

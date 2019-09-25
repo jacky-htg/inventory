@@ -4,6 +4,8 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+
+	"github.com/jacky-htg/inventory/libraries/api"
 )
 
 //Company : struct of Company
@@ -112,6 +114,56 @@ func (u *Company) Delete(ctx context.Context, db *sql.DB) error {
 
 	_, err = stmt.ExecContext(ctx, u.ID)
 	return err
+}
+
+// GetIDRegions by company id
+func (u *Company) GetIDRegions(ctx context.Context, tx *sql.Tx) ([]uint32, error) {
+	var list []uint32
+	var err error
+
+	rows, err := tx.QueryContext(ctx, "SELECT id FROM regions WHERE company_id=?", ctx.Value(api.Ctx("auth")).(User).ID)
+	if err != nil {
+		return list, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var temp uint32
+		err = rows.Scan(&temp)
+		if err != nil {
+			return list, err
+		}
+
+		list = append(list, temp)
+	}
+
+	return list, rows.Err()
+}
+
+// GetIDBranches by company id
+func (u *Company) GetIDBranches(ctx context.Context, tx *sql.Tx) ([]uint32, error) {
+	var list []uint32
+	var err error
+
+	rows, err := tx.QueryContext(ctx, "SELECT id FROM branches WHERE company_id=?", ctx.Value(api.Ctx("auth")).(User).ID)
+	if err != nil {
+		return list, err
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var temp uint32
+		err = rows.Scan(&temp)
+		if err != nil {
+			return list, err
+		}
+
+		list = append(list, temp)
+	}
+
+	return list, rows.Err()
 }
 
 func (u *Company) getArgs() []interface{} {

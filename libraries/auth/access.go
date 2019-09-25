@@ -8,12 +8,13 @@ import (
 	"strings"
 
 	"github.com/jacky-htg/inventory/libraries/array"
-	"github.com/jacky-htg/inventory/packages/auth/models"
+	"github.com/jacky-htg/inventory/models"
 )
 
 var aStr array.ArrString
 var aUint32 array.ArrUint32
 
+// ScanAccess to insert routing into database
 func ScanAccess(db *sql.DB) error {
 	var existingAccess []uint32
 	var err error
@@ -78,7 +79,7 @@ func ScanAccess(db *sql.DB) error {
 func storeAccess(existingAccess []uint32, tx *sql.Tx, controller string, access string, alias string) ([]uint32, error) {
 	ctx := context.Background()
 	// get or store parent access
-	existingAccess, id, err := storeController(existingAccess, ctx, tx, controller)
+	existingAccess, id, err := storeController(ctx, tx, existingAccess, controller)
 	if err != nil {
 		return existingAccess, err
 	}
@@ -103,7 +104,7 @@ func storeAccess(existingAccess []uint32, tx *sql.Tx, controller string, access 
 	return existingAccess, nil
 }
 
-func storeController(existingAccess []uint32, ctx context.Context, tx *sql.Tx, controller string) ([]uint32, uint32, error) {
+func storeController(ctx context.Context, tx *sql.Tx, existingAccess []uint32, controller string) ([]uint32, uint32, error) {
 	u := models.Access{Name: controller, Alias: controller}
 	err := u.GetByName(ctx, tx)
 	if err != sql.ErrNoRows && err != nil {

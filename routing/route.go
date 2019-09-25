@@ -5,10 +5,9 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/jacky-htg/inventory/controllers"
 	"github.com/jacky-htg/inventory/libraries/api"
 	"github.com/jacky-htg/inventory/middleware"
-	auth "github.com/jacky-htg/inventory/packages/auth/controllers"
-	health "github.com/jacky-htg/inventory/packages/profiling/controllers"
 )
 
 //API : hanlder api
@@ -20,19 +19,19 @@ func API(db *sql.DB, log *log.Logger) http.Handler {
 
 	// Health Routing
 	{
-		check := health.Checks{Db: db}
+		check := controllers.Checks{Db: db}
 		app.Handle(http.MethodGet, "/health", check.Health)
 	}
 
 	// Auth Routing
 	{
-		auth := auth.Auths{Db: db, Log: log}
+		auth := controllers.Auths{Db: db, Log: log}
 		app.Handle(http.MethodPost, "/login", auth.Login)
 	}
 
 	// Users Routing
 	{
-		user := auth.Users{Db: db, Log: log}
+		user := controllers.Users{Db: db, Log: log}
 		app.Handle(http.MethodGet, "/users", user.List)
 		app.Handle(http.MethodGet, "/users/:id", user.View)
 		app.Handle(http.MethodPost, "/users", user.Create)
@@ -42,7 +41,7 @@ func API(db *sql.DB, log *log.Logger) http.Handler {
 
 	// Roles Routing
 	{
-		roles := auth.Roles{Db: db, Log: log}
+		roles := controllers.Roles{Db: db, Log: log}
 		app.Handle(http.MethodGet, "/roles", roles.List)
 		app.Handle(http.MethodGet, "/roles/:id", roles.View)
 		app.Handle(http.MethodPost, "/roles", roles.Create)
@@ -54,7 +53,7 @@ func API(db *sql.DB, log *log.Logger) http.Handler {
 
 	// Access Routing
 	{
-		access := auth.Access{Db: db, Log: log}
+		access := controllers.Access{Db: db, Log: log}
 		app.Handle(http.MethodGet, "/access", access.List)
 	}
 

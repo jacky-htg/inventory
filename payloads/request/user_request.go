@@ -1,7 +1,7 @@
 package request
 
 import (
-	"github.com/jacky-htg/inventory/packages/auth/models"
+	"github.com/jacky-htg/inventory/models"
 )
 
 //NewUserRequest : format json request for new user
@@ -12,7 +12,6 @@ type NewUserRequest struct {
 	RePassword string        `json:"re_password" validate:"required"`
 	IsActive   bool          `json:"is_active"`
 	Roles      []models.Role `json:"roles"`
-	CompanyID  uint32        `json:"company" validate:"required"`
 	RegionID   uint32        `json:"region,omitempty"`
 	BranchID   uint32        `json:"branch,omitempty"`
 }
@@ -25,7 +24,6 @@ func (u *NewUserRequest) Transform() *models.User {
 	user.Password = u.Password
 	user.IsActive = u.IsActive
 	user.Roles = u.Roles
-	user.Company.ID = u.CompanyID
 
 	if u.RegionID > 0 {
 		user.Region.ID = u.RegionID

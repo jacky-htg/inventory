@@ -8,9 +8,9 @@ import (
 
 	"github.com/jacky-htg/inventory/libraries/api"
 	"github.com/jacky-htg/inventory/libraries/token"
-	"github.com/jacky-htg/inventory/packages/auth/models"
-	"github.com/jacky-htg/inventory/packages/auth/payloads/request"
-	"github.com/jacky-htg/inventory/packages/auth/payloads/response"
+	"github.com/jacky-htg/inventory/models"
+	"github.com/jacky-htg/inventory/payloads/request"
+	"github.com/jacky-htg/inventory/payloads/response"
 	"golang.org/x/crypto/bcrypt"
 )
 

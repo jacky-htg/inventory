@@ -10,7 +10,7 @@ import (
 
 	"github.com/jacky-htg/inventory/libraries/api"
 	"github.com/jacky-htg/inventory/libraries/array"
-	"github.com/jacky-htg/inventory/packages/auth/models"
+	"github.com/jacky-htg/inventory/models"
 )
 
 // Auths middleware to auhtorization checking

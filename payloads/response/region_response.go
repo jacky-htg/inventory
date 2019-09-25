@@ -1,7 +1,7 @@
 package response
 
 import (
-	"github.com/jacky-htg/inventory/packages/master/models"
+	"github.com/jacky-htg/inventory/models"
 )
 
 //RegionResponse : format json response for region
