@@ -29,6 +29,15 @@ func API(db *sql.DB, log *log.Logger) http.Handler {
 		app.Handle(http.MethodPost, "/login", auth.Login)
 	}
 
+	// Companies Routing
+	{
+		companies := controllers.Companies{Db: db, Log: log}
+		app.Handle(http.MethodGet, "/companies/:id", companies.View)
+		app.Handle(http.MethodPost, "/companies", companies.Create)
+		app.Handle(http.MethodPut, "/companies/:id", companies.Update)
+		app.Handle(http.MethodDelete, "/companies/:id", companies.Delete)
+	}
+
 	// Users Routing
 	{
 		user := controllers.Users{Db: db, Log: log}
