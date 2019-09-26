@@ -6,8 +6,8 @@ import (
 	"testing"
 
 	_ "github.com/go-sql-driver/mysql"
+	apiTest "github.com/jacky-htg/inventory/controllers/tests"
 	"github.com/jacky-htg/inventory/libraries/config"
-	apiTest "github.com/jacky-htg/inventory/packages/auth/controllers/tests"
 	"github.com/jacky-htg/inventory/routing"
 	"github.com/jacky-htg/inventory/schema"
 	"github.com/jacky-htg/inventory/tests"
@@ -55,5 +55,11 @@ func TestMain(t *testing.T) {
 		roles := apiTest.Roles{App: routing.API(db, log), Token: token}
 		t.Run("APiRolesList", roles.List)
 		t.Run("APiRolesCrud", roles.Crud)
+	}
+
+	// api test for regions
+	{
+		regions := apiTest.Regions{App: routing.API(db, log), Token: token}
+		t.Run("APiRegionsTest", regions.Run)
 	}
 }

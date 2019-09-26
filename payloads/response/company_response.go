@@ -8,7 +8,7 @@ import (
 type CompanyResponse struct {
 	ID      uint32 `json:"id"`
 	Code    string `json:"code"`
-	Name    string `json:"username"`
+	Name    string `json:"name"`
 	Address string `json:"address"`
 }
 

@@ -33,7 +33,7 @@ func API(db *sql.DB, log *log.Logger) http.Handler {
 	{
 		companies := controllers.Companies{Db: db, Log: log}
 		app.Handle(http.MethodGet, "/companies/:id", companies.View)
-		app.Handle(http.MethodPost, "/companies", companies.Create)
+		//app.Handle(http.MethodPost, "/companies", companies.Create)
 		app.Handle(http.MethodPut, "/companies/:id", companies.Update)
 		app.Handle(http.MethodDelete, "/companies/:id", companies.Delete)
 	}
@@ -64,6 +64,18 @@ func API(db *sql.DB, log *log.Logger) http.Handler {
 	{
 		access := controllers.Access{Db: db, Log: log}
 		app.Handle(http.MethodGet, "/access", access.List)
+	}
+
+	// Regions Routing
+	{
+		regions := controllers.Regions{Db: db, Log: log}
+		app.Handle(http.MethodGet, "/regions", regions.List)
+		app.Handle(http.MethodGet, "/regions/:id", regions.View)
+		app.Handle(http.MethodPost, "/regions", regions.Create)
+		app.Handle(http.MethodPut, "/regions/:id", regions.Update)
+		app.Handle(http.MethodPost, "/regions/:id/branches/:branch_id", regions.AddBranch)
+		app.Handle(http.MethodDelete, "/regions/:id/branches/:branch_id", regions.DeleteBranch)
+		app.Handle(http.MethodDelete, "/regions/:id", regions.Delete)
 	}
 
 	return app

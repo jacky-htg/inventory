@@ -67,6 +67,7 @@ func (u *Region) Get(ctx context.Context, db *sql.DB) error {
 
 //Create new region
 func (u *Region) Create(ctx context.Context, db *sql.DB) error {
+	userLogin := ctx.Value(api.Ctx("auth")).(User)
 	const query = `
 		INSERT INTO regions (company_id, code, name, created)
 		VALUES (?, ?, ?, NOW())
@@ -78,7 +79,7 @@ func (u *Region) Create(ctx context.Context, db *sql.DB) error {
 
 	defer stmt.Close()
 
-	res, err := stmt.ExecContext(ctx, ctx.Value(api.Ctx("auth")).(User).Company.ID, u.Code, u.Name)
+	res, err := stmt.ExecContext(ctx, userLogin.Company.ID, u.Code, u.Name)
 	if err != nil {
 		return err
 	}
@@ -89,6 +90,7 @@ func (u *Region) Create(ctx context.Context, db *sql.DB) error {
 	}
 
 	u.ID = uint32(id)
+	u.Company = userLogin.Company
 
 	return nil
 }
@@ -96,7 +98,7 @@ func (u *Region) Create(ctx context.Context, db *sql.DB) error {
 //Update region
 func (u *Region) Update(ctx context.Context, db *sql.DB) error {
 
-	stmt, err := db.PrepareContext(ctx, `.
+	stmt, err := db.PrepareContext(ctx, `
 		UPDATE regions 
 		SET name = ?,
 			updated = NOW()
@@ -127,8 +129,8 @@ func (u *Region) Delete(ctx context.Context, db *sql.DB) error {
 }
 
 //AddBranch to region
-func (u *Region) AddBranch(ctx context.Context, db *sql.DB, branchID uint32) error {
-	stmt, err := db.PrepareContext(ctx, `INSERT INTO branches_regions (branch_id, region_id) VALUES (?, ?)`)
+func (u *Region) AddBranch(ctx context.Context, tx *sql.Tx, branchID uint32) error {
+	stmt, err := tx.PrepareContext(ctx, `INSERT INTO branches_regions (branch_id, region_id) VALUES (?, ?)`)
 	if err != nil {
 		return err
 	}
@@ -137,8 +139,8 @@ func (u *Region) AddBranch(ctx context.Context, db *sql.DB, branchID uint32) err
 }
 
 //DeleteBranch from region
-func (u *Region) DeleteBranch(ctx context.Context, db *sql.DB, branchID uint32) error {
-	stmt, err := db.PrepareContext(ctx, `DELETE FROM branches_regions WHERE branch_id= ? AND region_id = ?`)
+func (u *Region) DeleteBranch(ctx context.Context, tx *sql.Tx, branchID uint32) error {
+	stmt, err := tx.PrepareContext(ctx, `DELETE FROM branches_regions WHERE branch_id= ? AND region_id = ?`)
 	if err != nil {
 		return err
 	}

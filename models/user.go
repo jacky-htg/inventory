@@ -416,6 +416,7 @@ func (u *User) Create(ctx context.Context, tx *sql.Tx) error {
 	}
 
 	u.ID = uint64(id)
+	u.Company = userLogin.Company
 
 	if len(u.Roles) > 0 {
 		for _, r := range u.Roles {

@@ -27,8 +27,8 @@ func (u *NewCompanyRequest) Transform() *models.Company {
 //CompanyRequest : format json request for company
 type CompanyRequest struct {
 	ID      uint32 `json:"id,omitempty" validate:"required"`
-	Code    string `json:"code,omitempty" validate:"required"`
-	Name    string `json:"name,omitempty" validate:"required"`
+	Code    string `json:"code,omitempty"`
+	Name    string `json:"name,omitempty"`
 	Address string `json:"address,omitempty"`
 }
 

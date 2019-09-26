@@ -22,8 +22,8 @@ func (u *NewRegionRequest) Transform() *models.Region {
 //RegionRequest : format json request for region
 type RegionRequest struct {
 	ID   uint32 `json:"id,omitempty" validate:"required"`
-	Code string `json:"code,omitempty" validate:"required"`
-	Name string `json:"name,omitempty" validate:"required"`
+	Code string `json:"code,omitempty"`
+	Name string `json:"name,omitempty"`
 }
 
 //Transform RegionRequest to Region
