@@ -366,6 +366,11 @@ func (u *User) Create(ctx context.Context, tx *sql.Tx) error {
 			return err
 		}
 
+		// user region can not create user head office
+		if u.Branch.ID <= 0 {
+			return api.ErrForbidden(errors.New("Forbidden data owner"), "")
+		}
+
 		regions = []uint32{}
 	case userLogin.Branch.ID > 0:
 		branches = []uint32{userLogin.Branch.ID}
@@ -452,6 +457,11 @@ func (u *User) Update(ctx context.Context, tx *sql.Tx) error {
 		branches, err = u.Region.GetIDBranches(ctx, tx)
 		if err != nil {
 			return err
+		}
+
+		// user region can not create user head office
+		if u.Branch.ID <= 0 {
+			return api.ErrForbidden(errors.New("Forbidden data owner"), "")
 		}
 
 		regions = []uint32{}
