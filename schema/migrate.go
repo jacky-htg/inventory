@@ -186,6 +186,24 @@ ALTER TABLE roles
 	ADD CONSTRAINT fk_roles_to_companies FOREIGN KEY (company_id) REFERENCES companies(id)
 ;`,
 	},
+	{
+		Version:     14,
+		Description: "Add Products",
+		Script: `
+CREATE TABLE products (
+	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	company_id	INT(10) UNSIGNED NOT NULL,
+	code	CHAR(10) NOT NULL UNIQUE,
+	name	VARCHAR(255) NOT NULL,
+	purchase_price DOUBLE NOT NULL DEFAULT 0,
+	sale_price	DOUBLE NOT NULL,
+	created TIMESTAMP NOT NULL DEFAULT NOW(),
+	updated TIMESTAMP NOT NULL DEFAULT NOW(),
+	PRIMARY KEY (id),
+	KEY products_company_id (company_id),
+	CONSTRAINT fk_products_to_companies FOREIGN KEY (company_id) REFERENCES companies(id)
+);`,
+	},
 }
 
 // Migrate attempts to bring the schema for db up to date with the migrations

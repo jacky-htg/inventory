@@ -78,5 +78,15 @@ func API(db *sql.DB, log *log.Logger) http.Handler {
 		app.Handle(http.MethodDelete, "/regions/:id", regions.Delete)
 	}
 
+	// Products Routing
+	{
+		products := controllers.Products{Db: db, Log: log}
+		app.Handle(http.MethodGet, "/products", products.List)
+		app.Handle(http.MethodGet, "/products/:id", products.View)
+		app.Handle(http.MethodPost, "/products", products.Create)
+		app.Handle(http.MethodPut, "/products/:id", products.Update)
+		app.Handle(http.MethodDelete, "/products/:id", products.Delete)
+	}
+
 	return app
 }

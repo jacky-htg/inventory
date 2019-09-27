@@ -62,4 +62,10 @@ func TestMain(t *testing.T) {
 		regions := apiTest.Regions{App: routing.API(db, log), Token: token}
 		t.Run("APiRegionsTest", regions.Run)
 	}
+
+	// api test for products
+	{
+		products := apiTest.Products{App: routing.API(db, log), Token: token}
+		t.Run("APiProductsCrud", products.Run)
+	}
 }
