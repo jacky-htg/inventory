@@ -438,6 +438,7 @@ func (u *Purchase) GetExistingDetails(ctx context.Context, tx *sql.Tx) ([]uint64
 
 func (u *Purchase) getCode(ctx context.Context, tx *sql.Tx) (string, error) {
 	var code, prefix string
+	var codeInt int
 	prefix = time.Now().Format("200601")
 
 	query := `SELECT code FROM purchases WHERE company_id = ? AND code LIKE ? ORDER BY code DESC LIMIT 1`
@@ -447,11 +448,12 @@ func (u *Purchase) getCode(ctx context.Context, tx *sql.Tx) (string, error) {
 		return code, err
 	}
 
-	runes := []rune(code)
-	code = string(runes[6:])
-	codeInt, err := strconv.Atoi(code)
-	if err != nil {
-		return code, err
+	if len(code) > 0 {
+		runes := []rune(code)
+		codeInt, err = strconv.Atoi(string(runes[6:]))
+		if err != nil {
+			return code, err
+		}
 	}
 
 	return prefix + fmt.Sprintf("%04d", codeInt+1), nil
