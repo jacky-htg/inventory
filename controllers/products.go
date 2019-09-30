@@ -23,12 +23,22 @@ type Products struct {
 //List : http handler for returning list of products
 func (u *Products) List(w http.ResponseWriter, r *http.Request) {
 	var product models.Product
-	list, err := product.List(r.Context(), u.Db)
+	tx, err := u.Db.Begin()
 	if err != nil {
 		u.Log.Printf("ERROR : %+v", err)
+		api.ResponseError(w, fmt.Errorf("begin transaction: %v", err))
+		return
+	}
+
+	list, err := product.List(r.Context(), tx)
+	if err != nil {
+		u.Log.Printf("ERROR : %+v", err)
+		tx.Rollback()
 		api.ResponseError(w, fmt.Errorf("getting products list: %v", err))
 		return
 	}
+
+	tx.Commit()
 
 	var listResponse []*response.ProductResponse
 	for _, product := range list {
@@ -54,19 +64,30 @@ func (u *Products) View(w http.ResponseWriter, r *http.Request) {
 
 	var product models.Product
 	product.ID = uint64(id)
-	err = product.Get(ctx, u.Db)
+	tx, err := u.Db.Begin()
+	if err != nil {
+		u.Log.Printf("ERROR : %+v", err)
+		api.ResponseError(w, fmt.Errorf("Begin tx: %v", err))
+		return
+	}
+
+	err = product.Get(ctx, tx)
 
 	if err == sql.ErrNoRows {
+		tx.Rollback()
 		u.Log.Printf("ERROR : %+v", err)
 		api.ResponseError(w, api.ErrNotFound(err, ""))
 		return
 	}
 
 	if err != nil {
+		tx.Rollback()
 		u.Log.Printf("ERROR : %+v", err)
 		api.ResponseError(w, fmt.Errorf("Get product: %v", err))
 		return
 	}
+
+	tx.Commit()
 
 	var response response.ProductResponse
 	response.Transform(&product)
@@ -84,12 +105,22 @@ func (u *Products) Create(w http.ResponseWriter, r *http.Request) {
 	}
 
 	product := productRequest.Transform()
-	err = product.Create(r.Context(), u.Db)
+	tx, err := u.Db.Begin()
 	if err != nil {
+		u.Log.Printf("ERROR : %+v", err)
+		api.ResponseError(w, fmt.Errorf("Begin tx: %v", err))
+		return
+	}
+
+	err = product.Create(r.Context(), tx)
+	if err != nil {
+		tx.Rollback()
 		u.Log.Printf("ERROR : %+v", err)
 		api.ResponseError(w, fmt.Errorf("Create product: %v", err))
 		return
 	}
+
+	tx.Commit()
 
 	var response response.ProductResponse
 	response.Transform(product)
@@ -110,8 +141,16 @@ func (u *Products) Update(w http.ResponseWriter, r *http.Request) {
 
 	var product models.Product
 	product.ID = uint64(id)
-	err = product.Get(ctx, u.Db)
+	tx, err := u.Db.Begin()
 	if err != nil {
+		u.Log.Printf("ERROR : %+v", err)
+		api.ResponseError(w, fmt.Errorf("Begin tx: %v", err))
+		return
+	}
+
+	err = product.Get(ctx, tx)
+	if err != nil {
+		tx.Rollback()
 		u.Log.Printf("ERROR : %+v", err)
 		api.ResponseError(w, fmt.Errorf("Get product: %v", err))
 		return
@@ -120,6 +159,7 @@ func (u *Products) Update(w http.ResponseWriter, r *http.Request) {
 	var productRequest request.ProductRequest
 	err = api.Decode(r, &productRequest)
 	if err != nil {
+		tx.Rollback()
 		u.Log.Printf("ERROR : %+v", err)
 		api.ResponseError(w, fmt.Errorf("Decode product: %v", err))
 		return
@@ -129,12 +169,15 @@ func (u *Products) Update(w http.ResponseWriter, r *http.Request) {
 		productRequest.ID = product.ID
 	}
 	productUpdate := productRequest.Transform(&product)
-	err = productUpdate.Update(ctx, u.Db)
+	err = productUpdate.Update(ctx, tx)
 	if err != nil {
+		tx.Rollback()
 		u.Log.Printf("ERROR : %+v", err)
 		api.ResponseError(w, fmt.Errorf("Update product: %v", err))
 		return
 	}
+
+	tx.Commit()
 
 	var response response.ProductResponse
 	response.Transform(productUpdate)
@@ -155,19 +198,30 @@ func (u *Products) Delete(w http.ResponseWriter, r *http.Request) {
 
 	var product models.Product
 	product.ID = uint64(id)
-	err = product.Get(ctx, u.Db)
+	tx, err := u.Db.Begin()
 	if err != nil {
+		u.Log.Printf("ERROR : %+v", err)
+		api.ResponseError(w, fmt.Errorf("Begin tx: %v", err))
+		return
+	}
+
+	err = product.Get(ctx, tx)
+	if err != nil {
+		tx.Rollback()
 		u.Log.Printf("ERROR : %+v", err)
 		api.ResponseError(w, fmt.Errorf("Get product: %v", err))
 		return
 	}
 
-	err = product.Delete(ctx, u.Db)
+	err = product.Delete(ctx, tx)
 	if err != nil {
+		tx.Rollback()
 		u.Log.Printf("ERROR : %+v", err)
 		api.ResponseError(w, fmt.Errorf("Delete product: %v", err))
 		return
 	}
+
+	tx.Commit()
 
 	api.ResponseOK(w, nil, http.StatusNoContent)
 }

@@ -1,10 +1,10 @@
 package array
 
-// ArrUint32 type of array uint 32
-type ArrUint32 uint32
+// ArrUint64 type of array uint 64
+type ArrUint64 uint64
 
 // InArray checking, return bool and index
-func (s ArrUint32) InArray(val uint32, array []uint32) (exists bool, index int) {
+func (s ArrUint64) InArray(val uint64, array []uint64) (exists bool, index int) {
 	exists = false
 	index = -1
 
@@ -20,7 +20,7 @@ func (s ArrUint32) InArray(val uint32, array []uint32) (exists bool, index int) 
 }
 
 // Remove array by value
-func (s ArrUint32) Remove(array []uint32, value uint32) []uint32 {
+func (s ArrUint64) Remove(array []uint64, value uint64) []uint64 {
 	isExist, index := s.InArray(value, array)
 	if isExist {
 		array = append(array[:index], array[(index+1):]...)
@@ -30,6 +30,6 @@ func (s ArrUint32) Remove(array []uint32, value uint32) []uint32 {
 }
 
 // RemoveByIndex is remove array by index
-func (s ArrUint32) RemoveByIndex(array []uint32, index int) []uint32 {
+func (s ArrUint64) RemoveByIndex(array []uint64, index int) []uint64 {
 	return append(array[:index], array[(index+1):]...)
 }

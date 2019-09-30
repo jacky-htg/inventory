@@ -32,10 +32,10 @@ JOIN companies ON products.company_id = companies.id
 `
 
 // List of products
-func (u *Product) List(ctx context.Context, db *sql.DB) ([]Product, error) {
+func (u *Product) List(ctx context.Context, tx *sql.Tx) ([]Product, error) {
 	list := []Product{}
 
-	rows, err := db.QueryContext(ctx, qProducts+" WHERE companies.id=?", ctx.Value(api.Ctx("auth")).(User).Company.ID)
+	rows, err := tx.QueryContext(ctx, qProducts+" WHERE companies.id=?", ctx.Value(api.Ctx("auth")).(User).Company.ID)
 	if err != nil {
 		return list, err
 	}
@@ -64,18 +64,18 @@ func (u *Product) List(ctx context.Context, db *sql.DB) ([]Product, error) {
 }
 
 // Get product by id
-func (u *Product) Get(ctx context.Context, db *sql.DB) error {
-	return db.QueryRowContext(ctx, qProducts+" WHERE products.id=? AND companies.id=?", u.ID, ctx.Value(api.Ctx("auth")).(User).Company.ID).Scan(u.getArgs()...)
+func (u *Product) Get(ctx context.Context, tx *sql.Tx) error {
+	return tx.QueryRowContext(ctx, qProducts+" WHERE products.id=? AND companies.id=?", u.ID, ctx.Value(api.Ctx("auth")).(User).Company.ID).Scan(u.getArgs()...)
 }
 
 // Create new product
-func (u *Product) Create(ctx context.Context, db *sql.DB) error {
+func (u *Product) Create(ctx context.Context, tx *sql.Tx) error {
 	userLogin := ctx.Value(api.Ctx("auth")).(User)
 	const query = `
 		INSERT INTO products (company_id, code, name, sale_price, created)
 		VALUES (?, ?, ?, ?, NOW())
 	`
-	stmt, err := db.PrepareContext(ctx, query)
+	stmt, err := tx.PrepareContext(ctx, query)
 	if err != nil {
 		return err
 	}
@@ -99,9 +99,9 @@ func (u *Product) Create(ctx context.Context, db *sql.DB) error {
 }
 
 // Update product
-func (u *Product) Update(ctx context.Context, db *sql.DB) error {
+func (u *Product) Update(ctx context.Context, tx *sql.Tx) error {
 
-	stmt, err := db.PrepareContext(ctx, `
+	stmt, err := tx.PrepareContext(ctx, `
 		UPDATE products 
 		SET name = ?,
 			sale_price = ?,
@@ -120,8 +120,8 @@ func (u *Product) Update(ctx context.Context, db *sql.DB) error {
 }
 
 // Delete product
-func (u *Product) Delete(ctx context.Context, db *sql.DB) error {
-	stmt, err := db.PrepareContext(ctx, `DELETE FROM products WHERE id = ? AND company_id = ?`)
+func (u *Product) Delete(ctx context.Context, tx *sql.Tx) error {
+	stmt, err := tx.PrepareContext(ctx, `DELETE FROM products WHERE id = ? AND company_id = ?`)
 	if err != nil {
 		return err
 	}

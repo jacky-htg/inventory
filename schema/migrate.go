@@ -204,6 +204,68 @@ CREATE TABLE products (
 	CONSTRAINT fk_products_to_companies FOREIGN KEY (company_id) REFERENCES companies(id)
 );`,
 	},
+	{
+		Version:     15,
+		Description: "Add Suppliers",
+		Script: `
+CREATE TABLE suppliers (
+	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	company_id	INT(10) UNSIGNED NOT NULL,
+	code	CHAR(10) NOT NULL UNIQUE,
+	name	VARCHAR(255) NOT NULL,
+	address VARCHAR(255),
+	created TIMESTAMP NOT NULL DEFAULT NOW(),
+	updated TIMESTAMP NOT NULL DEFAULT NOW(),
+	PRIMARY KEY (id),
+	KEY suppliers_company_id (company_id),
+	CONSTRAINT fk_suppliers_to_companies FOREIGN KEY (company_id) REFERENCES companies(id)
+);`,
+	},
+	{
+		Version:     16,
+		Description: "Add Purchases",
+		Script: `
+CREATE TABLE purchases (
+	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	company_id	INT(10) UNSIGNED NOT NULL,
+	branch_id INT(10) UNSIGNED NOT NULL,
+	supplier_id BIGINT(20) UNSIGNED NOT NULL,
+	code	CHAR(10) NOT NULL UNIQUE,
+	date	DATE NOT NULL,
+	created TIMESTAMP NOT NULL DEFAULT NOW(),
+	updated TIMESTAMP NOT NULL DEFAULT NOW(),
+	created_by BIGINT(20) UNSIGNED NOT NULL,
+	updated_by BIGINT(20) UNSIGNED NOT NULL,
+	PRIMARY KEY (id),
+	KEY purchases_company_id (company_id),
+	KEY purchases_branch_id (branch_id),
+	KEY purchases_supplier_id (supplier_id),
+	KEY purchases_created_by (created_by),
+	KEY purchases_updated_by (updated_by),
+	CONSTRAINT fk_purchases_to_companies FOREIGN KEY (company_id) REFERENCES companies(id),
+	CONSTRAINT fk_purchases_to_branches FOREIGN KEY (branch_id) REFERENCES branches(id),
+	CONSTRAINT fk_purchases_to_suppliers FOREIGN KEY (supplier_id) REFERENCES suppliers(id),
+	CONSTRAINT fk_purchases_to_users_created_by FOREIGN KEY (created_by) REFERENCES users(id),
+	CONSTRAINT fk_purchases_to_users_updated_by FOREIGN KEY (updated_by) REFERENCES users(id)
+);`,
+	},
+	{
+		Version:     17,
+		Description: "Add Purchase Details",
+		Script: `
+CREATE TABLE purchase_details (
+	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	purchase_id	BIGINT(20) UNSIGNED NOT NULL,
+	product_id BIGINT(20) UNSIGNED NOT NULL,
+	price DOUBLE UNSIGNED NOT NULL,
+	disc	DOUBLE UNSIGNED NOT NULL,
+	PRIMARY KEY (id),
+	KEY purchase_details_purchase_id (purchase_id),
+	KEY purchase_details_product_id (product_id),
+	CONSTRAINT fk_purchase_details_to_purchases FOREIGN KEY (purchase_id) REFERENCES purchases(id) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT fk_purchase_details_to_products FOREIGN KEY (product_id) REFERENCES products(id)
+);`,
+	},
 }
 
 // Migrate attempts to bring the schema for db up to date with the migrations

@@ -1,7 +1,9 @@
 package array
 
+// ArrString type of array string
 type ArrString string
 
+// InArray checking, return bool and index
 func (s ArrString) InArray(val string, array []string) (exists bool, index int) {
 	exists = false
 	index = -1
@@ -17,6 +19,7 @@ func (s ArrString) InArray(val string, array []string) (exists bool, index int) 
 	return
 }
 
+// Remove array by value
 func (s ArrString) Remove(array []string, value string) []string {
 	isExist, index := s.InArray(value, array)
 	if isExist {

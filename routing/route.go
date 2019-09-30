@@ -88,5 +88,14 @@ func API(db *sql.DB, log *log.Logger) http.Handler {
 		app.Handle(http.MethodDelete, "/products/:id", products.Delete)
 	}
 
+	// Purchases Routing
+	{
+		purchases := controllers.Purchases{Db: db, Log: log}
+		app.Handle(http.MethodGet, "/purchases", purchases.List)
+		app.Handle(http.MethodGet, "/purchases/:id", purchases.View)
+		app.Handle(http.MethodPost, "/purchases", purchases.Create)
+		app.Handle(http.MethodPut, "/purchases/:id", purchases.Update)
+	}
+
 	return app
 }

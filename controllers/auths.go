@@ -14,6 +14,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+// Auths struct
 type Auths struct {
 	Db  *sql.DB
 	Log *log.Logger
