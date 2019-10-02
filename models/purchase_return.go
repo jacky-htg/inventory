@@ -340,6 +340,10 @@ func (u *PurchaseReturn) Create(ctx context.Context, tx *sql.Tx) error {
 	u.Purchase.Get(ctx, tx)
 
 	for i, d := range u.PurchaseReturnDetails {
+		// TODO :
+		// VALIDATE that detail is open
+		// 1. Detail belum pernah direturn
+		// 2. Detail belum pernah direceiving
 		detailID, err := u.storeDetail(ctx, tx, d)
 		if err != nil {
 			return err
@@ -390,6 +394,10 @@ func (u *PurchaseReturn) Update(ctx context.Context, tx *sql.Tx) error {
 	}
 
 	for i, d := range u.PurchaseReturnDetails {
+		// TODO :
+		// VALIDATE that detail is open
+		// 1. Detail belum pernah direturn
+		// 2. Detail belum pernah direceiving
 		if d.ID <= 0 {
 			detailID, err := u.storeDetail(ctx, tx, d)
 			if err != nil {
