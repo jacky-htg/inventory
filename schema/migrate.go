@@ -230,8 +230,9 @@ CREATE TABLE purchases (
 	company_id	INT(10) UNSIGNED NOT NULL,
 	branch_id INT(10) UNSIGNED NOT NULL,
 	supplier_id BIGINT(20) UNSIGNED NOT NULL,
-	code	CHAR(10) NOT NULL UNIQUE,
+	code	CHAR(13) NOT NULL UNIQUE,
 	date	DATE NOT NULL,
+	disc DOUBLE NOT NULL DEFAULT 0,
 	created TIMESTAMP NOT NULL DEFAULT NOW(),
 	updated TIMESTAMP NOT NULL DEFAULT NOW(),
 	created_by BIGINT(20) UNSIGNED NOT NULL,
@@ -264,6 +265,52 @@ CREATE TABLE purchase_details (
 	KEY purchase_details_product_id (product_id),
 	CONSTRAINT fk_purchase_details_to_purchases FOREIGN KEY (purchase_id) REFERENCES purchases(id) ON DELETE CASCADE ON UPDATE CASCADE,
 	CONSTRAINT fk_purchase_details_to_products FOREIGN KEY (product_id) REFERENCES products(id)
+);`,
+	},
+	{
+		Version:     18,
+		Description: "Add Purchase Returns",
+		Script: `
+CREATE TABLE purchase_returns (
+	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	company_id	INT(10) UNSIGNED NOT NULL,
+	branch_id INT(10) UNSIGNED NOT NULL,
+	purchase_id BIGINT(20) UNSIGNED NOT NULL,
+	code	CHAR(13) NOT NULL UNIQUE,
+	date	DATE NOT NULL,
+	disc DOUBLE NOT NULL DEFAULT 0,
+	created TIMESTAMP NOT NULL DEFAULT NOW(),
+	updated TIMESTAMP NOT NULL DEFAULT NOW(),
+	created_by BIGINT(20) UNSIGNED NOT NULL,
+	updated_by BIGINT(20) UNSIGNED NOT NULL,
+	PRIMARY KEY (id),
+	KEY purchase_returns_company_id (company_id),
+	KEY purchase_returns_branch_id (branch_id),
+	KEY purchase_returns_purchase_id (purchase_id),
+	KEY purchase_returns_created_by (created_by),
+	KEY purchase_returns_updated_by (updated_by),
+	CONSTRAINT fk_purchase_returns_to_companies FOREIGN KEY (company_id) REFERENCES companies(id),
+	CONSTRAINT fk_purchase_returns_to_branches FOREIGN KEY (branch_id) REFERENCES branches(id),
+	CONSTRAINT fk_purchase_returns_to_purchases FOREIGN KEY (purchase_id) REFERENCES purchases(id),
+	CONSTRAINT fk_purchase_returns_to_users_created_by FOREIGN KEY (created_by) REFERENCES users(id),
+	CONSTRAINT fk_purchase_returns_to_users_updated_by FOREIGN KEY (updated_by) REFERENCES users(id)
+);`,
+	},
+	{
+		Version:     19,
+		Description: "Add Purchase Return Details",
+		Script: `
+CREATE TABLE purchase_return_details (
+	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	purchase_return_id	BIGINT(20) UNSIGNED NOT NULL,
+	product_id BIGINT(20) UNSIGNED NOT NULL,
+	price DOUBLE UNSIGNED NOT NULL,
+	disc	DOUBLE UNSIGNED NOT NULL,
+	PRIMARY KEY (id),
+	KEY purchase_return_details_purchase_return_id (purchase_return_id),
+	KEY purchase_return_details_product_id (product_id),
+	CONSTRAINT fk_purchase_return_details_to_purchase_returns FOREIGN KEY (purchase_return_id) REFERENCES purchase_returns(id) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT fk_purchase_return_details_to_products FOREIGN KEY (product_id) REFERENCES products(id)
 );`,
 	},
 }
