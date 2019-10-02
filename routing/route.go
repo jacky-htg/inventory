@@ -97,5 +97,20 @@ func API(db *sql.DB, log *log.Logger) http.Handler {
 		app.Handle(http.MethodPut, "/purchases/:id", purchases.Update)
 	}
 
+	// Purchase Returns Routing
+	{
+		purchaseReturns := controllers.PurchaseReturns{Db: db, Log: log}
+		app.Handle(http.MethodGet, "/purchase_returns", purchaseReturns.List)
+		app.Handle(http.MethodGet, "/purchase_returns/:id", purchaseReturns.View)
+		app.Handle(http.MethodPost, "/purchase_returns", purchaseReturns.Create)
+		app.Handle(http.MethodPut, "/purchase_returns/:id", purchaseReturns.Update)
+	}
+
+	// Closing Stock Routing
+	{
+		closingStock := controllers.ClosingStocks{Db: db, Log: log}
+		app.Handle(http.MethodPost, "/closing_stocks", closingStock.Closing)
+	}
+
 	return app
 }

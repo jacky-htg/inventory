@@ -313,6 +313,93 @@ CREATE TABLE purchase_return_details (
 	CONSTRAINT fk_purchase_return_details_to_products FOREIGN KEY (product_id) REFERENCES products(id)
 );`,
 	},
+	{
+		Version:     20,
+		Description: "Add Inventories",
+		Script: `
+CREATE TABLE inventories (
+	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	company_id	INT(10) UNSIGNED NOT NULL,
+	product_id BIGINT(20) UNSIGNED NOT NULL,
+	transaction_id BIGINT(20) UNSIGNED NOT NULL,
+	transaction_date DATE NOT NULL,
+	type CHAR(2) NOT NULL,
+	in_out TINYINT(1)UNSIGNED NOT NULL,
+	qty MEDIUMINT(8) UNSIGNED NOT NULL, 
+	created TIMESTAMP NOT NULL DEFAULT NOW(),
+	updated TIMESTAMP NOT NULL DEFAULT NOW(),
+	PRIMARY KEY (id),
+	KEY inventories_company_id (company_id),
+	KEY inventories_product_id (product_id),
+	CONSTRAINT fk_inventories_to_companies FOREIGN KEY (company_id) REFERENCES companies(id),
+	CONSTRAINT fk_inventories_to_products FOREIGN KEY (product_id) REFERENCES products(id)
+);`,
+	},
+	{
+		Version:     21,
+		Description: "Add saldo stocks",
+		Script: `
+CREATE TABLE saldo_stocks (
+	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	company_id	INT(10) UNSIGNED NOT NULL,
+	product_id BIGINT(20) UNSIGNED NOT NULL,
+	qty MEDIUMINT(8) UNSIGNED NOT NULL,
+	year YEAR(4) NOT NULL,
+	month TINYINT(2) NOT NULL,
+	PRIMARY KEY (id),
+	KEY saldo_stocks_company_id (company_id),
+	KEY saldo_stocks_product_id (product_id),
+	CONSTRAINT fk_saldo_stocks_to_companies FOREIGN KEY (company_id) REFERENCES companies(id),
+	CONSTRAINT fk_saldo_stocks_to_products FOREIGN KEY (product_id) REFERENCES products(id)
+);`,
+	},
+	{
+		Version:     22,
+		Description: "Set Global log_bin_trust_function_creators",
+		Script: `
+SET GLOBAL log_bin_trust_function_creators = 1;
+`,
+	},
+	{
+		Version:     23,
+		Description: "Add Closing Stocks",
+		Script: `
+CREATE FUNCTION closing_stocks(companyID int, curMonth int, curYear int)
+RETURNS INTEGER
+BEGIN
+
+	DECLARE nextYear int;
+	DECLARE nextMonth int;
+	
+	SET nextYear = curYear;
+	SET nextMonth = curMonth + 1;
+	
+	IF curMonth = 12 THEN 
+		SET nextYear = curYear+1;
+		SET nextMonth = 1;
+	END IF;
+	
+	INSERT INTO saldo_stocks (company_id, product_id, qty, year, month)
+	SELECT saldo.id AS product_id, IF(transaction.qty IS NULL, saldo.qty, saldo.qty+transaction.qty) AS qty, nextYear AS year, nextMonth AS month 
+	FROM (
+		SELECT products.id, IF(saldo_stocks.qty IS NULL, 0, saldo_stocks.qty) AS qty
+		FROM products
+		LEFT JOIN saldo_stocks ON products.id = saldo_stocks.product_id AND products.company_id=saldo_stocks.company_id AND saldo_stocks.year=curYear AND saldo_stocks.month=curMonth
+		WHERE products.company_id=companyID
+	) AS saldo
+	LEFT JOIN (
+		SELECT tr.product_id, SUM(tr.qty) AS qty
+		FROM (
+			select inventories.product_id, if(inventories.in_out, qty, -qty) as qty   
+			from inventories
+			WHERE MONTH(inventories.transaction_date)=curMonth AND YEAR(inventories.transaction_date)=curYear AND inventories.company_id=companyID
+		) as tr
+		GROUP BY tr.product_id
+	) as transaction ON saldo.id=transaction.product_id;
+
+RETURN 1;
+END;`,
+	},
 }
 
 // Migrate attempts to bring the schema for db up to date with the migrations
