@@ -3,20 +3,52 @@ package tests
 import (
 	"context"
 	"database/sql"
+	"os"
 	"testing"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/google/go-cmp/cmp"
+	"github.com/jacky-htg/inventory/libraries/api"
+	"github.com/jacky-htg/inventory/libraries/config"
 	"github.com/jacky-htg/inventory/models"
+	"github.com/jacky-htg/inventory/schema"
+	"github.com/jacky-htg/inventory/tests"
 )
 
 // User struct for test users
 type User struct {
-	Db *sql.DB
+	Db        *sql.DB
+	UserLogin models.User
+}
+
+func TestMain(t *testing.T) {
+	_, ok := os.LookupEnv("APP_ENV")
+	if !ok {
+		config.Setup("../../.env")
+	}
+
+	db, teardown := tests.NewUnit(t)
+	defer teardown()
+
+	if err := schema.Seed(db); err != nil {
+		t.Fatal(err)
+	}
+
+	userLogin := models.User{Username: "jackyhtg"}
+	err := userLogin.GetByUsername(context.Background(), db)
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	user := User{Db: db, UserLogin: userLogin}
+	t.Run("List", user.List)
+	t.Run("Crud", user.Crud)
 }
 
 //Crud : unit test  for create get and delete user function
 func (u *User) Crud(t *testing.T) {
 	ctx := context.Background()
+	ctx = context.WithValue(ctx, api.Ctx("auth"), u.UserLogin)
 
 	u0 := models.User{
 		Username: "Aladin",
@@ -84,8 +116,10 @@ func (u *User) Crud(t *testing.T) {
 
 //List : unit test for user list function
 func (u *User) List(t *testing.T) {
+	ctx := context.Background()
+	ctx = context.WithValue(ctx, api.Ctx("auth"), u.UserLogin)
 	var user models.User
-	users, err := user.List(context.Background(), u.Db)
+	users, err := user.List(ctx, u.Db)
 	if err != nil {
 		t.Fatalf("listing users: %s", err)
 	}
