@@ -461,7 +461,7 @@ func (u *Purchase) getCode(ctx context.Context, tx *sql.Tx) (string, error) {
 
 	if len(code) > 0 {
 		runes := []rune(code)
-		codeInt, err = strconv.Atoi(string(runes[6:]))
+		codeInt, err = strconv.Atoi(string(runes[8:]))
 		if err != nil {
 			return code, err
 		}
