@@ -21,6 +21,7 @@ type Purchase struct {
 	Date            time.Time
 	Price           float64
 	Disc            float64
+	AdditionalDisc  float64
 	Total           float64
 	Supplier        Supplier
 	Company         Company
@@ -59,7 +60,8 @@ func (u *Purchase) List(ctx context.Context, tx *sql.Tx) ([]Purchase, error) {
 		branches.address,
 		branches.type,
 		SUM(purchase_details.price),
-		SUM(purchase_details.disc)
+		SUM(purchase_details.disc),
+		purchases.disc
 	FROM purchases
 	JOIN companies ON purchases.company_id = companies.id
 	JOIN suppliers ON purchases.supplier_id = suppliers.id
@@ -120,13 +122,14 @@ func (u *Purchase) List(ctx context.Context, tx *sql.Tx) ([]Purchase, error) {
 			&purchase.Branch.Type,
 			&purchase.Price,
 			&purchase.Disc,
+			&purchase.AdditionalDisc,
 		)
 
 		if err != nil {
 			return list, err
 		}
 
-		purchase.Total = purchase.Price - purchase.Disc
+		purchase.Total = purchase.Price - purchase.Disc - purchase.AdditionalDisc
 		purchase.Supplier.Company = purchase.Company
 		purchase.Branch.Company = purchase.Company
 
@@ -163,7 +166,8 @@ func (u *Purchase) Get(ctx context.Context, tx *sql.Tx) error {
 		JSON_ARRAYAGG(products.id),
 		JSON_ARRAYAGG(products.code),
 		JSON_ARRAYAGG(products.name),
-		JSON_ARRAYAGG(products.sale_price)
+		JSON_ARRAYAGG(products.sale_price),
+		purchases.disc
 	FROM purchases
 	JOIN companies ON purchases.company_id = companies.id
 	JOIN suppliers ON purchases.supplier_id = suppliers.id
@@ -222,13 +226,14 @@ func (u *Purchase) Get(ctx context.Context, tx *sql.Tx) error {
 		&productCode,
 		&productName,
 		&productPrice,
+		&u.AdditionalDisc,
 	)
 
 	if err != nil {
 		return err
 	}
 
-	u.Total = u.Price - u.Disc
+	u.Total = u.Price - u.Disc - u.AdditionalDisc
 
 	if len(detailID) > 0 {
 		var detailIDs []uint64
@@ -303,8 +308,8 @@ func (u *Purchase) Create(ctx context.Context, tx *sql.Tx) error {
 	}
 
 	const query = `
-		INSERT INTO purchases (code, date, supplier_id, company_id, branch_id, created_by, updated_by, created, updated)
-		VALUES (?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
+		INSERT INTO purchases (code, date, disc, supplier_id, company_id, branch_id, created_by, updated_by, created, updated)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW(), NOW())
 	`
 	stmt, err := tx.PrepareContext(ctx, query)
 	if err != nil {
@@ -318,7 +323,7 @@ func (u *Purchase) Create(ctx context.Context, tx *sql.Tx) error {
 		return err
 	}
 
-	res, err := stmt.ExecContext(ctx, u.Code, u.Date, u.Supplier.ID, userLogin.Company.ID, userLogin.Branch.ID, userLogin.ID, userLogin.ID)
+	res, err := stmt.ExecContext(ctx, u.Code, u.Date, u.AdditionalDisc, u.Supplier.ID, userLogin.Company.ID, userLogin.Branch.ID, userLogin.ID, userLogin.ID)
 	if err != nil {
 		return err
 	}
@@ -344,7 +349,7 @@ func (u *Purchase) Create(ctx context.Context, tx *sql.Tx) error {
 		u.Disc += d.Disc
 		u.PurchaseDetails[i].Product.Get(ctx, tx)
 	}
-	u.Total = u.Price - u.Disc
+	u.Total = u.Price - u.Disc - u.AdditionalDisc
 
 	return nil
 }
@@ -359,6 +364,7 @@ func (u *Purchase) Update(ctx context.Context, tx *sql.Tx) error {
 	const query = `
 		UPDATE purchases 
 		SET date = ?, 
+			disc = ?,
 			supplier_id = ?, 
 			updated_by = ?, 
 			updated = NOW()
@@ -373,7 +379,7 @@ func (u *Purchase) Update(ctx context.Context, tx *sql.Tx) error {
 
 	defer stmt.Close()
 
-	_, err = stmt.ExecContext(ctx, u.Date, u.Supplier.ID, userLogin.ID, u.ID, userLogin.Company.ID, userLogin.Branch.ID)
+	_, err = stmt.ExecContext(ctx, u.Date, u.AdditionalDisc, u.Supplier.ID, userLogin.ID, u.ID, userLogin.Company.ID, userLogin.Branch.ID)
 	if err != nil {
 		return err
 	}
@@ -399,7 +405,12 @@ func (u *Purchase) Update(ctx context.Context, tx *sql.Tx) error {
 			var arrUint64 array.ArrUint64
 			existingDetails = arrUint64.Remove(existingDetails, d.ID)
 		}
+
+		u.Price += d.Price
+		u.Disc += d.Disc
 	}
+
+	u.Total = u.Price - u.Disc - u.AdditionalDisc
 
 	for _, e := range existingDetails {
 		err = u.removeDetail(ctx, tx, e)
@@ -439,7 +450,7 @@ func (u *Purchase) GetExistingDetails(ctx context.Context, tx *sql.Tx) ([]uint64
 func (u *Purchase) getCode(ctx context.Context, tx *sql.Tx) (string, error) {
 	var code, prefix string
 	var codeInt int
-	prefix = time.Now().Format("200601")
+	prefix = "PO" + time.Now().Format("200601")
 
 	query := `SELECT code FROM purchases WHERE company_id = ? AND code LIKE ? ORDER BY code DESC LIMIT 1`
 	err := tx.QueryRowContext(ctx, query, ctx.Value(api.Ctx("auth")).(User).Company.ID, prefix+"%").Scan(&code)
@@ -456,7 +467,7 @@ func (u *Purchase) getCode(ctx context.Context, tx *sql.Tx) (string, error) {
 		}
 	}
 
-	return prefix + fmt.Sprintf("%04d", codeInt+1), nil
+	return prefix + fmt.Sprintf("%05d", codeInt+1), nil
 }
 
 func (u *Purchase) storeDetail(ctx context.Context, tx *sql.Tx, d PurchaseDetail) (uint64, error) {
