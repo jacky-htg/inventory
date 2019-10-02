@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "8a963d45-3874-471c-affb-d7f364402bba",
+		"_postman_id": "ee0c14d7-d40a-4e2a-82da-e7be8915de7e",
 		"name": "inventory",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -974,7 +974,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"date\": \"2019-09-29\",\n\t\"supplier\": 1,\n\t\"purchase_details\":[\n\t\t{\n\t\t\t\"price\": 900,\n\t\t\t\"disc\": 100,\n\t\t\t\"product\": 1\n\t\t},\n\t\t{\n\t\t\t\"price\": 500,\n\t\t\t\"disc\": 0,\n\t\t\t\"product\": 2\n\t\t}\n\t]\n}"
+									"raw": "{\n\t\"date\": \"2019-09-29\",\n\t\"supplier\": 1,\n\t\"additional_disc\": 0,\n\t\"purchase_details\":[\n\t\t{\n\t\t\t\"price\": 900,\n\t\t\t\"disc\": 100,\n\t\t\t\"product\": 1\n\t\t},\n\t\t{\n\t\t\t\"price\": 500,\n\t\t\t\"disc\": 0,\n\t\t\t\"product\": 2\n\t\t}\n\t]\n}"
 								},
 								"url": {
 									"raw": "{{url}}/purchases",
@@ -1035,7 +1035,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"date\": \"2019-09-29\",\n\t\"supplier\": 1,\n\t\"purchase_details\":[\n\t\t{\n\t\t\t\"id\": 1,\n\t\t\t\"price\": 900,\n\t\t\t\"disc\": 100,\n\t\t\t\"product\": 1\n\t\t},\n\t\t{\n\t\t\t\"price\": 500,\n\t\t\t\"disc\": 0,\n\t\t\t\"product\": 2\n\t\t}\n\t]\n}"
+									"raw": "{\n\t\"date\": \"2019-09-29\",\n\t\"supplier\": 1,\n\t\"additional_disc\": 0,\n\t\"purchase_details\":[\n\t\t{\n\t\t\t\"id\": 1,\n\t\t\t\"price\": 900,\n\t\t\t\"disc\": 100,\n\t\t\t\"product\": 1\n\t\t},\n\t\t{\n\t\t\t\"price\": 500,\n\t\t\t\"disc\": 0,\n\t\t\t\"product\": 2\n\t\t}\n\t]\n}"
 								},
 								"url": {
 									"raw": "{{url}}/purchases/1",
