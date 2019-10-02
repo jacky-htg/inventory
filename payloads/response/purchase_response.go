@@ -13,6 +13,7 @@ type PurchaseResponse struct {
 	Date            time.Time                `json:"name"`
 	Price           float64                  `json:"price"`
 	Disc            float64                  `json:"disc"`
+	AdditionalDisc  float64                  `json:"additional_disc"`
 	Total           float64                  `json:"total"`
 	Supplier        SupplierResponse         `json:"supplier"`
 	Company         CompanyResponse          `json:"company"`
@@ -27,6 +28,7 @@ func (u *PurchaseResponse) Transform(purchase *models.Purchase) {
 	u.Date = purchase.Date
 	u.Price = purchase.Price
 	u.Disc = purchase.Disc
+	u.AdditionalDisc = purchase.AdditionalDisc
 	u.Total = purchase.Total
 	u.Supplier.Transform(&purchase.Supplier)
 	u.Company.Transform(&purchase.Company)
@@ -41,15 +43,16 @@ func (u *PurchaseResponse) Transform(purchase *models.Purchase) {
 
 // PurchaseListResponse : format json response for purchase list
 type PurchaseListResponse struct {
-	ID       uint64           `json:"id"`
-	Code     string           `json:"code"`
-	Date     time.Time        `json:"date"`
-	Price    float64          `json:"price"`
-	Disc     float64          `json:"disc"`
-	Total    float64          `json:"total"`
-	Supplier SupplierResponse `json:"supplier"`
-	Company  CompanyResponse  `json:"company"`
-	Branch   BranchResponse   `json:"branch"`
+	ID             uint64           `json:"id"`
+	Code           string           `json:"code"`
+	Date           time.Time        `json:"date"`
+	Price          float64          `json:"price"`
+	Disc           float64          `json:"disc"`
+	AdditionalDisc float64          `json:"additional_disc"`
+	Total          float64          `json:"total"`
+	Supplier       SupplierResponse `json:"supplier"`
+	Company        CompanyResponse  `json:"company"`
+	Branch         BranchResponse   `json:"branch"`
 }
 
 // Transform from Purchase model to Purchase List response
@@ -59,6 +62,7 @@ func (u *PurchaseListResponse) Transform(purchase *models.Purchase) {
 	u.Date = purchase.Date
 	u.Price = purchase.Price
 	u.Disc = purchase.Disc
+	u.AdditionalDisc = purchase.AdditionalDisc
 	u.Total = purchase.Total
 	u.Supplier.Transform(&purchase.Supplier)
 	u.Company.Transform(&purchase.Company)

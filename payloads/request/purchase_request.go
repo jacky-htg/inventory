@@ -9,6 +9,7 @@ import (
 // NewPurchaseRequest : format json request for new purchase
 type NewPurchaseRequest struct {
 	Date            string                     `json:"date" validate:"required"`
+	AdditionalDisc  float64                    `json:"additional_disc" validate:"required"`
 	PurchaseDetails []NewPurchaseDetailRequest `json:"purchase_details" validate:"required"`
 	SupplierID      uint64                     `json:"supplier" validate:"required"`
 }
@@ -18,6 +19,7 @@ func (u *NewPurchaseRequest) Transform() *models.Purchase {
 	var p models.Purchase
 	p.Date, _ = time.Parse("2006-01-02", u.Date)
 	p.Supplier.ID = u.SupplierID
+	p.AdditionalDisc = u.AdditionalDisc
 
 	for _, pd := range u.PurchaseDetails {
 		p.PurchaseDetails = append(p.PurchaseDetails, pd.Transform())
@@ -47,6 +49,7 @@ func (u *NewPurchaseDetailRequest) Transform() models.PurchaseDetail {
 type PurchaseRequest struct {
 	ID              uint64                  `json:"id" validate:"required"`
 	Date            string                  `json:"date"`
+	AdditionalDisc  float64                 `json:"additional_disc"`
 	PurchaseDetails []PurchaseDetailRequest `json:"purchase_details"`
 	SupplierID      uint64                  `json:"supplier"`
 }
@@ -56,6 +59,7 @@ func (u *PurchaseRequest) Transform(p *models.Purchase) *models.Purchase {
 	if u.ID == p.ID {
 		p.Date, _ = time.Parse("2006-01-02", u.Date)
 		p.Supplier.ID = u.SupplierID
+		p.AdditionalDisc = u.AdditionalDisc
 
 		var details []models.PurchaseDetail
 		for _, pd := range u.PurchaseDetails {
