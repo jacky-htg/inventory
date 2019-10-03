@@ -112,5 +112,15 @@ func API(db *sql.DB, log *log.Logger) http.Handler {
 		app.Handle(http.MethodPost, "/closing_stocks", closingStock.Closing)
 	}
 
+	// Customers Routing
+	{
+		customers := controllers.Customers{Db: db, Log: log}
+		app.Handle(http.MethodGet, "/customers", customers.List)
+		app.Handle(http.MethodPost, "/customers", customers.Create)
+		app.Handle(http.MethodGet, "/customers/:id", customers.View)
+		app.Handle(http.MethodPut, "/customers/:id", customers.Update)
+		app.Handle(http.MethodDelete, "/customers/:id", customers.Delete)
+	}
+
 	return app
 }
