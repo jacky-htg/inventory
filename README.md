@@ -21,3 +21,9 @@ Is an open source Inventory API
 - Call GET /login request in auth directory. username: jackyhtg password:12345678
 - Edit current value of token on inventory environment with token in result of login
 - Test all request
+
+## How to Add new Module
+You can read sample of [add new master](#https://github.com/jacky-htg/inventory/blob/master/master.md).
+
+## API Documentation and Specification Program
+You can read [API documentation and specification program](#https://github.com/jacky-htg/inventory/wiki) in wiki inventory. 
