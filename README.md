@@ -1,6 +1,11 @@
 # Inventory
 
 Is an open source Inventory API
+- Language : Golang
+- Database : MySQL
+- Architecture : Simple MVC
+- Router : httprouter
+- SQL : database/sql
 
 ## Get Started
 - git clone git@github.com:jacky-htg/inventory.git
