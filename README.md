@@ -23,7 +23,7 @@ Is an open source Inventory API
 - Test all request
 
 ## How to Add new Module
-You can read sample of [add new master](#https://github.com/jacky-htg/inventory/blob/master/master.md).
+You can read sample of [add new master](https://github.com/jacky-htg/inventory/blob/master/master.md).
 
 ## API Documentation and Specification Program
-You can read [API documentation and specification program](#https://github.com/jacky-htg/inventory/wiki) in wiki inventory. 
+You can read [API documentation and specification program](https://github.com/jacky-htg/inventory/wiki) in wiki inventory. 
