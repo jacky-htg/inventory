@@ -260,6 +260,7 @@ CREATE TABLE purchase_details (
 	product_id BIGINT(20) UNSIGNED NOT NULL,
 	price DOUBLE UNSIGNED NOT NULL,
 	disc	DOUBLE UNSIGNED NOT NULL,
+	qty MEDIUMINT(8) UNSIGNED NOT NULL,
 	PRIMARY KEY (id),
 	KEY purchase_details_purchase_id (purchase_id),
 	KEY purchase_details_product_id (product_id),
@@ -306,6 +307,7 @@ CREATE TABLE purchase_return_details (
 	product_id BIGINT(20) UNSIGNED NOT NULL,
 	price DOUBLE UNSIGNED NOT NULL,
 	disc	DOUBLE UNSIGNED NOT NULL,
+	qty MEDIUMINT(8) UNSIGNED NOT NULL,
 	PRIMARY KEY (id),
 	KEY purchase_return_details_purchase_return_id (purchase_return_id),
 	KEY purchase_return_details_product_id (product_id),
@@ -414,6 +416,51 @@ CREATE TABLE customers (
 	PRIMARY KEY (id),
 	KEY customers_company_id (company_id),
 	CONSTRAINT fk_customers_to_companies FOREIGN KEY (company_id) REFERENCES companies(id)
+);`,
+	},
+	{
+		Version:     25,
+		Description: "Add Good Receiving",
+		Script: `
+CREATE TABLE good_receivings (
+	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	company_id	INT(10) UNSIGNED NOT NULL,
+	branch_id INT(10) UNSIGNED NOT NULL,
+	purchase_id BIGINT(20) UNSIGNED NOT NULL,
+	code	CHAR(13) NOT NULL UNIQUE,
+	date	DATE NOT NULL,
+	remark VARCHAR(255) NOT NULL,
+	created TIMESTAMP NOT NULL DEFAULT NOW(),
+	updated TIMESTAMP NOT NULL DEFAULT NOW(),
+	created_by BIGINT(20) UNSIGNED NOT NULL,
+	updated_by BIGINT(20) UNSIGNED NOT NULL,
+	PRIMARY KEY (id),
+	KEY good_receivings_company_id (company_id),
+	KEY good_receivings_branch_id (branch_id),
+	KEY good_receivings_purchase_id (purchase_id),
+	KEY good_receivings_created_by (created_by),
+	KEY good_receivings_updated_by (updated_by),
+	CONSTRAINT fk_good_receivings_to_companies FOREIGN KEY (company_id) REFERENCES companies(id),
+	CONSTRAINT fk_good_receivings_to_branches FOREIGN KEY (branch_id) REFERENCES branches(id),
+	CONSTRAINT fk_good_receivings_to_purchases FOREIGN KEY (purchase_id) REFERENCES purchases(id),
+	CONSTRAINT fk_good_receivings_to_users_created_by FOREIGN KEY (created_by) REFERENCES users(id),
+	CONSTRAINT fk_good_receivings_to_users_updated_by FOREIGN KEY (updated_by) REFERENCES users(id)
+);`,
+	},
+	{
+		Version:     26,
+		Description: "Add Good Receiving Details",
+		Script: `
+CREATE TABLE good_receiving_details (
+	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	good_receiving_id	BIGINT(20) UNSIGNED NOT NULL,
+	product_id BIGINT(20) UNSIGNED NOT NULL,
+	qty MEDIUMINT(8) UNSIGNED NOT NULL,
+	PRIMARY KEY (id),
+	KEY good_receiving_details_good_receiving_id (good_receiving_id),
+	KEY good_receiving_details_product_id (product_id),
+	CONSTRAINT fk_good_receiving_details_to_good_receivings FOREIGN KEY (good_receiving_id) REFERENCES good_receivings(id) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT fk_good_receiving_details_to_products FOREIGN KEY (product_id) REFERENCES products(id)
 );`,
 	},
 }
