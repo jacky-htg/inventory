@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "ee0c14d7-d40a-4e2a-82da-e7be8915de7e",
+		"_postman_id": "bb8afe80-23bb-4830-aab3-90af9461b5b6",
 		"name": "inventory",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -427,7 +427,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\"username\": \"jackyhtg\",\n\"password\": \"1234\"\n}"
+							"raw": "{\n\"username\": \"jackyhtg\",\n\"password\": \"12345678\"\n}"
 						},
 						"url": {
 							"raw": "{{url}}/login",
@@ -1070,6 +1070,160 @@
 										"customers"
 									]
 								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Branches",
+					"item": [
+						{
+							"name": "branches",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/branches",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"branches"
+									],
+									"query": [
+										{
+											"key": "",
+											"value": ""
+										}
+									]
+								},
+								"description": "get all branches"
+							},
+							"response": []
+						},
+						{
+							"name": "branches",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"code\": \"123\",\n\t\"name\": \"toko bagus\",\n\t\"type\": \"s\",\n\t\"address\": \"jalan sultan iskandar\"\n}"
+								},
+								"url": {
+									"raw": "{{url}}/branches",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"branches"
+									]
+								},
+								"description": "add branch"
+							},
+							"response": []
+						},
+						{
+							"name": "branches/:id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/branches/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"branches",
+										"1"
+									]
+								},
+								"description": "get branch by id"
+							},
+							"response": []
+						},
+						{
+							"name": "branches/:id",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"id\": 1,\n\t\"code\": \"123\",\n\t\"name\": \"toko bagus jaya\",\n\t\"type\": \"s\",\n\t\"address\": \"jalan sultan iskandar no. 6\"\n}"
+								},
+								"url": {
+									"raw": "{{url}}/branches/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"branches",
+										"1"
+									]
+								},
+								"description": "update branch by id"
+							},
+							"response": []
+						},
+						{
+							"name": "branches/:id",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": ""
+								},
+								"description": "delete branch by id"
 							},
 							"response": []
 						}
