@@ -7,8 +7,12 @@ Is an open source Inventory API
 - Router : httprouter
 - SQL : database/sql
 
+## Disclaimer
+This application is under develoment. You can follow the progress of project in [inventory project](https://github.com/jacky-htg/inventory/projects/1). You also can view of [milestones](https://github.com/jacky-htg/inventory/milestones).
+
 ## Features
 - Multi companies
+- Setting : The company can use the whole of features, or cherry pick part of features.
 - Company registration and verifications 
 - Multi regions. One region can be assigned to many branches.
 - Multi branches/shops/warehouses
@@ -40,6 +44,7 @@ Is an open source Inventory API
 - Report of suppliers
 - Report of salesman
 - Report of stock
+- Report of product history (the history of product from receiving in warehouse until delivery to customer)
 - Report of purchase
 - Report of purchase return
 - Report of good receiving
