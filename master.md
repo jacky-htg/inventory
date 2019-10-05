@@ -73,7 +73,10 @@ func (u *Customer) List(ctx context.Context, tx *sql.Tx) ([]Customer, error) {
 
 // Create new customer
 func (u *Customer) Create(ctx context.Context, tx *sql.Tx) error {
-	stmt, err := tx.PrepareContext(ctx, `INSERT INTO customers (company_id, name, email, address, hp) VALUES (?, ?, ?, ?, ?)`)
+	stmt, err := tx.PrepareContext(ctx, `
+		INSERT INTO customers (company_id, name, email, address, hp) 
+		VALUES (?, ?, ?, ?, ?)
+	`)
 	if err != nil {
 		return err
 	}
