@@ -51,7 +51,11 @@ const qCustomers = `SELECT id, name, email, address, hp FROM customers`
 func (u *Customer) List(ctx context.Context, tx *sql.Tx) ([]Customer, error) {
 	var list []Customer
 
-	rows, err := tx.QueryContext(ctx, qCustomers+" WHERE company_id=?", ctx.Value(api.Ctx("auth")).(User).Company.ID)
+	rows, err := tx.QueryContext(
+		ctx, 
+		qCustomers+" WHERE company_id=?", 
+		ctx.Value(api.Ctx("auth")).(User).Company.ID,
+	)
 	if err != nil {
 		return list, err
 	}
