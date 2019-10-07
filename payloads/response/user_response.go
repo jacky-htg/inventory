@@ -24,10 +24,14 @@ func (u *UserResponse) Transform(user *models.User) {
 	u.Company.Transform(&user.Company)
 
 	if user.Region.ID > 0 {
-		u.Region.Transform(&user.Region)
+		var regionResponse RegionResponse
+		regionResponse.Transform(&user.Region)
+		u.Region = &regionResponse
 	}
 
 	if user.Branch.ID > 0 {
-		u.Branch.Transform(&user.Branch)
+		var branchResponse BranchResponse
+		branchResponse.Transform(&user.Branch)
+		u.Branch = &branchResponse
 	}
 }
