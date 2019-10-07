@@ -25,10 +25,7 @@ CREATE TABLE users (
 	PRIMARY KEY (id),
 	KEY users_company_id (company_id),
 	KEY users_region_id (region_id),
-	KEY users_branch_id (branch_id),
-	CONSTRAINT fk_users_to_regions FOREIGN KEY (region_id) REFERENCES regions(id),
-	CONSTRAINT fk_users_to_branches FOREIGN KEY (branch_id) REFERENCES branches(id),
-	CONSTRAINT fk_users_to_companies FOREIGN KEY (company_id) REFERENCES companies(id)
+	KEY users_branch_id (branch_id)
 );`,
 	},
 	{
@@ -54,8 +51,7 @@ CREATE TABLE roles (
 	company_id  INT(10) UNSIGNED NOT NULL,
 	created TIMESTAMP NOT NULL DEFAULT NOW(),
 	PRIMARY KEY (id),
-	KEY roles_company_id (company_id),
-	CONSTRAINT fk_roles_to_companies FOREIGN KEY (company_id) REFERENCES companies(id)
+	KEY roles_company_id (company_id)
 );`,
 	},
 	{
@@ -160,6 +156,24 @@ CREATE TABLE branches_regions (
 	},
 	{
 		Version:     10,
+		Description: "Create Relation of users table",
+		Script: `
+ALTER TABLE users
+	ADD CONSTRAINT fk_users_to_regions FOREIGN KEY (region_id) REFERENCES regions(id),
+	ADD CONSTRAINT fk_users_to_branches FOREIGN KEY (branch_id) REFERENCES branches(id),
+	ADD CONSTRAINT fk_users_to_companies FOREIGN KEY (company_id) REFERENCES companies(id)
+`,
+	},
+	{
+		Version:     11,
+		Description: "Create Relation of roles table",
+		Script: `
+ALTER TABLE roles 
+	ADD CONSTRAINT fk_roles_to_companies FOREIGN KEY (company_id) REFERENCES companies(id)
+`,
+	},
+	{
+		Version:     12,
 		Description: "Add Products",
 		Script: `
 CREATE TABLE products (
@@ -177,7 +191,7 @@ CREATE TABLE products (
 );`,
 	},
 	{
-		Version:     11,
+		Version:     13,
 		Description: "Add Suppliers",
 		Script: `
 CREATE TABLE suppliers (
@@ -194,7 +208,7 @@ CREATE TABLE suppliers (
 );`,
 	},
 	{
-		Version:     12,
+		Version:     14,
 		Description: "Add Purchases",
 		Script: `
 CREATE TABLE purchases (
@@ -223,7 +237,7 @@ CREATE TABLE purchases (
 );`,
 	},
 	{
-		Version:     13,
+		Version:     15,
 		Description: "Add Purchase Details",
 		Script: `
 CREATE TABLE purchase_details (
@@ -241,7 +255,7 @@ CREATE TABLE purchase_details (
 );`,
 	},
 	{
-		Version:     14,
+		Version:     16,
 		Description: "Add Purchase Returns",
 		Script: `
 CREATE TABLE purchase_returns (
@@ -270,7 +284,7 @@ CREATE TABLE purchase_returns (
 );`,
 	},
 	{
-		Version:     15,
+		Version:     17,
 		Description: "Add Purchase Return Details",
 		Script: `
 CREATE TABLE purchase_return_details (
@@ -288,7 +302,7 @@ CREATE TABLE purchase_return_details (
 );`,
 	},
 	{
-		Version:     16,
+		Version:     18,
 		Description: "Add Inventories",
 		Script: `
 CREATE TABLE inventories (
@@ -310,7 +324,7 @@ CREATE TABLE inventories (
 );`,
 	},
 	{
-		Version:     17,
+		Version:     19,
 		Description: "Add saldo stocks",
 		Script: `
 CREATE TABLE saldo_stocks (
@@ -328,14 +342,14 @@ CREATE TABLE saldo_stocks (
 );`,
 	},
 	{
-		Version:     18,
+		Version:     20,
 		Description: "Set Global log_bin_trust_function_creators",
 		Script: `
 SET GLOBAL log_bin_trust_function_creators = 1;
 `,
 	},
 	{
-		Version:     19,
+		Version:     21,
 		Description: "Add Closing Stocks",
 		Script: `
 CREATE FUNCTION closing_stocks(companyID int, curMonth int, curYear int)
@@ -375,7 +389,7 @@ RETURN 1;
 END;`,
 	},
 	{
-		Version:     20,
+		Version:     22,
 		Description: "Add Closing Stocks",
 		Script: `
 CREATE TABLE customers (
@@ -391,7 +405,7 @@ CREATE TABLE customers (
 );`,
 	},
 	{
-		Version:     21,
+		Version:     23,
 		Description: "Add Good Receiving",
 		Script: `
 CREATE TABLE good_receivings (
@@ -420,7 +434,7 @@ CREATE TABLE good_receivings (
 );`,
 	},
 	{
-		Version:     22,
+		Version:     24,
 		Description: "Add Good Receiving Details",
 		Script: `
 CREATE TABLE good_receiving_details (
