@@ -17,9 +17,18 @@ CREATE TABLE users (
 	password         varchar(255) NOT NULL,
 	email     VARCHAR(255) NOT NULL UNIQUE,
 	is_active TINYINT(1) NOT NULL DEFAULT '0',
+	company_id  INT(10) UNSIGNED NOT NULL,
+	region_id INT(10) UNSIGNED,
+	branch_id INT(10) UNSIGNED,
 	created TIMESTAMP NOT NULL DEFAULT NOW(),
 	updated TIMESTAMP NOT NULL DEFAULT NOW(),
-	PRIMARY KEY (id)
+	PRIMARY KEY (id),
+	KEY users_company_id (company_id),
+	KEY users_region_id (region_id),
+	KEY users_branch_id (branch_id),
+	CONSTRAINT fk_users_to_regions FOREIGN KEY (region_id) REFERENCES regions(id),
+	CONSTRAINT fk_users_to_branches FOREIGN KEY (branch_id) REFERENCES branches(id),
+	CONSTRAINT fk_users_to_companies FOREIGN KEY (company_id) REFERENCES companies(id)
 );`,
 	},
 	{
@@ -42,8 +51,11 @@ CREATE TABLE access (
 CREATE TABLE roles (
 	id   INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
 	name         varchar(255) NOT NULL UNIQUE,
+	company_id  INT(10) UNSIGNED NOT NULL,
 	created TIMESTAMP NOT NULL DEFAULT NOW(),
-	PRIMARY KEY (id)
+	PRIMARY KEY (id),
+	KEY roles_company_id (company_id),
+	CONSTRAINT fk_roles_to_companies FOREIGN KEY (company_id) REFERENCES companies(id)
 );`,
 	},
 	{
@@ -148,46 +160,6 @@ CREATE TABLE branches_regions (
 	},
 	{
 		Version:     10,
-		Description: "Alter users with company_id, region_id and branch_id",
-		Script: `
-ALTER TABLE users
-	ADD company_id  INT(10) UNSIGNED NOT NULL AFTER is_active,
-	ADD region_id INT(10) UNSIGNED AFTER company_id,
-	ADD branch_id INT(10) UNSIGNED AFTER region_id,
-	ADD KEY users_company_id (company_id),
-	ADD KEY users_region_id (region_id),
-	ADD KEY users_branch_id (branch_id),
-	ADD CONSTRAINT fk_users_to_regions FOREIGN KEY (region_id) REFERENCES regions(id),
-	ADD CONSTRAINT fk_users_to_branches FOREIGN KEY (branch_id) REFERENCES branches(id)
-;`,
-	},
-	{
-		Version:     11,
-		Description: "Alter users with companies constraint",
-		Script: `
-ALTER TABLE users
-	ADD CONSTRAINT fk_users_to_companies FOREIGN KEY (company_id) REFERENCES companies(id)
-;`,
-	},
-	{
-		Version:     12,
-		Description: "Alter roles with company_id",
-		Script: `
-ALTER TABLE roles
-	ADD company_id  INT(10) UNSIGNED NOT NULL AFTER name,
-	ADD KEY roles_company_id (company_id)
-;`,
-	},
-	{
-		Version:     13,
-		Description: "Alter roles with companies constraint",
-		Script: `
-ALTER TABLE roles
-	ADD CONSTRAINT fk_roles_to_companies FOREIGN KEY (company_id) REFERENCES companies(id)
-;`,
-	},
-	{
-		Version:     14,
 		Description: "Add Products",
 		Script: `
 CREATE TABLE products (
@@ -205,7 +177,7 @@ CREATE TABLE products (
 );`,
 	},
 	{
-		Version:     15,
+		Version:     11,
 		Description: "Add Suppliers",
 		Script: `
 CREATE TABLE suppliers (
@@ -222,7 +194,7 @@ CREATE TABLE suppliers (
 );`,
 	},
 	{
-		Version:     16,
+		Version:     12,
 		Description: "Add Purchases",
 		Script: `
 CREATE TABLE purchases (
@@ -251,7 +223,7 @@ CREATE TABLE purchases (
 );`,
 	},
 	{
-		Version:     17,
+		Version:     13,
 		Description: "Add Purchase Details",
 		Script: `
 CREATE TABLE purchase_details (
@@ -269,7 +241,7 @@ CREATE TABLE purchase_details (
 );`,
 	},
 	{
-		Version:     18,
+		Version:     14,
 		Description: "Add Purchase Returns",
 		Script: `
 CREATE TABLE purchase_returns (
@@ -298,7 +270,7 @@ CREATE TABLE purchase_returns (
 );`,
 	},
 	{
-		Version:     19,
+		Version:     15,
 		Description: "Add Purchase Return Details",
 		Script: `
 CREATE TABLE purchase_return_details (
@@ -316,7 +288,7 @@ CREATE TABLE purchase_return_details (
 );`,
 	},
 	{
-		Version:     20,
+		Version:     16,
 		Description: "Add Inventories",
 		Script: `
 CREATE TABLE inventories (
@@ -338,7 +310,7 @@ CREATE TABLE inventories (
 );`,
 	},
 	{
-		Version:     21,
+		Version:     17,
 		Description: "Add saldo stocks",
 		Script: `
 CREATE TABLE saldo_stocks (
@@ -356,14 +328,14 @@ CREATE TABLE saldo_stocks (
 );`,
 	},
 	{
-		Version:     22,
+		Version:     18,
 		Description: "Set Global log_bin_trust_function_creators",
 		Script: `
 SET GLOBAL log_bin_trust_function_creators = 1;
 `,
 	},
 	{
-		Version:     23,
+		Version:     19,
 		Description: "Add Closing Stocks",
 		Script: `
 CREATE FUNCTION closing_stocks(companyID int, curMonth int, curYear int)
@@ -403,7 +375,7 @@ RETURN 1;
 END;`,
 	},
 	{
-		Version:     24,
+		Version:     20,
 		Description: "Add Closing Stocks",
 		Script: `
 CREATE TABLE customers (
@@ -419,7 +391,7 @@ CREATE TABLE customers (
 );`,
 	},
 	{
-		Version:     25,
+		Version:     21,
 		Description: "Add Good Receiving",
 		Script: `
 CREATE TABLE good_receivings (
@@ -448,7 +420,7 @@ CREATE TABLE good_receivings (
 );`,
 	},
 	{
-		Version:     26,
+		Version:     22,
 		Description: "Add Good Receiving Details",
 		Script: `
 CREATE TABLE good_receiving_details (
