@@ -32,6 +32,7 @@ func (u *NewPurchaseRequest) Transform() *models.Purchase {
 type NewPurchaseDetailRequest struct {
 	Price     float64 `json:"price"`
 	Disc      float64 `json:"disc"`
+	Qty       uint    `json:"qty"`
 	ProductID uint64  `json:"product"`
 }
 
@@ -40,6 +41,7 @@ func (u *NewPurchaseDetailRequest) Transform() models.PurchaseDetail {
 	var pd models.PurchaseDetail
 	pd.Price = u.Price
 	pd.Disc = u.Disc
+	pd.Qty = u.Qty
 	pd.Product.ID = u.ProductID
 
 	return pd
@@ -77,6 +79,7 @@ type PurchaseDetailRequest struct {
 	ID        uint64  `json:"id"`
 	Price     float64 `json:"price"`
 	Disc      float64 `json:"disc"`
+	Qty       uint    `json:"qty"`
 	ProductID uint64  `json:"product"`
 }
 
@@ -86,6 +89,7 @@ func (u *PurchaseDetailRequest) Transform() models.PurchaseDetail {
 	pd.ID = u.ID
 	pd.Price = u.Price
 	pd.Disc = u.Disc
+	pd.Qty = u.Qty
 	pd.Product.ID = u.ProductID
 
 	return pd

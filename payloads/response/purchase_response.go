@@ -74,6 +74,7 @@ type PurchaseDetailResponse struct {
 	ID      uint64          `json:"id"`
 	Price   float64         `json:"price"`
 	Disc    float64         `json:"disc"`
+	Qty     uint            `json:"qty"`
 	Product ProductResponse `json:"product"`
 }
 
@@ -82,5 +83,6 @@ func (u *PurchaseDetailResponse) Transform(pd *models.PurchaseDetail) {
 	u.ID = pd.ID
 	u.Price = pd.Price
 	u.Disc = pd.Disc
+	u.Qty = pd.Qty
 	u.Product.Transform(&pd.Product)
 }

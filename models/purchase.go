@@ -35,6 +35,7 @@ type PurchaseDetail struct {
 	Product Product
 	Price   float64
 	Disc    float64
+	Qty     uint
 }
 
 // List purchases
@@ -163,6 +164,7 @@ func (u *Purchase) Get(ctx context.Context, tx *sql.Tx) error {
 		JSON_ARRAYAGG(purchase_details.id),
 		JSON_ARRAYAGG(purchase_details.price),
 		JSON_ARRAYAGG(purchase_details.disc),
+		JSON_ARRAYAGG(purchase_details.qty),
 		JSON_ARRAYAGG(products.id),
 		JSON_ARRAYAGG(products.code),
 		JSON_ARRAYAGG(products.name),
@@ -199,7 +201,7 @@ func (u *Purchase) Get(ctx context.Context, tx *sql.Tx) error {
 		params = append(params, userLogin.Branch.ID)
 	}
 
-	var detailID, detailPrice, detailDisc, productID, productCode, productName, productPrice string
+	var detailID, detailPrice, detailDisc, detailQty, productID, productCode, productName, productPrice string
 	err := tx.QueryRowContext(ctx, query+" GROUP BY purchases.id", params...).Scan(
 		&u.ID,
 		&u.Code,
@@ -222,6 +224,7 @@ func (u *Purchase) Get(ctx context.Context, tx *sql.Tx) error {
 		&detailID,
 		&detailPrice,
 		&detailDisc,
+		&detailQty,
 		&productID,
 		&productCode,
 		&productName,
@@ -250,6 +253,12 @@ func (u *Purchase) Get(ctx context.Context, tx *sql.Tx) error {
 
 		var detailDiscs []float64
 		err = json.Unmarshal([]byte(detailDisc), &detailDiscs)
+		if err != nil {
+			return err
+		}
+
+		var detailQtys []uint
+		err = json.Unmarshal([]byte(detailQty), &detailQtys)
 		if err != nil {
 			return err
 		}
@@ -283,6 +292,7 @@ func (u *Purchase) Get(ctx context.Context, tx *sql.Tx) error {
 				ID:    uint64(v),
 				Price: detailPrices[i],
 				Disc:  detailDiscs[i],
+				Qty:   detailQtys[i],
 				Product: Product{
 					ID:        productIDs[i],
 					Code:      productCodes[i],
@@ -473,8 +483,8 @@ func (u *Purchase) getCode(ctx context.Context, tx *sql.Tx) (string, error) {
 func (u *Purchase) storeDetail(ctx context.Context, tx *sql.Tx, d PurchaseDetail) (uint64, error) {
 	var id uint64
 	const queryDetail = `
-		INSERT INTO purchase_details (purchase_id, product_id, price, disc)
-		VALUES (?, ?, ?, ?)
+		INSERT INTO purchase_details (purchase_id, product_id, price, disc, qty)
+		VALUES (?, ?, ?, ?, ?)
 	`
 	stmt, err := tx.PrepareContext(ctx, queryDetail)
 	if err != nil {
@@ -483,7 +493,7 @@ func (u *Purchase) storeDetail(ctx context.Context, tx *sql.Tx, d PurchaseDetail
 
 	defer stmt.Close()
 
-	res, err := stmt.ExecContext(ctx, u.ID, d.Product.ID, d.Price, d.Disc)
+	res, err := stmt.ExecContext(ctx, u.ID, d.Product.ID, d.Price, d.Disc, d.Qty)
 	if err != nil {
 		return id, err
 	}
@@ -501,7 +511,8 @@ func (u *Purchase) updateDetail(ctx context.Context, tx *sql.Tx, d PurchaseDetai
 		UPDATE purchase_details 
 		SET product_id = ?, 
 			price = ?,
-			disc = ?
+			disc = ?,
+			qty = ?
 		WHERE id = ?
 		AND purchase_id = ?
 	`
@@ -512,7 +523,7 @@ func (u *Purchase) updateDetail(ctx context.Context, tx *sql.Tx, d PurchaseDetai
 
 	defer stmt.Close()
 
-	_, err = stmt.ExecContext(ctx, d.Product.ID, d.Price, d.Disc, d.ID, u.ID)
+	_, err = stmt.ExecContext(ctx, d.Product.ID, d.Price, d.Disc, d.Qty, d.ID, u.ID)
 	return err
 }
 
