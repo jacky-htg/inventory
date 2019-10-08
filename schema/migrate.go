@@ -493,6 +493,20 @@ CREATE TABLE product_categories (
 	CONSTRAINT fk_product_categories_to_categories FOREIGN KEY (category_id) REFERENCES categories(id)
 );`,
 	},
+	{
+		Version:     28,
+		Description: "Add relations of products",
+		Script: `
+ALTER TABLE products
+	ADD brand_id BIGINT(20) UNSIGNED NOT NULL AFTER company_id,
+	ADD product_category_id BIGINT(20) UNSIGNED NOT NULL AFTER brand_id,
+	ADD minimum_stock MEDIUMINT(8) UNSIGNED NOT NULL AFTER sale_price,
+	ADD KEY products_brand_id (brand_id),
+	ADD KEY products_product_category_id (product_category_id),
+	ADD CONSTRAINT fk_products_to_brands FOREIGN KEY (brand_id) REFERENCES brands(id),
+	ADD CONSTRAINT fk_products_to_product_categories FOREIGN KEY (product_category_id) REFERENCES product_categories(id)
+;`,
+	},
 }
 
 // Migrate attempts to bring the schema for db up to date with the migrations

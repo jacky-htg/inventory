@@ -60,6 +60,15 @@ func (u *Products) List(t *testing.T) {
 					"name":    "Dummy",
 					"address": "",
 				},
+				"brand": map[string]interface{}{
+					"id":   float64(1),
+					"code": "BRAND-01",
+					"name": "TOP",
+				},
+				"product_category": map[string]interface{}{
+					"id":   float64(1),
+					"name": "Lemari",
+				},
 			},
 		},
 	}
@@ -74,9 +83,11 @@ func (u *Products) Create(t *testing.T) map[string]interface{} {
 	var created map[string]interface{}
 	jsonBody := `
 		{
-			"code": "PROD-1",
+			"code": "PROD-200",
 			"name": "Tes",
-			"price": 1
+			"price": 1,
+			"brand": "1",
+			"product_category": "1"
 		}
 	`
 	body := strings.NewReader(jsonBody)
@@ -107,7 +118,7 @@ func (u *Products) Create(t *testing.T) map[string]interface{} {
 		"status_message": "OK",
 		"data": map[string]interface{}{
 			"id":    c["id"],
-			"code":  "PROD-1",
+			"code":  "PROD-200",
 			"name":  "Tes",
 			"price": float64(1),
 			"company": map[string]interface{}{
@@ -115,6 +126,15 @@ func (u *Products) Create(t *testing.T) map[string]interface{} {
 				"code":    "DM",
 				"name":    "Dummy",
 				"address": "",
+			},
+			"brand": map[string]interface{}{
+				"id":   float64(1),
+				"code": "BRAND-01",
+				"name": "TOP",
+			},
+			"product_category": map[string]interface{}{
+				"id":   float64(1),
+				"name": "Lemari",
 			},
 		},
 	}
@@ -149,7 +169,7 @@ func (u *Products) View(t *testing.T, id float64) {
 		"status_message": "OK",
 		"data": map[string]interface{}{
 			"id":    id,
-			"code":  "PROD-1",
+			"code":  "PROD-200",
 			"name":  "Tes",
 			"price": float64(1),
 			"company": map[string]interface{}{
@@ -157,6 +177,15 @@ func (u *Products) View(t *testing.T, id float64) {
 				"code":    "DM",
 				"name":    "Dummy",
 				"address": "",
+			},
+			"brand": map[string]interface{}{
+				"id":   float64(1),
+				"code": "BRAND-01",
+				"name": "TOP",
+			},
+			"product_category": map[string]interface{}{
+				"id":   float64(1),
+				"name": "Lemari",
 			},
 		},
 	}
@@ -174,7 +203,9 @@ func (u *Products) Update(t *testing.T, id float64) {
 		{
 			"id": %s,
 			"name": "Test",
-			"price": 2
+			"price": 2,
+			"brand":"1",
+			"product_category": "1"
 		}
 	`
 	body := strings.NewReader(fmt.Sprintf(jsonBody, fmt.Sprintf("%d", int(id))))
@@ -199,7 +230,7 @@ func (u *Products) Update(t *testing.T, id float64) {
 		"status_message": "OK",
 		"data": map[string]interface{}{
 			"id":    id,
-			"code":  "PROD-1",
+			"code":  "PROD-200",
 			"name":  "Test",
 			"price": float64(2),
 			"company": map[string]interface{}{
@@ -207,6 +238,15 @@ func (u *Products) Update(t *testing.T, id float64) {
 				"code":    "DM",
 				"name":    "Dummy",
 				"address": "",
+			},
+			"brand": map[string]interface{}{
+				"id":   float64(1),
+				"code": "BRAND-01",
+				"name": "TOP",
+			},
+			"product_category": map[string]interface{}{
+				"id":   float64(1),
+				"name": "Lemari",
 			},
 		},
 	}

@@ -10,12 +10,14 @@ import (
 
 // Product : struct of Product
 type Product struct {
-	ID            uint64
-	Code          string
-	Name          string
-	PurchasePrice float64
-	SalePrice     float64
-	Company       Company
+	ID              uint64
+	Code            string
+	Name            string
+	PurchasePrice   float64
+	SalePrice       float64
+	Company         Company
+	Brand           Brand
+	ProductCategory ProductCategory
 }
 
 const qProducts = `
@@ -23,12 +25,19 @@ SELECT 	products.id,
 		products.code, 
 		products.name,
 		products.sale_price, 
-		companies.id, 
-		companies.code, 
-		companies.name,
-		companies.address  
+		companies.id as company_id, 
+		companies.code as company_code, 
+		companies.name as company_name,
+		companies.address as company_address,
+		brands.id as brand_id,
+		brands.code as brand_code,
+		brands.name as brand_name,
+		product_categories.id as product_category_id,
+		product_categories.name as product_category_name  
 FROM products
 JOIN companies ON products.company_id = companies.id
+JOIN brands ON products.brand_id = brands.id
+JOIN product_categories ON products.product_category_id = product_categories.id
 `
 
 // List of products
@@ -72,8 +81,8 @@ func (u *Product) Get(ctx context.Context, tx *sql.Tx) error {
 func (u *Product) Create(ctx context.Context, tx *sql.Tx) error {
 	userLogin := ctx.Value(api.Ctx("auth")).(User)
 	const query = `
-		INSERT INTO products (company_id, code, name, sale_price, created)
-		VALUES (?, ?, ?, ?, NOW())
+		INSERT INTO products (company_id, brand_id, product_category_id, code, name, sale_price, created)
+		VALUES (?, ?, ?, ?, ?, ?, NOW())
 	`
 	stmt, err := tx.PrepareContext(ctx, query)
 	if err != nil {
@@ -82,7 +91,7 @@ func (u *Product) Create(ctx context.Context, tx *sql.Tx) error {
 
 	defer stmt.Close()
 
-	res, err := stmt.ExecContext(ctx, userLogin.Company.ID, u.Code, u.Name, u.SalePrice)
+	res, err := stmt.ExecContext(ctx, userLogin.Company.ID, u.Brand.ID, u.ProductCategory.ID, u.Code, u.Name, u.SalePrice)
 	if err != nil {
 		return err
 	}
@@ -105,6 +114,8 @@ func (u *Product) Update(ctx context.Context, tx *sql.Tx) error {
 		UPDATE products 
 		SET name = ?,
 			sale_price = ?,
+			brand_id = ?,
+			product_category_id = ?,
 			updated = NOW()
 		WHERE id = ?
 		AND company_id = ?
@@ -115,7 +126,7 @@ func (u *Product) Update(ctx context.Context, tx *sql.Tx) error {
 
 	defer stmt.Close()
 
-	_, err = stmt.ExecContext(ctx, u.Name, u.SalePrice, u.ID, ctx.Value(api.Ctx("auth")).(User).Company.ID)
+	_, err = stmt.ExecContext(ctx, u.Name, u.SalePrice, u.Brand.ID, u.ProductCategory.ID, u.ID, ctx.Value(api.Ctx("auth")).(User).Company.ID)
 	return err
 }
 
@@ -142,6 +153,11 @@ func (u *Product) getArgs() []interface{} {
 	args = append(args, &u.Company.Code)
 	args = append(args, &u.Company.Name)
 	args = append(args, &u.Company.Address)
+	args = append(args, &u.Brand.ID)
+	args = append(args, &u.Brand.Code)
+	args = append(args, &u.Brand.Name)
+	args = append(args, &u.ProductCategory.ID)
+	args = append(args, &u.ProductCategory.Name)
 
 	return args
 }

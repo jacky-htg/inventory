@@ -564,7 +564,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\t\t\"code\": \"PROD-2\",\n\t\t\t\"name\": \"Tes 2\",\n\t\t\t\"price\": 1000,\n\t\t\t\"minimum_stock\" : 100\n\t\t}"
+									"raw": "{\n    \"code\": \"PROD-100\",\n    \"name\": \"Tes 2\",\n    \"price\": 1000,\n    \"brand\": \"1\",\n    \"product_category\": \"1\"\n}"
 								},
 								"url": {
 									"raw": "{{url}}/products",
@@ -652,7 +652,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"id\": 1,\n\t\"name\": \"Test\",\n\t\"price\": 2,\n\t\"minimum_stock\": 50\n}"
+									"raw": "{\n\t\"id\": 1,\n\t\"name\": \"Test\",\n\t\"price\": 2,\n\t\"brand\": \"1\",\n\t\"product_category\": \"1\"\n}"
 								},
 								"url": {
 									"raw": "{{url}}/products/1",
