@@ -564,7 +564,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\t\t\"code\": \"PROD-1\",\n\t\t\t\"name\": \"Tes\",\n\t\t\t\"price\": 1\n\t\t}"
+									"raw": "{\n\t\t\t\"code\": \"PROD-2\",\n\t\t\t\"name\": \"Tes 2\",\n\t\t\t\"price\": 1000,\n\t\t\t\"minimum_stock\" : 100\n\t\t}"
 								},
 								"url": {
 									"raw": "{{url}}/products",
@@ -652,7 +652,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"id\": 1,\n\t\"name\": \"Test\",\n\t\"price\": 2\n}"
+									"raw": "{\n\t\"id\": 1,\n\t\"name\": \"Test\",\n\t\"price\": 2,\n\t\"minimum_stock\": 50\n}"
 								},
 								"url": {
 									"raw": "{{url}}/products/1",
@@ -1224,6 +1224,162 @@
 									"raw": ""
 								},
 								"description": "delete branch by id"
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Brands",
+					"item": [
+						{
+							"name": "brands",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/brands",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"brands"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "brands",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"code\": \"BRAND-1\",\n    \"name\": \"Tes\"\n}"
+								},
+								"url": {
+									"raw": "{{url}}/brands",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"brands"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "brands/:id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/brands/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"brands",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "brands/:id",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": 1,\n    \"name\": \"Test\"\n}"
+								},
+								"url": {
+									"raw": "{{url}}/brands/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"brands",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "brands/:id",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/brands/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"brands",
+										"1"
+									]
+								}
 							},
 							"response": []
 						}

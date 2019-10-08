@@ -449,6 +449,22 @@ CREATE TABLE good_receiving_details (
 	CONSTRAINT fk_good_receiving_details_to_products FOREIGN KEY (product_id) REFERENCES products(id)
 );`,
 	},
+	{
+		Version:     25,
+		Description: "Add Brands",
+		Script: `
+CREATE TABLE brands (
+	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	company_id	INT(10) UNSIGNED NOT NULL,
+	code CHAR(10) NOT NULL,
+	name VARCHAR(45) NOT NULL,
+	created TIMESTAMP NOT NULL DEFAULT NOW(),
+	updated TIMESTAMP NOT NULL DEFAULT NOW(),
+	PRIMARY KEY (id),
+	KEY brands_company_id (company_id),
+	CONSTRAINT fk_brands_to_companies FOREIGN KEY (company_id) REFERENCES companies(id)
+);`,
+	},
 }
 
 // Migrate attempts to bring the schema for db up to date with the migrations
