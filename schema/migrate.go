@@ -465,6 +465,34 @@ CREATE TABLE brands (
 	CONSTRAINT fk_brands_to_companies FOREIGN KEY (company_id) REFERENCES companies(id)
 );`,
 	},
+	{
+		Version:     26,
+		Description: "Add Categories",
+		Script: `
+CREATE TABLE categories (
+	id   MEDIUMINT(8) UNSIGNED NOT NULL AUTO_INCREMENT,
+	name VARCHAR(45) NOT NULL,
+	PRIMARY KEY (id)
+);`,
+	},
+	{
+		Version:     27,
+		Description: "Add Product Categories",
+		Script: `
+CREATE TABLE product_categories (
+	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	company_id	INT(10) UNSIGNED NOT NULL,
+	category_id MEDIUMINT(8) UNSIGNED NOT NULL,
+	name VARCHAR(45) NOT NULL,
+	created TIMESTAMP NOT NULL DEFAULT NOW(),
+	updated TIMESTAMP NOT NULL DEFAULT NOW(),
+	PRIMARY KEY (id),
+	KEY product_categories_company_id (company_id),
+	KEY product_categories_category_id (category_id),
+	CONSTRAINT fk_product_categories_to_companies FOREIGN KEY (company_id) REFERENCES companies(id),
+	CONSTRAINT fk_product_categories_to_categories FOREIGN KEY (category_id) REFERENCES categories(id)
+);`,
+	},
 }
 
 // Migrate attempts to bring the schema for db up to date with the migrations

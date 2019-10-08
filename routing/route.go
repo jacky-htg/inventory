@@ -142,5 +142,15 @@ func API(db *sql.DB, log *log.Logger) http.Handler {
 		app.Handle(http.MethodDelete, "/brands/:id", brands.Delete)
 	}
 
+	// ProductCategories Routing
+	{
+		productCategories := controllers.ProductCategories{Db: db, Log: log}
+		app.Handle(http.MethodGet, "/product_categories", productCategories.List)
+		app.Handle(http.MethodPost, "/product_categories", productCategories.Create)
+		app.Handle(http.MethodGet, "/product_categories/:id", productCategories.View)
+		app.Handle(http.MethodPut, "/product_categories/:id", productCategories.Update)
+		app.Handle(http.MethodDelete, "/product_categories/:id", productCategories.Delete)
+	}
+
 	return app
 }

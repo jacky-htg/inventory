@@ -1385,6 +1385,162 @@
 						}
 					],
 					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Product Categories",
+					"item": [
+						{
+							"name": "product_categories",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/product_categories",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"product_categories"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "product_categories",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Lemari\",\n    \"category\": 1\n}"
+								},
+								"url": {
+									"raw": "{{url}}/product_categories",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"product_categories"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "product_categories/:id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/product_categories/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"product_categories",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "product_categories/:id",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": 1,\n    \"name\": \"Bed\"\n}"
+								},
+								"url": {
+									"raw": "{{url}}/product_categories/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"product_categories",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "product_categories/:id",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/product_categories/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"product_categories",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
 				}
 			]
 		},

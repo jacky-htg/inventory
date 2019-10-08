@@ -43,6 +43,10 @@ const seedCompanies string = `
 INSERT INTO companies (id, code, name) VALUES (1, "DM", "Dummy");
 `
 
+const seedCategories string = `
+INSERT INTO categories (id, name) VALUES (1, "Accesories");
+`
+
 // Seed runs the set of seed-data queries against db. The queries are ran in a
 // transaction and rolled back if any fail.
 func Seed(db *sql.DB) error {
@@ -53,6 +57,7 @@ func Seed(db *sql.DB) error {
 		seedRoles,
 		seedAccessRoles,
 		seedRolesUsers,
+		seedCategories,
 	}
 
 	tx, err := db.Begin()
