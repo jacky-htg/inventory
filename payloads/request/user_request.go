@@ -68,8 +68,14 @@ func (u *UserRequest) Transform(user *models.User) *models.User {
 			user.Roles = u.Roles
 		}
 
-		user.Region.ID = u.RegionID
-		user.Branch.ID = u.BranchID
+		if u.RegionID > 0 {
+			user.Region.ID = u.RegionID
+		}
+
+		if u.BranchID > 0 {
+			user.Branch.ID = u.BranchID
+		}
+
 		user.IsActive = u.IsActive
 	}
 	return user
