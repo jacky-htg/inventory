@@ -9,7 +9,7 @@ import (
 // NewPurchaseReturnRequest : format json request for new purchase return
 type NewPurchaseReturnRequest struct {
 	Date                  string                           `json:"date" validate:"required"`
-	AdditionalDisc        float64                          `json:"additional_disc" validate:"required"`
+	AdditionalDisc        float64                          `json:"additional_disc"`
 	PurchaseReturnDetails []NewPurchaseReturnDetailRequest `json:"purchase_return_details" validate:"required"`
 	PurchaseID            uint64                           `json:"purchase" validate:"required"`
 }
@@ -22,6 +22,10 @@ func (u *NewPurchaseReturnRequest) Transform() *models.PurchaseReturn {
 	p.AdditionalDisc = u.AdditionalDisc
 
 	for _, pd := range u.PurchaseReturnDetails {
+		if pd.Qty < 1 {
+			pd.Qty = 1
+		}
+
 		p.PurchaseReturnDetails = append(p.PurchaseReturnDetails, pd.Transform())
 	}
 
@@ -32,6 +36,7 @@ func (u *NewPurchaseReturnRequest) Transform() *models.PurchaseReturn {
 type NewPurchaseReturnDetailRequest struct {
 	Price     float64 `json:"price"`
 	Disc      float64 `json:"disc"`
+	Qty       uint    `json:"qty" validate:"required"`
 	ProductID uint64  `json:"product"`
 }
 
@@ -40,6 +45,7 @@ func (u *NewPurchaseReturnDetailRequest) Transform() models.PurchaseReturnDetail
 	var pd models.PurchaseReturnDetail
 	pd.Price = u.Price
 	pd.Disc = u.Disc
+	pd.Qty = u.Qty
 	pd.Product.ID = u.ProductID
 
 	return pd
@@ -63,6 +69,10 @@ func (u *PurchaseReturnRequest) Transform(p *models.PurchaseReturn) *models.Purc
 
 		var details []models.PurchaseReturnDetail
 		for _, pd := range u.PurchaseReturnDetails {
+			if pd.Qty < 1 {
+				pd.Qty = 1
+			}
+
 			details = append(details, pd.Transform())
 		}
 
@@ -77,6 +87,7 @@ type PurchaseReturnDetailRequest struct {
 	ID        uint64  `json:"id"`
 	Price     float64 `json:"price"`
 	Disc      float64 `json:"disc"`
+	Qty       uint    `json:"qty"`
 	ProductID uint64  `json:"product"`
 }
 
@@ -86,6 +97,7 @@ func (u *PurchaseReturnDetailRequest) Transform() models.PurchaseReturnDetail {
 	pd.ID = u.ID
 	pd.Price = u.Price
 	pd.Disc = u.Disc
+	pd.Qty = u.Qty
 	pd.Product.ID = u.ProductID
 
 	return pd

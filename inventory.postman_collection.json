@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "bb8afe80-23bb-4830-aab3-90af9461b5b6",
+		"_postman_id": "53d24725-3a25-4292-8a51-33c70723b213",
 		"name": "inventory",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -85,7 +85,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\t\t\"username\": \"peterpan\",\n\t\t\t\"email\": \"peterpan@gmail.com\", \n\t\t\t\"password\": \"1234\", \n\t\t\t\"re_password\": \"1234\", \n\t\t\t\"is_active\": true\n\t\t}"
+									"raw": "{\n\t\t\t\"username\": \"peterpan\",\n\t\t\t\"email\": \"peterpan@gmail.com\", \n\t\t\t\"password\": \"1234\", \n\t\t\t\"re_password\": \"1234\", \n\t\t\t\"is_active\": true,\n\t\t\t\"branch\" : 1,\n\t\t\t\"roles\": [\n\t\t\t\t{\n\t\t\t\t\t\"id\": 1\n\t\t\t\t}\n\t\t\t]\n\t\t}"
 								},
 								"url": {
 									"raw": "{{url}}/users",
@@ -118,7 +118,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"id\": 2,\n\t\"username\": \"gatholoco\",\n\t\"email\": \"gatholoco@gmail.com\", \n\t\"password\": \"1234\", \n\t\"re_password\": \"1234\", \n\t\"is_active\": true\n}"
+									"raw": "{\n    \"id\": 2,\n    \"username\": \"gatholoco\",\n    \"email\": \"gatholoco@gmail.com\",\n    \"password\": \"1234\",\n    \"re_password\": \"1234\",\n    \"is_active\": true,\n    \"roles\": [\n        {\n            \"id\": 1\n        }\n    ]\n}"
 								},
 								"url": {
 									"raw": "{{url}}/users/2",
@@ -1095,7 +1095,7 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{url}}/branches",
+									"raw": "{{url}}/branches?=",
 									"host": [
 										"{{url}}"
 									],
@@ -1284,7 +1284,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"date\": \"2019-09-29\",\n\t\"supplier\": 1,\n\t\"additional_disc\": 0,\n\t\"purchase_details\":[\n\t\t{\n\t\t\t\"price\": 900,\n\t\t\t\"disc\": 100,\n\t\t\t\"product\": 1\n\t\t},\n\t\t{\n\t\t\t\"price\": 500,\n\t\t\t\"disc\": 0,\n\t\t\t\"product\": 2\n\t\t}\n\t]\n}"
+									"raw": "{\n\t\"date\": \"2019-09-29\",\n\t\"supplier\": 1,\n\t\"additional_disc\": 0,\n\t\"purchase_details\":[\n\t\t{\n\t\t\t\"price\": 900,\n\t\t\t\"disc\": 100,\n\t\t\t\"product\": 1,\n\t\t\t\"qty\": 1\n\t\t},\n\t\t{\n\t\t\t\"price\": 500,\n\t\t\t\"disc\": 0,\n\t\t\t\"product\": 2,\n\t\t\t\"qty\": 2\n\t\t}\n\t]\n}"
 								},
 								"url": {
 									"raw": "{{url}}/purchases",
@@ -1345,7 +1345,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"date\": \"2019-09-29\",\n\t\"supplier\": 1,\n\t\"additional_disc\": 0,\n\t\"purchase_details\":[\n\t\t{\n\t\t\t\"id\": 1,\n\t\t\t\"price\": 900,\n\t\t\t\"disc\": 100,\n\t\t\t\"product\": 1\n\t\t},\n\t\t{\n\t\t\t\"price\": 500,\n\t\t\t\"disc\": 0,\n\t\t\t\"product\": 2\n\t\t}\n\t]\n}"
+									"raw": "{\n\t\"id\": 1,\n\t\"date\": \"2019-09-29\",\n\t\"supplier\": 1,\n\t\"additional_disc\": 0,\n\t\"purchase_details\":[\n\t\t{\n\t\t\t\"id\": 1,\n\t\t\t\"price\": 900,\n\t\t\t\"disc\": 100,\n\t\t\t\"product\": 1\n\t\t},\n\t\t{\n\t\t\t\"price\": 500,\n\t\t\t\"disc\": 0,\n\t\t\t\"product\": 2,\n\t\t\t\"qty\": 4\n\t\t}\n\t]\n}"
 								},
 								"url": {
 									"raw": "{{url}}/purchases/1",
@@ -1412,7 +1412,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"date\": \"2019-09-29\",\n    \"addition_disc\": 0,\n    \"purchase\": 1,\n    \"purchase_return_details\": [\n        {\n            \"price\": 900,\n            \"disc\": 100,\n            \"product\": 1\n        },\n        {\n            \"price\": 500,\n            \"disc\": 0,\n            \"product\": 2\n        }\n    ]\n}"
+									"raw": "{\n    \"date\": \"2019-09-29\",\n    \"additional_disc\": 0,\n    \"purchase\": 1,\n    \"purchase_return_details\": [\n        {\n            \"price\": 900,\n            \"disc\": 100,\n            \"product\": 1\n        },\n        {\n            \"price\": 500,\n            \"disc\": 0,\n            \"product\": 2\n        }\n    ]\n}"
 								},
 								"url": {
 									"raw": "{{url}}/purchase_returns",

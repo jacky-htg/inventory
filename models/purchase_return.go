@@ -35,6 +35,7 @@ type PurchaseReturnDetail struct {
 	Product Product
 	Price   float64
 	Disc    float64
+	Qty     uint
 }
 
 // List purchase returns
@@ -163,6 +164,7 @@ func (u *PurchaseReturn) Get(ctx context.Context, tx *sql.Tx) error {
 		JSON_ARRAYAGG(purchase_return_details.id),
 		JSON_ARRAYAGG(purchase_return_details.price),
 		JSON_ARRAYAGG(purchase_return_details.disc),
+		JSON_ARRAYAGG(purchase_return_details.qty),
 		JSON_ARRAYAGG(products.id),
 		JSON_ARRAYAGG(products.code),
 		JSON_ARRAYAGG(products.name),
@@ -199,7 +201,7 @@ func (u *PurchaseReturn) Get(ctx context.Context, tx *sql.Tx) error {
 		params = append(params, userLogin.Branch.ID)
 	}
 
-	var detailID, detailPrice, detailDisc, productID, productCode, productName, productPrice string
+	var detailID, detailPrice, detailDisc, detailQty, productID, productCode, productName, productPrice string
 	err := tx.QueryRowContext(ctx, query+" GROUP BY purchase_returns.id", params...).Scan(
 		&u.ID,
 		&u.Code,
@@ -222,6 +224,7 @@ func (u *PurchaseReturn) Get(ctx context.Context, tx *sql.Tx) error {
 		&detailID,
 		&detailPrice,
 		&detailDisc,
+		&detailQty,
 		&productID,
 		&productCode,
 		&productName,
@@ -250,6 +253,12 @@ func (u *PurchaseReturn) Get(ctx context.Context, tx *sql.Tx) error {
 
 		var detailDiscs []float64
 		err = json.Unmarshal([]byte(detailDisc), &detailDiscs)
+		if err != nil {
+			return err
+		}
+
+		var detailQtys []uint
+		err = json.Unmarshal([]byte(detailQty), &detailQtys)
 		if err != nil {
 			return err
 		}
@@ -283,6 +292,7 @@ func (u *PurchaseReturn) Get(ctx context.Context, tx *sql.Tx) error {
 				ID:    uint64(v),
 				Price: detailPrices[i],
 				Disc:  detailDiscs[i],
+				Qty:   detailQtys[i],
 				Product: Product{
 					ID:        productIDs[i],
 					Code:      productCodes[i],
@@ -344,10 +354,11 @@ func (u *PurchaseReturn) Create(ctx context.Context, tx *sql.Tx) error {
 		// VALIDATE that detail is open
 		// 1. Detail belum pernah direturn
 		// 2. Detail belum pernah direceiving
-		detailID, err := u.storeDetail(ctx, tx, d)
+		detailID, err := u.storeDetail(ctx, tx, d, u.Purchase.ID)
 		if err != nil {
 			return err
 		}
+
 		u.PurchaseReturnDetails[i].ID = detailID
 		u.Price += d.Price
 		u.Disc += d.Disc
@@ -394,12 +405,8 @@ func (u *PurchaseReturn) Update(ctx context.Context, tx *sql.Tx) error {
 	}
 
 	for i, d := range u.PurchaseReturnDetails {
-		// TODO :
-		// VALIDATE that detail is open
-		// 1. Detail belum pernah direturn
-		// 2. Detail belum pernah direceiving
 		if d.ID <= 0 {
-			detailID, err := u.storeDetail(ctx, tx, d)
+			detailID, err := u.storeDetail(ctx, tx, d, u.Purchase.ID)
 			if err != nil {
 				return err
 			}
@@ -463,7 +470,7 @@ func (u *PurchaseReturn) getCode(ctx context.Context, tx *sql.Tx) (string, error
 	query := `SELECT code FROM purchase_returns WHERE company_id = ? AND code LIKE ? ORDER BY code DESC LIMIT 1`
 	err := tx.QueryRowContext(ctx, query, ctx.Value(api.Ctx("auth")).(User).Company.ID, prefix+"%").Scan(&code)
 
-	if err != nil {
+	if err != nil && err != sql.ErrNoRows {
 		return code, err
 	}
 
@@ -478,11 +485,37 @@ func (u *PurchaseReturn) getCode(ctx context.Context, tx *sql.Tx) (string, error
 	return prefix + fmt.Sprintf("%05d", codeInt+1), nil
 }
 
-func (u *PurchaseReturn) storeDetail(ctx context.Context, tx *sql.Tx, d PurchaseReturnDetail) (uint64, error) {
+func (u *PurchaseReturn) storeDetail(ctx context.Context, tx *sql.Tx, d PurchaseReturnDetail, purchaseID uint64) (uint64, error) {
 	var id uint64
+
+	// check :
+	// 1. valid detail purchase return is only product in purchase detail list.
+	// 2. Max qty of product detail purchase return = qty product detail purchase - qty existing return
+	// 3. Jika modul receiving sudah selesai, tambahkan validasi max qty = qty purchase - qty return - qty receiving
+	var qty uint
+	userLogin := ctx.Value(api.Ctx("auth")).(User)
+	err := tx.QueryRowContext(ctx, `
+		SELECT (MAX(purchase_details.qty) - IFNULL(SUM(purchase_return_details.qty), 0)) as qty
+		FROM purchase_details 
+		JOIN purchases ON purchase_details.purchase_id = purchases.id
+		LEFT JOIN purchase_returns ON purchases.id = purchase_returns.purchase_id
+		LEFT JOIN purchase_return_details ON purchase_returns.id = purchase_return_details.purchase_return_id AND purchase_details.product_id = purchase_return_details.product_id
+		WHERE purchase_details.purchase_id=? AND purchase_details.product_id=?
+		AND purchases.company_id=? AND purchases.branch_id=?
+		GROUP BY purchase_details.product_id
+	`, purchaseID, d.Product.ID, userLogin.Company.ID, userLogin.Branch.ID).Scan(&qty)
+
+	if err != nil {
+		return id, err
+	}
+
+	if d.Qty > qty {
+		return id, api.ErrBadRequest(errors.New("Invalid quantity"), "")
+	}
+
 	const queryDetail = `
-		INSERT INTO purchase_return_details (purchase_return_id, product_id, price, disc)
-		VALUES (?, ?, ?, ?)
+		INSERT INTO purchase_return_details (purchase_return_id, product_id, price, disc, qty)
+		VALUES (?, ?, ?, ?, ?)
 	`
 	stmt, err := tx.PrepareContext(ctx, queryDetail)
 	if err != nil {
@@ -491,7 +524,7 @@ func (u *PurchaseReturn) storeDetail(ctx context.Context, tx *sql.Tx, d Purchase
 
 	defer stmt.Close()
 
-	res, err := stmt.ExecContext(ctx, u.ID, d.Product.ID, d.Price, d.Disc)
+	res, err := stmt.ExecContext(ctx, u.ID, d.Product.ID, d.Price, d.Disc, d.Qty)
 	if err != nil {
 		return id, err
 	}
@@ -509,7 +542,8 @@ func (u *PurchaseReturn) updateDetail(ctx context.Context, tx *sql.Tx, d Purchas
 		UPDATE purchase_return_details 
 		SET product_id = ?, 
 			price = ?,
-			disc = ?
+			disc = ?,
+			qty = ?
 		WHERE id = ?
 		AND purchase_return_id = ?
 	`
@@ -520,7 +554,7 @@ func (u *PurchaseReturn) updateDetail(ctx context.Context, tx *sql.Tx, d Purchas
 
 	defer stmt.Close()
 
-	_, err = stmt.ExecContext(ctx, d.Product.ID, d.Price, d.Disc, d.ID, u.ID)
+	_, err = stmt.ExecContext(ctx, d.Product.ID, d.Price, d.Disc, d.Qty, d.ID, u.ID)
 	return err
 }
 
