@@ -9,7 +9,7 @@ import (
 // NewPurchaseRequest : format json request for new purchase
 type NewPurchaseRequest struct {
 	Date            string                     `json:"date" validate:"required"`
-	AdditionalDisc  float64                    `json:"additional_disc" validate:"required"`
+	AdditionalDisc  float64                    `json:"additional_disc"`
 	PurchaseDetails []NewPurchaseDetailRequest `json:"purchase_details" validate:"required"`
 	SupplierID      uint64                     `json:"supplier" validate:"required"`
 }
@@ -22,6 +22,10 @@ func (u *NewPurchaseRequest) Transform() *models.Purchase {
 	p.AdditionalDisc = u.AdditionalDisc
 
 	for _, pd := range u.PurchaseDetails {
+		if pd.Qty < 1 {
+			pd.Qty = 1
+		}
+
 		p.PurchaseDetails = append(p.PurchaseDetails, pd.Transform())
 	}
 
@@ -30,10 +34,10 @@ func (u *NewPurchaseRequest) Transform() *models.Purchase {
 
 // NewPurchaseDetailRequest : format json request for purchase detail
 type NewPurchaseDetailRequest struct {
-	Price     float64 `json:"price"`
+	Price     float64 `json:"price" validate:"required"`
 	Disc      float64 `json:"disc"`
-	Qty       uint    `json:"qty"`
-	ProductID uint64  `json:"product"`
+	Qty       uint    `json:"qty" validate:"required"`
+	ProductID uint64  `json:"product" validate:"required"`
 }
 
 // Transform NewPurchaseDetailRequest to PurchaseDetail
@@ -65,6 +69,10 @@ func (u *PurchaseRequest) Transform(p *models.Purchase) *models.Purchase {
 
 		var details []models.PurchaseDetail
 		for _, pd := range u.PurchaseDetails {
+			if pd.Qty < 1 {
+				pd.Qty = 1
+			}
+
 			details = append(details, pd.Transform())
 		}
 
