@@ -11,52 +11,52 @@ Is an open source Inventory API
 This application is under development. You can follow the progress of project in [inventory project](https://github.com/jacky-htg/inventory/projects/1). You also can view of [milestones](https://github.com/jacky-htg/inventory/milestones). This application only provides Inventory API, if you need the frontend application in desktop/web based/mobile android/mobile ios you can contact me by email : rijal.asep.nugroho@gmail.com
 
 ## Features
-- Multi companies
-- Setting : The company can use the whole of features, or cherry pick part of features.
-- Company registration and verifications 
-- Multi regions. One region can be assigned to many branches.
-- Multi branches/shops/warehouses
-- Multi users, multi roles and multi access
-- Role Base Access Control (RBAC)
-- One user can be assigned multi roles
-- One role can be assigned multi access  
-- Master products
-- Master product categories
-- Master brands (brand of products)
-- Master customers
-- Master suppliers
-- Master salesman
-- Transaction of purchase
-- Transaction of purchase return
-- Transaction of good receiving
-- Transaction of good receiving return
-- Transaction of sales order
-- Transaction of sales order return
-- Transaction of delivery order
-- Transaction of delivery order return
-- Transaction of internal warehouse mutations
-- Transaction of external warehouse mutations
-- Transaction of stock opname
-- Transaction of closing stocks
-- Auto suggestions for purchasing order when the product stock is less than the minimum stock
-- Report of users
-- Report of products
-- Report of customers
-- Report of suppliers
-- Report of salesman
-- Report of stock
-- Report of product history (the history of product from receiving in warehouse until delivery to customer)
-- Report of purchase
-- Report of purchase return
-- Report of good receiving
-- Report of good receiving return
-- Report of sales order
-- Report of sales order return
-- Report of delivery order
-- Report of delivery order return
-- Report of internal warehouse mutations
-- Report of external warehouse mutations
-- Report of stock opname
+- [x] Multi companies
+- [ ] Setting : The company can use the whole of features, or cherry pick part of features.
+- [ ] Company registration and verifications 
+- [x] Multi regions. One region can be assigned to many branches.
+- [x] Multi branches/shops/warehouses
+- [x] Multi users, multi roles and multi access
+- [x] Role Base Access Control (RBAC)
+- [x] One user can be assigned multi roles
+- [x] One role can be assigned multi access  
+- [x] Master products
+- [x] Master product categories
+- [x] Master brands (brand of products)
+- [x] Master customers
+- [ ] Master suppliers
+- [ ] Master salesman
+- [x] Transaction of purchase
+- [x] Transaction of purchase return
+- [ ] Transaction of good receiving
+- [ ] Transaction of good receiving return
+- [ ] Transaction of sales order
+- [ ] Transaction of sales order return
+- [ ] Transaction of delivery order
+- [ ] Transaction of delivery order return
+- [ ] Transaction of internal warehouse mutations
+- [ ] Transaction of external warehouse mutations
+- [ ] Transaction of stock opname
+- [x] Transaction of closing stocks
+- [ ] Auto suggestions for purchasing order when the product stock is less than the minimum stock
+- [ ] Report of users
+- [ ] Report of products
+- [ ] Report of customers
+- [ ] Report of suppliers
+- [ ] Report of salesman
+- [ ] Report of stock
+- [ ] Report of product history (the history of product from receiving in warehouse until delivery to customer)
+- [ ] Report of purchase
+- [ ] Report of purchase return
+- [ ] Report of good receiving
+- [ ] Report of good receiving return
+- [ ] Report of sales order
+- [ ] Report of sales order return
+- [ ] Report of delivery order
+- [ ] Report of delivery order return
+- [ ] Report of internal warehouse mutations
+- [ ] Report of external warehouse mutations
+- [ ] Report of stock opname
 
 ## Get Started
 - git clone git@github.com:jacky-htg/inventory.git
