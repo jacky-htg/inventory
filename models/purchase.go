@@ -418,6 +418,7 @@ func (u *Purchase) Update(ctx context.Context, tx *sql.Tx) error {
 
 		u.Price += d.Price
 		u.Disc += d.Disc
+		u.PurchaseDetails[i].Product.Get(ctx, tx)
 	}
 
 	u.Total = u.Price - u.Disc - u.AdditionalDisc
@@ -465,7 +466,7 @@ func (u *Purchase) getCode(ctx context.Context, tx *sql.Tx) (string, error) {
 	query := `SELECT code FROM purchases WHERE company_id = ? AND code LIKE ? ORDER BY code DESC LIMIT 1`
 	err := tx.QueryRowContext(ctx, query, ctx.Value(api.Ctx("auth")).(User).Company.ID, prefix+"%").Scan(&code)
 
-	if err != nil {
+	if err != nil && err != sql.ErrNoRows {
 		return code, err
 	}
 
