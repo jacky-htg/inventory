@@ -11,6 +11,7 @@ type NewProductRequest struct {
 	Code              string  `json:"code" validate:"required"`
 	Name              string  `json:"name" validate:"required"`
 	SalePrice         float64 `json:"price" validate:"required"`
+	MinimumStock      string  `json:"minimum_stock" validate:"required"`
 	BrandID           string  `json:"brand" validate:"required"`
 	ProductCategoryID string  `json:"product_category" validate:"required"`
 }
@@ -21,6 +22,9 @@ func (u *NewProductRequest) Transform() *models.Product {
 	product.Code = u.Code
 	product.Name = u.Name
 	product.SalePrice = u.SalePrice
+
+	minStock, _ := strconv.Atoi(u.MinimumStock)
+	product.MinimumStock = uint(minStock)
 
 	brandID, _ := strconv.Atoi(u.BrandID)
 	product.Brand.ID = uint64(brandID)
@@ -37,6 +41,7 @@ type ProductRequest struct {
 	Code              string  `json:"code,omitempty"`
 	Name              string  `json:"name,omitempty"`
 	SalePrice         float64 `json:"price,omitempty"`
+	MinimumStock      string  `json:"minimum_stock,omitempty"`
 	BrandID           string  `json:"brand"`
 	ProductCategoryID string  `json:"product_category"`
 }
@@ -54,6 +59,11 @@ func (u *ProductRequest) Transform(product *models.Product) *models.Product {
 
 		if u.SalePrice > 0 {
 			product.SalePrice = u.SalePrice
+		}
+
+		if len(u.MinimumStock) > 0 {
+			minStock, _ := strconv.Atoi(u.MinimumStock)
+			product.MinimumStock = uint(minStock)
 		}
 
 		if len(u.BrandID) > 0 {

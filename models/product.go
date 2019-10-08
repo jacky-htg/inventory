@@ -15,6 +15,7 @@ type Product struct {
 	Name            string
 	PurchasePrice   float64
 	SalePrice       float64
+	MinimumStock    uint
 	Company         Company
 	Brand           Brand
 	ProductCategory ProductCategory
@@ -24,7 +25,8 @@ const qProducts = `
 SELECT 	products.id, 
 		products.code, 
 		products.name,
-		products.sale_price, 
+		products.sale_price,
+		products.minimum_stock, 
 		companies.id as company_id, 
 		companies.code as company_code, 
 		companies.name as company_name,
@@ -81,8 +83,8 @@ func (u *Product) Get(ctx context.Context, tx *sql.Tx) error {
 func (u *Product) Create(ctx context.Context, tx *sql.Tx) error {
 	userLogin := ctx.Value(api.Ctx("auth")).(User)
 	const query = `
-		INSERT INTO products (company_id, brand_id, product_category_id, code, name, sale_price, created)
-		VALUES (?, ?, ?, ?, ?, ?, NOW())
+		INSERT INTO products (company_id, brand_id, product_category_id, code, name, sale_price, minimum_stock, created)
+		VALUES (?, ?, ?, ?, ?, ?, ?, NOW())
 	`
 	stmt, err := tx.PrepareContext(ctx, query)
 	if err != nil {
@@ -91,7 +93,7 @@ func (u *Product) Create(ctx context.Context, tx *sql.Tx) error {
 
 	defer stmt.Close()
 
-	res, err := stmt.ExecContext(ctx, userLogin.Company.ID, u.Brand.ID, u.ProductCategory.ID, u.Code, u.Name, u.SalePrice)
+	res, err := stmt.ExecContext(ctx, userLogin.Company.ID, u.Brand.ID, u.ProductCategory.ID, u.Code, u.Name, u.SalePrice, u.MinimumStock)
 	if err != nil {
 		return err
 	}
@@ -116,6 +118,7 @@ func (u *Product) Update(ctx context.Context, tx *sql.Tx) error {
 			sale_price = ?,
 			brand_id = ?,
 			product_category_id = ?,
+			minimum_stock = ?,
 			updated = NOW()
 		WHERE id = ?
 		AND company_id = ?
@@ -126,7 +129,7 @@ func (u *Product) Update(ctx context.Context, tx *sql.Tx) error {
 
 	defer stmt.Close()
 
-	_, err = stmt.ExecContext(ctx, u.Name, u.SalePrice, u.Brand.ID, u.ProductCategory.ID, u.ID, ctx.Value(api.Ctx("auth")).(User).Company.ID)
+	_, err = stmt.ExecContext(ctx, u.Name, u.SalePrice, u.Brand.ID, u.ProductCategory.ID, u.MinimumStock, u.ID, ctx.Value(api.Ctx("auth")).(User).Company.ID)
 	return err
 }
 
@@ -149,6 +152,7 @@ func (u *Product) getArgs() []interface{} {
 	args = append(args, &u.Code)
 	args = append(args, &u.Name)
 	args = append(args, &u.SalePrice)
+	args = append(args, &u.MinimumStock)
 	args = append(args, &u.Company.ID)
 	args = append(args, &u.Company.Code)
 	args = append(args, &u.Company.Name)

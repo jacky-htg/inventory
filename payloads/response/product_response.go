@@ -10,6 +10,7 @@ type ProductResponse struct {
 	Code            string                  `json:"code"`
 	Name            string                  `json:"name"`
 	SalePrice       float64                 `json:"price"`
+	MinimumStock    uint                    `json:"minimum_stock"`
 	Company         CompanyResponse         `json:"company"`
 	Brand           BrandResponse           `json:"brand"`
 	ProductCategory ProductCategoryResponse `json:"product_category"`
@@ -21,6 +22,7 @@ func (u *ProductResponse) Transform(product *models.Product) {
 	u.Code = product.Code
 	u.Name = product.Name
 	u.SalePrice = product.SalePrice
+	u.MinimumStock = product.MinimumStock
 	u.Company.Transform(&product.Company)
 	u.Brand.Transform(&product.Brand)
 	u.ProductCategory.Transform(&product.ProductCategory)

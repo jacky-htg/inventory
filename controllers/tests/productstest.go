@@ -50,10 +50,11 @@ func (u *Products) List(t *testing.T) {
 		"status_message": string("OK"),
 		"data": []interface{}{
 			map[string]interface{}{
-				"id":    float64(1),
-				"code":  string("PROD-1"),
-				"name":  "Tes",
-				"price": float64(1),
+				"id":            float64(1),
+				"code":          string("PROD-1"),
+				"name":          "Tes",
+				"price":         float64(1),
+				"minimum_stock": float64(25),
 				"company": map[string]interface{}{
 					"id":      float64(1),
 					"code":    "DM",
@@ -86,6 +87,7 @@ func (u *Products) Create(t *testing.T) map[string]interface{} {
 			"code": "PROD-200",
 			"name": "Tes",
 			"price": 1,
+			"minimum_stock" : "25",
 			"brand": "1",
 			"product_category": "1"
 		}
@@ -117,10 +119,11 @@ func (u *Products) Create(t *testing.T) map[string]interface{} {
 		"status_code":    "REBEL-200",
 		"status_message": "OK",
 		"data": map[string]interface{}{
-			"id":    c["id"],
-			"code":  "PROD-200",
-			"name":  "Tes",
-			"price": float64(1),
+			"id":            c["id"],
+			"code":          "PROD-200",
+			"name":          "Tes",
+			"price":         float64(1),
+			"minimum_stock": float64(25),
 			"company": map[string]interface{}{
 				"id":      float64(1),
 				"code":    "DM",
@@ -168,10 +171,11 @@ func (u *Products) View(t *testing.T, id float64) {
 		"status_code":    "REBEL-200",
 		"status_message": "OK",
 		"data": map[string]interface{}{
-			"id":    id,
-			"code":  "PROD-200",
-			"name":  "Tes",
-			"price": float64(1),
+			"id":            id,
+			"code":          "PROD-200",
+			"name":          "Tes",
+			"price":         float64(1),
+			"minimum_stock": float64(25),
 			"company": map[string]interface{}{
 				"id":      float64(1),
 				"code":    "DM",
@@ -204,6 +208,7 @@ func (u *Products) Update(t *testing.T, id float64) {
 			"id": %s,
 			"name": "Test",
 			"price": 2,
+			"minimum_stock": "50",
 			"brand":"1",
 			"product_category": "1"
 		}
@@ -229,10 +234,11 @@ func (u *Products) Update(t *testing.T, id float64) {
 		"status_code":    "REBEL-200",
 		"status_message": "OK",
 		"data": map[string]interface{}{
-			"id":    id,
-			"code":  "PROD-200",
-			"name":  "Test",
-			"price": float64(2),
+			"id":            id,
+			"code":          "PROD-200",
+			"name":          "Test",
+			"price":         float64(2),
+			"minimum_stock": float64(50),
 			"company": map[string]interface{}{
 				"id":      float64(1),
 				"code":    "DM",
