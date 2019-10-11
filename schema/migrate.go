@@ -9,87 +9,6 @@ import (
 var migrations = []darwin.Migration{
 	{
 		Version:     1,
-		Description: "Add users",
-		Script: `
-CREATE TABLE users (
-	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-	username         CHAR(15) NOT NULL UNIQUE,
-	password         varchar(255) NOT NULL,
-	email     VARCHAR(255) NOT NULL UNIQUE,
-	is_active TINYINT(1) NOT NULL DEFAULT '0',
-	company_id  INT(10) UNSIGNED NOT NULL,
-	region_id INT(10) UNSIGNED,
-	branch_id INT(10) UNSIGNED,
-	created TIMESTAMP NOT NULL DEFAULT NOW(),
-	updated TIMESTAMP NOT NULL DEFAULT NOW(),
-	PRIMARY KEY (id),
-	KEY users_company_id (company_id),
-	KEY users_region_id (region_id),
-	KEY users_branch_id (branch_id)
-);`,
-	},
-	{
-		Version:     2,
-		Description: "Add access",
-		Script: `
-CREATE TABLE access (
-	id   INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-	parent_id         INT(10) UNSIGNED,
-	name         varchar(255) NOT NULL UNIQUE,
-	alias         varchar(255) NOT NULL UNIQUE,
-	created TIMESTAMP NOT NULL DEFAULT NOW(),
-	PRIMARY KEY (id)
-);`,
-	},
-	{
-		Version:     3,
-		Description: "Add roles",
-		Script: `
-CREATE TABLE roles (
-	id   INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-	name         varchar(255) NOT NULL UNIQUE,
-	company_id  INT(10) UNSIGNED NOT NULL,
-	created TIMESTAMP NOT NULL DEFAULT NOW(),
-	PRIMARY KEY (id),
-	KEY roles_company_id (company_id)
-);`,
-	},
-	{
-		Version:     4,
-		Description: "Add access_roles",
-		Script: `
-CREATE TABLE access_roles (
-	id   INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
-	access_id         INT(10) UNSIGNED NOT NULL,
-	role_id         INT(10) UNSIGNED NOT NULL,
-	created TIMESTAMP NOT NULL DEFAULT NOW(),
-	PRIMARY KEY (id),
-	UNIQUE KEY access_roles_unique (access_id, role_id),
-	KEY access_roles_access_id (access_id),
-	KEY access_roles_role_id (role_id),
-	CONSTRAINT fk_access_roles_to_access FOREIGN KEY (access_id) REFERENCES access(id) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT fk_access_roles_to_roles FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE ON UPDATE CASCADE
-);`,
-	},
-	{
-		Version:     5,
-		Description: "Add roles_users",
-		Script: `
-CREATE TABLE roles_users (
-	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-	role_id         INT(10) UNSIGNED NOT NULL,
-	user_id         BIGINT(20) UNSIGNED NOT NULL,
-	created TIMESTAMP NOT NULL DEFAULT NOW(),
-	PRIMARY KEY (id),
-	UNIQUE KEY roles_users_unique (role_id, user_id),
-	KEY roles_users_role_id (role_id),
-	KEY roles_users_user_id (user_id),
-	CONSTRAINT fk_roles_users_to_roles FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT fk_roles_users_to_users FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
-);`,
-	},
-	{
-		Version:     6,
 		Description: "Add companies",
 		Script: `
 CREATE TABLE companies (
@@ -103,7 +22,7 @@ CREATE TABLE companies (
 );`,
 	},
 	{
-		Version:     7,
+		Version:     2,
 		Description: "Add regions",
 		Script: `
 CREATE TABLE regions (
@@ -119,7 +38,7 @@ CREATE TABLE regions (
 );`,
 	},
 	{
-		Version:     8,
+		Version:     3,
 		Description: "Add branches",
 		Script: `
 CREATE TABLE branches (
@@ -137,7 +56,109 @@ CREATE TABLE branches (
 );`,
 	},
 	{
+		Version:     4,
+		Description: "Add Shelves",
+		Script: `
+CREATE TABLE shelves (
+	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	branch_id	INT(10) UNSIGNED NOT NULL,
+	code CHAR(10) NOT NULL,
+	capacity MEDIUMINT(8) UNSIGNED NOT NULL,
+	created TIMESTAMP NOT NULL DEFAULT NOW(),
+	updated TIMESTAMP NOT NULL DEFAULT NOW(),
+	PRIMARY KEY (id),
+	KEY shelves_branch_id (branch_id),
+	UNIQUE KEY shelves_code (branch_id, code),
+	CONSTRAINT fk_shelves_to_branches FOREIGN KEY (branch_id) REFERENCES branches(id)
+);`,
+	},
+	{
+		Version:     5,
+		Description: "Add users",
+		Script: `
+CREATE TABLE users (
+	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	username CHAR(15) NOT NULL UNIQUE,
+	password VARCHAR(255) NOT NULL,
+	email     VARCHAR(255) NOT NULL UNIQUE,
+	is_active TINYINT(1) NOT NULL DEFAULT '0',
+	company_id  INT(10) UNSIGNED NOT NULL,
+	region_id INT(10) UNSIGNED,
+	branch_id INT(10) UNSIGNED,
+	created TIMESTAMP NOT NULL DEFAULT NOW(),
+	updated TIMESTAMP NOT NULL DEFAULT NOW(),
+	PRIMARY KEY (id),
+	KEY users_company_id (company_id),
+	KEY users_region_id (region_id),
+	KEY users_branch_id (branch_id),
+	CONSTRAINT fk_users_to_regions FOREIGN KEY (region_id) REFERENCES regions(id),
+	CONSTRAINT fk_users_to_branches FOREIGN KEY (branch_id) REFERENCES branches(id),
+	CONSTRAINT fk_users_to_companies FOREIGN KEY (company_id) REFERENCES companies(id)
+);`,
+	},
+	{
+		Version:     6,
+		Description: "Add access",
+		Script: `
+CREATE TABLE access (
+	id   INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	parent_id         INT(10) UNSIGNED,
+	name         varchar(255) NOT NULL UNIQUE,
+	alias         varchar(255) NOT NULL UNIQUE,
+	created TIMESTAMP NOT NULL DEFAULT NOW(),
+	PRIMARY KEY (id)
+);`,
+	},
+	{
+		Version:     7,
+		Description: "Add roles",
+		Script: `
+CREATE TABLE roles (
+	id   INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	name         varchar(255) NOT NULL UNIQUE,
+	company_id  INT(10) UNSIGNED NOT NULL,
+	created TIMESTAMP NOT NULL DEFAULT NOW(),
+	PRIMARY KEY (id),
+	KEY roles_company_id (company_id),
+	CONSTRAINT fk_roles_to_companies FOREIGN KEY (company_id) REFERENCES companies(id)
+);`,
+	},
+	{
+		Version:     8,
+		Description: "Add access_roles",
+		Script: `
+CREATE TABLE access_roles (
+	id   INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+	access_id         INT(10) UNSIGNED NOT NULL,
+	role_id         INT(10) UNSIGNED NOT NULL,
+	created TIMESTAMP NOT NULL DEFAULT NOW(),
+	PRIMARY KEY (id),
+	UNIQUE KEY access_roles_unique (access_id, role_id),
+	KEY access_roles_access_id (access_id),
+	KEY access_roles_role_id (role_id),
+	CONSTRAINT fk_access_roles_to_access FOREIGN KEY (access_id) REFERENCES access(id) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT fk_access_roles_to_roles FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE ON UPDATE CASCADE
+);`,
+	},
+	{
 		Version:     9,
+		Description: "Add roles_users",
+		Script: `
+CREATE TABLE roles_users (
+	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	role_id         INT(10) UNSIGNED NOT NULL,
+	user_id         BIGINT(20) UNSIGNED NOT NULL,
+	created TIMESTAMP NOT NULL DEFAULT NOW(),
+	PRIMARY KEY (id),
+	UNIQUE KEY roles_users_unique (role_id, user_id),
+	KEY roles_users_role_id (role_id),
+	KEY roles_users_user_id (user_id),
+	CONSTRAINT fk_roles_users_to_roles FOREIGN KEY (role_id) REFERENCES roles(id) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT fk_roles_users_to_users FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE ON UPDATE CASCADE
+);`,
+	},
+	{
+		Version:     10,
 		Description: "Add branches_regions",
 		Script: `
 CREATE TABLE branches_regions (
@@ -155,60 +176,112 @@ CREATE TABLE branches_regions (
 );`,
 	},
 	{
-		Version:     10,
-		Description: "Create Relation of users table",
-		Script: `
-ALTER TABLE users
-	ADD CONSTRAINT fk_users_to_regions FOREIGN KEY (region_id) REFERENCES regions(id),
-	ADD CONSTRAINT fk_users_to_branches FOREIGN KEY (branch_id) REFERENCES branches(id),
-	ADD CONSTRAINT fk_users_to_companies FOREIGN KEY (company_id) REFERENCES companies(id)
-`,
-	},
-	{
 		Version:     11,
-		Description: "Create Relation of roles table",
-		Script: `
-ALTER TABLE roles 
-	ADD CONSTRAINT fk_roles_to_companies FOREIGN KEY (company_id) REFERENCES companies(id)
-`,
-	},
-	{
-		Version:     12,
-		Description: "Add Products",
-		Script: `
-CREATE TABLE products (
-	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-	company_id	INT(10) UNSIGNED NOT NULL,
-	code	CHAR(10) NOT NULL UNIQUE,
-	name	VARCHAR(255) NOT NULL,
-	purchase_price DOUBLE NOT NULL DEFAULT 0,
-	sale_price	DOUBLE NOT NULL,
-	created TIMESTAMP NOT NULL DEFAULT NOW(),
-	updated TIMESTAMP NOT NULL DEFAULT NOW(),
-	PRIMARY KEY (id),
-	KEY products_company_id (company_id),
-	CONSTRAINT fk_products_to_companies FOREIGN KEY (company_id) REFERENCES companies(id)
-);`,
-	},
-	{
-		Version:     13,
 		Description: "Add Suppliers",
 		Script: `
 CREATE TABLE suppliers (
 	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 	company_id	INT(10) UNSIGNED NOT NULL,
-	code	CHAR(10) NOT NULL UNIQUE,
+	code	CHAR(10) NOT NULL,
 	name	VARCHAR(255) NOT NULL,
 	address VARCHAR(255),
 	created TIMESTAMP NOT NULL DEFAULT NOW(),
 	updated TIMESTAMP NOT NULL DEFAULT NOW(),
 	PRIMARY KEY (id),
 	KEY suppliers_company_id (company_id),
+	UNIQUE KEY suppliers_code (company_id, code),
 	CONSTRAINT fk_suppliers_to_companies FOREIGN KEY (company_id) REFERENCES companies(id)
 );`,
 	},
 	{
+		Version:     12,
+		Description: "Add Customers",
+		Script: `
+CREATE TABLE customers (
+	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	company_id	INT(10) UNSIGNED NOT NULL,
+	name VARCHAR(100) NOT NULL,
+	email VARCHAR(100) NOT NULL UNIQUE,
+	address VARCHAR(255) NOT NULL,
+	hp CHAR(15) NOT NULL,
+	PRIMARY KEY (id),
+	KEY customers_company_id (company_id),
+	CONSTRAINT fk_customers_to_companies FOREIGN KEY (company_id) REFERENCES companies(id)
+);`,
+	},
+	{
+		Version:     13,
+		Description: "Add Brands",
+		Script: `
+CREATE TABLE brands (
+	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	company_id	INT(10) UNSIGNED NOT NULL,
+	code CHAR(10) NOT NULL,
+	name VARCHAR(45) NOT NULL,
+	created TIMESTAMP NOT NULL DEFAULT NOW(),
+	updated TIMESTAMP NOT NULL DEFAULT NOW(),
+	PRIMARY KEY (id),
+	UNIQUE KEY brands_code (company_id, code),
+	KEY brands_company_id (company_id),
+	CONSTRAINT fk_brands_to_companies FOREIGN KEY (company_id) REFERENCES companies(id)
+);`,
+	},
+	{
 		Version:     14,
+		Description: "Add Categories",
+		Script: `
+CREATE TABLE categories (
+	id   MEDIUMINT(8) UNSIGNED NOT NULL AUTO_INCREMENT,
+	name VARCHAR(45) NOT NULL,
+	PRIMARY KEY (id)
+);`,
+	},
+	{
+		Version:     15,
+		Description: "Add Product Categories",
+		Script: `
+CREATE TABLE product_categories (
+	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	company_id	INT(10) UNSIGNED NOT NULL,
+	category_id MEDIUMINT(8) UNSIGNED NOT NULL,
+	name VARCHAR(45) NOT NULL,
+	created TIMESTAMP NOT NULL DEFAULT NOW(),
+	updated TIMESTAMP NOT NULL DEFAULT NOW(),
+	PRIMARY KEY (id),
+	KEY product_categories_company_id (company_id),
+	KEY product_categories_category_id (category_id),
+	CONSTRAINT fk_product_categories_to_companies FOREIGN KEY (company_id) REFERENCES companies(id),
+	CONSTRAINT fk_product_categories_to_categories FOREIGN KEY (category_id) REFERENCES categories(id)
+);`,
+	},
+	{
+		Version:     16,
+		Description: "Add Products",
+		Script: `
+CREATE TABLE products (
+	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	company_id	INT(10) UNSIGNED NOT NULL,
+	brand_id BIGINT(20) UNSIGNED NOT NULL,
+	product_category_id BIGINT(20) UNSIGNED NOT NULL,
+	code	CHAR(10) NOT NULL,
+	name	VARCHAR(255) NOT NULL,
+	purchase_price DOUBLE NOT NULL DEFAULT 0,
+	sale_price	DOUBLE NOT NULL,
+	minimum_stock MEDIUMINT(8) UNSIGNED NOT NULL,
+	created TIMESTAMP NOT NULL DEFAULT NOW(),
+	updated TIMESTAMP NOT NULL DEFAULT NOW(),
+	PRIMARY KEY (id),
+	KEY products_company_id (company_id),
+	KEY products_brand_id (brand_id),
+	KEY products_product_category_id (product_category_id),
+	UNIQUE KEY products_code (company_id, code),
+	CONSTRAINT fk_products_to_companies FOREIGN KEY (company_id) REFERENCES companies(id),
+	CONSTRAINT fk_products_to_brands FOREIGN KEY (brand_id) REFERENCES brands(id),
+	CONSTRAINT fk_products_to_product_categories FOREIGN KEY (product_category_id) REFERENCES product_categories(id)
+);`,
+	},
+	{
+		Version:     17,
 		Description: "Add Purchases",
 		Script: `
 CREATE TABLE purchases (
@@ -216,7 +289,7 @@ CREATE TABLE purchases (
 	company_id	INT(10) UNSIGNED NOT NULL,
 	branch_id INT(10) UNSIGNED NOT NULL,
 	supplier_id BIGINT(20) UNSIGNED NOT NULL,
-	code	CHAR(13) NOT NULL UNIQUE,
+	code	CHAR(13) NOT NULL,
 	date	DATE NOT NULL,
 	disc DOUBLE NOT NULL DEFAULT 0,
 	created TIMESTAMP NOT NULL DEFAULT NOW(),
@@ -224,6 +297,7 @@ CREATE TABLE purchases (
 	created_by BIGINT(20) UNSIGNED NOT NULL,
 	updated_by BIGINT(20) UNSIGNED NOT NULL,
 	PRIMARY KEY (id),
+	UNIQUE KEY purchases_code (company_id, code),
 	KEY purchases_company_id (company_id),
 	KEY purchases_branch_id (branch_id),
 	KEY purchases_supplier_id (supplier_id),
@@ -237,7 +311,7 @@ CREATE TABLE purchases (
 );`,
 	},
 	{
-		Version:     15,
+		Version:     18,
 		Description: "Add Purchase Details",
 		Script: `
 CREATE TABLE purchase_details (
@@ -255,7 +329,7 @@ CREATE TABLE purchase_details (
 );`,
 	},
 	{
-		Version:     16,
+		Version:     19,
 		Description: "Add Purchase Returns",
 		Script: `
 CREATE TABLE purchase_returns (
@@ -263,7 +337,7 @@ CREATE TABLE purchase_returns (
 	company_id	INT(10) UNSIGNED NOT NULL,
 	branch_id INT(10) UNSIGNED NOT NULL,
 	purchase_id BIGINT(20) UNSIGNED NOT NULL,
-	code	CHAR(13) NOT NULL UNIQUE,
+	code	CHAR(13) NOT NULL,
 	date	DATE NOT NULL,
 	disc DOUBLE NOT NULL DEFAULT 0,
 	created TIMESTAMP NOT NULL DEFAULT NOW(),
@@ -271,6 +345,7 @@ CREATE TABLE purchase_returns (
 	created_by BIGINT(20) UNSIGNED NOT NULL,
 	updated_by BIGINT(20) UNSIGNED NOT NULL,
 	PRIMARY KEY (id),
+	UNIQUE KEY purchase_returns_code (company_id, code),
 	KEY purchase_returns_company_id (company_id),
 	KEY purchase_returns_branch_id (branch_id),
 	KEY purchase_returns_purchase_id (purchase_id),
@@ -284,7 +359,7 @@ CREATE TABLE purchase_returns (
 );`,
 	},
 	{
-		Version:     17,
+		Version:     20,
 		Description: "Add Purchase Return Details",
 		Script: `
 CREATE TABLE purchase_return_details (
@@ -302,7 +377,7 @@ CREATE TABLE purchase_return_details (
 );`,
 	},
 	{
-		Version:     18,
+		Version:     21,
 		Description: "Add Inventories",
 		Script: `
 CREATE TABLE inventories (
@@ -310,6 +385,7 @@ CREATE TABLE inventories (
 	company_id	INT(10) UNSIGNED NOT NULL,
 	product_id BIGINT(20) UNSIGNED NOT NULL,
 	transaction_id BIGINT(20) UNSIGNED NOT NULL,
+	code CHAR(20) NOT NULL,
 	transaction_date DATE NOT NULL,
 	type CHAR(2) NOT NULL,
 	in_out TINYINT(1)UNSIGNED NOT NULL,
@@ -324,7 +400,7 @@ CREATE TABLE inventories (
 );`,
 	},
 	{
-		Version:     19,
+		Version:     22,
 		Description: "Add saldo stocks",
 		Script: `
 CREATE TABLE saldo_stocks (
@@ -342,14 +418,14 @@ CREATE TABLE saldo_stocks (
 );`,
 	},
 	{
-		Version:     20,
+		Version:     23,
 		Description: "Set Global log_bin_trust_function_creators",
 		Script: `
 SET GLOBAL log_bin_trust_function_creators = 1;
 `,
 	},
 	{
-		Version:     21,
+		Version:     24,
 		Description: "Add Closing Stocks",
 		Script: `
 CREATE FUNCTION closing_stocks(companyID int, curMonth int, curYear int)
@@ -389,23 +465,7 @@ RETURN 1;
 END;`,
 	},
 	{
-		Version:     22,
-		Description: "Add Closing Stocks",
-		Script: `
-CREATE TABLE customers (
-	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-	company_id	INT(10) UNSIGNED NOT NULL,
-	name VARCHAR(100) NOT NULL,
-	email VARCHAR(100) NOT NULL UNIQUE,
-	address VARCHAR(255) NOT NULL,
-	hp CHAR(15) NOT NULL,
-	PRIMARY KEY (id),
-	KEY customers_company_id (company_id),
-	CONSTRAINT fk_customers_to_companies FOREIGN KEY (company_id) REFERENCES companies(id)
-);`,
-	},
-	{
-		Version:     23,
+		Version:     25,
 		Description: "Add Good Receiving",
 		Script: `
 CREATE TABLE good_receivings (
@@ -413,7 +473,7 @@ CREATE TABLE good_receivings (
 	company_id	INT(10) UNSIGNED NOT NULL,
 	branch_id INT(10) UNSIGNED NOT NULL,
 	purchase_id BIGINT(20) UNSIGNED NOT NULL,
-	code	CHAR(13) NOT NULL UNIQUE,
+	code	CHAR(13) NOT NULL,
 	date	DATE NOT NULL,
 	remark VARCHAR(255) NOT NULL,
 	created TIMESTAMP NOT NULL DEFAULT NOW(),
@@ -421,6 +481,7 @@ CREATE TABLE good_receivings (
 	created_by BIGINT(20) UNSIGNED NOT NULL,
 	updated_by BIGINT(20) UNSIGNED NOT NULL,
 	PRIMARY KEY (id),
+	UNIQUE KEY good_receivings_code (company_id, code),
 	KEY good_receivings_company_id (company_id),
 	KEY good_receivings_branch_id (branch_id),
 	KEY good_receivings_purchase_id (purchase_id),
@@ -434,7 +495,7 @@ CREATE TABLE good_receivings (
 );`,
 	},
 	{
-		Version:     24,
+		Version:     26,
 		Description: "Add Good Receiving Details",
 		Script: `
 CREATE TABLE good_receiving_details (
@@ -442,70 +503,18 @@ CREATE TABLE good_receiving_details (
 	good_receiving_id	BIGINT(20) UNSIGNED NOT NULL,
 	product_id BIGINT(20) UNSIGNED NOT NULL,
 	qty MEDIUMINT(8) UNSIGNED NOT NULL,
+	code CHAR(20) NOT NULL,
+	shelve_id BIGINT(20) UNSIGNED NOT NULL,
+	expired_date TIMESTAMP,
 	PRIMARY KEY (id),
 	KEY good_receiving_details_good_receiving_id (good_receiving_id),
 	KEY good_receiving_details_product_id (product_id),
+	KEY good_receiving_details_shelve_id (shelve_id),
+	UNIQUE KEY good_receiving_details_code (code, product_id),
 	CONSTRAINT fk_good_receiving_details_to_good_receivings FOREIGN KEY (good_receiving_id) REFERENCES good_receivings(id) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT fk_good_receiving_details_to_products FOREIGN KEY (product_id) REFERENCES products(id)
+	CONSTRAINT fk_good_receiving_details_to_products FOREIGN KEY (product_id) REFERENCES products(id),
+	CONSTRAINT fk_good_receiving_details_to_shelves FOREIGN KEY (shelve_id) REFERENCES shelves(id)
 );`,
-	},
-	{
-		Version:     25,
-		Description: "Add Brands",
-		Script: `
-CREATE TABLE brands (
-	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-	company_id	INT(10) UNSIGNED NOT NULL,
-	code CHAR(10) NOT NULL,
-	name VARCHAR(45) NOT NULL,
-	created TIMESTAMP NOT NULL DEFAULT NOW(),
-	updated TIMESTAMP NOT NULL DEFAULT NOW(),
-	PRIMARY KEY (id),
-	KEY brands_company_id (company_id),
-	CONSTRAINT fk_brands_to_companies FOREIGN KEY (company_id) REFERENCES companies(id)
-);`,
-	},
-	{
-		Version:     26,
-		Description: "Add Categories",
-		Script: `
-CREATE TABLE categories (
-	id   MEDIUMINT(8) UNSIGNED NOT NULL AUTO_INCREMENT,
-	name VARCHAR(45) NOT NULL,
-	PRIMARY KEY (id)
-);`,
-	},
-	{
-		Version:     27,
-		Description: "Add Product Categories",
-		Script: `
-CREATE TABLE product_categories (
-	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-	company_id	INT(10) UNSIGNED NOT NULL,
-	category_id MEDIUMINT(8) UNSIGNED NOT NULL,
-	name VARCHAR(45) NOT NULL,
-	created TIMESTAMP NOT NULL DEFAULT NOW(),
-	updated TIMESTAMP NOT NULL DEFAULT NOW(),
-	PRIMARY KEY (id),
-	KEY product_categories_company_id (company_id),
-	KEY product_categories_category_id (category_id),
-	CONSTRAINT fk_product_categories_to_companies FOREIGN KEY (company_id) REFERENCES companies(id),
-	CONSTRAINT fk_product_categories_to_categories FOREIGN KEY (category_id) REFERENCES categories(id)
-);`,
-	},
-	{
-		Version:     28,
-		Description: "Add relations of products",
-		Script: `
-ALTER TABLE products
-	ADD brand_id BIGINT(20) UNSIGNED NOT NULL AFTER company_id,
-	ADD product_category_id BIGINT(20) UNSIGNED NOT NULL AFTER brand_id,
-	ADD minimum_stock MEDIUMINT(8) UNSIGNED NOT NULL AFTER sale_price,
-	ADD KEY products_brand_id (brand_id),
-	ADD KEY products_product_category_id (product_category_id),
-	ADD CONSTRAINT fk_products_to_brands FOREIGN KEY (brand_id) REFERENCES brands(id),
-	ADD CONSTRAINT fk_products_to_product_categories FOREIGN KEY (product_category_id) REFERENCES product_categories(id)
-;`,
 	},
 }
 

@@ -5,8 +5,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
-	"fmt"
-	"strconv"
 	"strings"
 	"time"
 
@@ -328,7 +326,7 @@ func (u *Purchase) Create(ctx context.Context, tx *sql.Tx) error {
 
 	defer stmt.Close()
 
-	u.Code, err = u.getCode(ctx, tx)
+	u.Code, err = api.GetCode(ctx, tx, "POR", "purchases", userLogin.Company.ID)
 	if err != nil {
 		return err
 	}
@@ -456,29 +454,6 @@ func (u *Purchase) GetExistingDetails(ctx context.Context, tx *sql.Tx) ([]uint64
 	}
 
 	return list, rows.Err()
-}
-
-func (u *Purchase) getCode(ctx context.Context, tx *sql.Tx) (string, error) {
-	var code, prefix string
-	var codeInt int
-	prefix = "PO" + time.Now().Format("200601")
-
-	query := `SELECT code FROM purchases WHERE company_id = ? AND code LIKE ? ORDER BY code DESC LIMIT 1`
-	err := tx.QueryRowContext(ctx, query, ctx.Value(api.Ctx("auth")).(User).Company.ID, prefix+"%").Scan(&code)
-
-	if err != nil && err != sql.ErrNoRows {
-		return code, err
-	}
-
-	if len(code) > 0 {
-		runes := []rune(code)
-		codeInt, err = strconv.Atoi(string(runes[8:]))
-		if err != nil {
-			return code, err
-		}
-	}
-
-	return prefix + fmt.Sprintf("%05d", codeInt+1), nil
 }
 
 func (u *Purchase) storeDetail(ctx context.Context, tx *sql.Tx, d PurchaseDetail) (uint64, error) {
