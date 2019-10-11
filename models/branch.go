@@ -15,6 +15,14 @@ type Branch struct {
 	Address sql.NullString
 	Type    string
 	Company Company
+	Shelves []Shelve
+}
+
+// Shelve struct
+type Shelve struct {
+	ID       uint64
+	Code     string
+	Capacity uint
 }
 
 const qBranches = `
