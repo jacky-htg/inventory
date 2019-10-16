@@ -20,8 +20,8 @@ func GetCode(ctx context.Context, tx *sql.Tx, prefix string, tableName string, c
 
 	prefix += time.Now().Format("200601")
 
-	query := `SELECT code FROM ? WHERE company_id = ? AND code LIKE ? ORDER BY code DESC LIMIT 1`
-	err := tx.QueryRowContext(ctx, query, tableName, companyID, prefix+"%").Scan(&code)
+	query := "SELECT code FROM " + tableName + " WHERE company_id = ? AND code LIKE ? ORDER BY code DESC LIMIT 1"
+	err := tx.QueryRowContext(ctx, query, companyID, prefix+"%").Scan(&code)
 
 	if err != nil && err != sql.ErrNoRows {
 		return code, err
