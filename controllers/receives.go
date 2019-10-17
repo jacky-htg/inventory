@@ -22,7 +22,7 @@ type Receives struct {
 
 // List : http handler for returning list of Receives
 func (u *Receives) List(w http.ResponseWriter, r *http.Request) {
-	var Receive models.Receive
+	var receive models.Receive
 	tx, err := u.Db.Begin()
 	if err != nil {
 		u.Log.Printf("ERROR : %+v", err)
@@ -30,7 +30,7 @@ func (u *Receives) List(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	list, err := Receive.List(r.Context(), tx)
+	list, err := receive.List(r.Context(), tx)
 	if err != nil {
 		tx.Rollback()
 		u.Log.Printf("ERROR : %+v", err)
@@ -41,10 +41,10 @@ func (u *Receives) List(w http.ResponseWriter, r *http.Request) {
 	tx.Commit()
 
 	var listResponse []*response.ReceiveListResponse
-	for _, Receive := range list {
-		var ReceiveResponse response.ReceiveListResponse
-		ReceiveResponse.Transform(&Receive)
-		listResponse = append(listResponse, &ReceiveResponse)
+	for _, r := range list {
+		var receiveResponse response.ReceiveListResponse
+		receiveResponse.Transform(&r)
+		listResponse = append(listResponse, &receiveResponse)
 	}
 
 	api.ResponseOK(w, listResponse, http.StatusOK)
@@ -62,8 +62,8 @@ func (u *Receives) View(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var Receive models.Receive
-	Receive.ID = uint64(id)
+	var receive models.Receive
+	receive.ID = uint64(id)
 	tx, err := u.Db.Begin()
 	if err != nil {
 		u.Log.Printf("ERROR : %+v", err)
@@ -71,7 +71,7 @@ func (u *Receives) View(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = Receive.Get(ctx, tx)
+	err = receive.Get(ctx, tx)
 
 	if err == sql.ErrNoRows {
 		tx.Rollback()
@@ -90,21 +90,21 @@ func (u *Receives) View(w http.ResponseWriter, r *http.Request) {
 	tx.Commit()
 
 	var response response.ReceiveResponse
-	response.Transform(&Receive)
+	response.Transform(&receive)
 	api.ResponseOK(w, response, http.StatusOK)
 }
 
 // Create : http handler for create new Receive
 func (u *Receives) Create(w http.ResponseWriter, r *http.Request) {
-	var ReceiveRequest request.NewReceiveRequest
-	err := api.Decode(r, &ReceiveRequest)
+	var receiveRequest request.NewReceiveRequest
+	err := api.Decode(r, &receiveRequest)
 	if err != nil {
 		u.Log.Printf("ERROR : %+v", err)
 		api.ResponseError(w, fmt.Errorf("decode Receive: %v", err))
 		return
 	}
 
-	Receive := ReceiveRequest.Transform()
+	receive := receiveRequest.Transform()
 	tx, err := u.Db.Begin()
 	if err != nil {
 		u.Log.Printf("ERROR : %+v", err)
@@ -112,7 +112,7 @@ func (u *Receives) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = Receive.Create(r.Context(), tx)
+	err = receive.Create(r.Context(), tx)
 	if err != nil {
 		u.Log.Printf("ERROR : %+v", err)
 		tx.Rollback()
@@ -123,7 +123,7 @@ func (u *Receives) Create(w http.ResponseWriter, r *http.Request) {
 	tx.Commit()
 
 	var response response.ReceiveResponse
-	response.Transform(Receive)
+	response.Transform(receive)
 	api.ResponseOK(w, response, http.StatusCreated)
 }
 
@@ -143,8 +143,8 @@ func (u *Receives) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var Receive models.Receive
-	Receive.ID = uint64(id)
+	var receive models.Receive
+	receive.ID = uint64(id)
 	tx, err := u.Db.Begin()
 	if err != nil {
 		u.Log.Printf("ERROR : %+v", err)
@@ -152,7 +152,7 @@ func (u *Receives) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = Receive.Get(ctx, tx)
+	err = receive.Get(ctx, tx)
 	if err != nil {
 		tx.Rollback()
 		u.Log.Printf("ERROR : %+v", err)
@@ -160,8 +160,8 @@ func (u *Receives) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var ReceiveRequest request.ReceiveRequest
-	err = api.Decode(r, &ReceiveRequest)
+	var receiveRequest request.ReceiveRequest
+	err = api.Decode(r, &receiveRequest)
 	if err != nil {
 		tx.Rollback()
 		u.Log.Printf("ERROR : %+v", err)
@@ -169,11 +169,11 @@ func (u *Receives) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if ReceiveRequest.ID <= 0 {
-		ReceiveRequest.ID = Receive.ID
+	if receiveRequest.ID <= 0 {
+		receiveRequest.ID = receive.ID
 	}
-	ReceiveUpdate := ReceiveRequest.Transform(&Receive)
-	err = ReceiveUpdate.Update(ctx, tx)
+	receiveUpdate := receiveRequest.Transform(&receive)
+	err = receiveUpdate.Update(ctx, tx)
 	if err != nil {
 		tx.Rollback()
 		u.Log.Printf("ERROR : %+v", err)
@@ -184,6 +184,6 @@ func (u *Receives) Update(w http.ResponseWriter, r *http.Request) {
 	tx.Commit()
 
 	var response response.ReceiveResponse
-	response.Transform(ReceiveUpdate)
+	response.Transform(receiveUpdate)
 	api.ResponseOK(w, response, http.StatusOK)
 }

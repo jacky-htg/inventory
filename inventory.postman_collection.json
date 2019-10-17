@@ -1676,6 +1676,134 @@
 					"_postman_isSubFolder": true
 				},
 				{
+					"name": "Good Receiving",
+					"item": [
+						{
+							"name": "receives",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"type": "text",
+										"value": "{{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/receives",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"receives"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "receives",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"date\": \"2019-09-29\",\n\t\"purchase\": 1,\n\t\"remark\": \"test\",\n\t\"receive_details\":[\n\t\t{\n\t\t\t\"product\": 1,\n\t\t\t\"shelve\": 1\n\t\t},\n\t\t{\n\t\t\t\"product\": 2,\n\t\t\t\"shelve\": 1\n\t\t},\n\t\t{\n\t\t\t\"product\": 2,\n\t\t\t\"shelve\": 1\n\t\t}\n\t]\n}"
+								},
+								"url": {
+									"raw": "{{url}}/receives",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"receives"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "receives/:id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/receives/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"receives",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "receives/:id",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"id\": 21,\n\t\"date\": \"2019-09-29\",\n\t\"purchase\": 1,\n\t\"remark\": \"edit test\",\n\t\"receive_details\":[\n\t\t{\n\t\t\t\"id\": 35,\n\t\t\t\"product\": 1,\n\t\t\t\"shelve\": 1\n\t\t}\n\t]\n}"
+								},
+								"url": {
+									"raw": "{{url}}/receives/21",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"receives",
+										"21"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
 					"name": "Purchase Returns ",
 					"item": [
 						{

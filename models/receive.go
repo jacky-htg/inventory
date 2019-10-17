@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"encoding/json"
 	"errors"
+	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -124,7 +126,7 @@ func (u *Receive) List(ctx context.Context, tx *sql.Tx) ([]Receive, error) {
 // Get Receive by id
 func (u *Receive) Get(ctx context.Context, tx *sql.Tx) error {
 	query := `
-	SELECT 	Receives.id, 
+	SELECT 	good_receivings.id, 
 		good_receivings.code, 
 		good_receivings.date,
 		purchases.id,
@@ -326,11 +328,10 @@ func (u *Receive) Create(ctx context.Context, tx *sql.Tx) error {
 	u.Branch.Company = u.Company
 
 	for i, d := range u.ReceiveDetails {
-		detailID, err := u.storeDetail(ctx, tx, d)
+		err := u.storeDetail(ctx, tx, d, i)
 		if err != nil {
 			return err
 		}
-		u.ReceiveDetails[i].ID = detailID
 		u.ReceiveDetails[i].Product.Get(ctx, tx)
 	}
 
@@ -383,12 +384,18 @@ func (u *Receive) Update(ctx context.Context, tx *sql.Tx) error {
 
 	for i, d := range u.ReceiveDetails {
 		if d.ID <= 0 {
-			detailID, err := u.storeDetail(ctx, tx, d)
+			err := u.storeDetail(ctx, tx, d, i)
 			if err != nil {
 				return err
 			}
-			u.ReceiveDetails[i].ID = detailID
 		} else {
+			detail, err := u.getDetail(ctx, tx, d.ID)
+			if err != nil {
+				return err
+			}
+
+			d.Code = detail.Code
+
 			err = u.updateDetail(ctx, tx, d)
 			if err != nil {
 				return err
@@ -436,42 +443,28 @@ func (u *Receive) GetExistingDetails(ctx context.Context, tx *sql.Tx) ([]uint64,
 	return list, rows.Err()
 }
 
-func (u *Receive) storeDetail(ctx context.Context, tx *sql.Tx, d ReceiveDetail) (uint64, error) {
-	var id uint64
+func (u *Receive) getDetail(ctx context.Context, tx *sql.Tx, e uint64) (*ReceiveDetail, error) {
+	detail := new(ReceiveDetail)
+	err := tx.QueryRowContext(ctx,
+		`SELECT id, product_id, qty, code, shelve_id FROM good_receiving_details WHERE id = ? AND good_receiving_id = ?`,
+		e, u.ID).Scan(&detail.ID, &detail.Product.ID, &detail.Qty, &detail.Code, &detail.Shelve.ID)
+
+	return detail, err
+}
+
+func (u *Receive) storeDetail(ctx context.Context, tx *sql.Tx, d ReceiveDetail, i int) error {
+	var err error
+
 	const queryDetail = `
 		INSERT INTO good_receiving_details (good_receiving_id, product_id, qty, code, shelve_id)
 		VALUES (?, ?, ?, ?, ?)
 	`
-	stmt, err := tx.PrepareContext(ctx, queryDetail)
+
+	d.Code, err = u.getProductCode(ctx, tx, d.Product.ID)
 	if err != nil {
-		return id, err
+		return err
 	}
 
-	defer stmt.Close()
-
-	res, err := stmt.ExecContext(ctx, u.ID, d.Product.ID, d.Qty, d.Code, d.Shelve.ID)
-	if err != nil {
-		return id, err
-	}
-
-	detailID, err := res.LastInsertId()
-	if err != nil {
-		return id, err
-	}
-
-	return uint64(detailID), nil
-}
-
-func (u *Receive) updateDetail(ctx context.Context, tx *sql.Tx, d ReceiveDetail) error {
-	const queryDetail = `
-		UPDATE good_receiving_details 
-		SET product_id = ?, 
-			code = ?,
-			shelve_id = ?,
-			qty = ?
-		WHERE id = ?
-		AND good_receiving_id = ?
-	`
 	stmt, err := tx.PrepareContext(ctx, queryDetail)
 	if err != nil {
 		return err
@@ -479,12 +472,76 @@ func (u *Receive) updateDetail(ctx context.Context, tx *sql.Tx, d ReceiveDetail)
 
 	defer stmt.Close()
 
-	_, err = stmt.ExecContext(ctx, d.Product.ID, d.Code, d.Shelve.ID, d.Qty, d.ID, u.ID)
-	return err
+	res, err := stmt.ExecContext(ctx, u.ID, d.Product.ID, d.Qty, d.Code, d.Shelve.ID)
+	if err != nil {
+		return err
+	}
+
+	detailID, err := res.LastInsertId()
+	u.ReceiveDetails[i].ID = uint64(detailID)
+	u.ReceiveDetails[i].Code = d.Code
+
+	inventory := new(Inventory)
+	inventory.CompanyID = ctx.Value(api.Ctx("auth")).(User).Company.ID
+	inventory.BranchID = ctx.Value(api.Ctx("auth")).(User).Branch.ID
+	inventory.ShelveID = d.Shelve.ID
+	inventory.ProductID = d.Product.ID
+	inventory.ProductCode = d.Code
+	inventory.TransactionID = u.ID
+	inventory.Code = u.Code
+	inventory.TransactionDate = u.Date
+	inventory.Type = "GR"
+	inventory.InOut = true
+	inventory.Qty = 1
+	return inventory.Create(ctx, tx)
+}
+
+func (u *Receive) updateDetail(ctx context.Context, tx *sql.Tx, d ReceiveDetail) error {
+	const queryDetail = `
+		UPDATE good_receiving_details 
+		SET product_id = ?, 
+			code = ?,
+			shelve_id = ?
+		WHERE id = ?
+		AND good_receiving_id = ?
+	`
+
+	inventory := new(Inventory)
+	inventory.ProductID = d.Product.ID
+	inventory.ProductCode = d.Code
+	inventory.TransactionID = u.ID
+	inventory.Type = "GR"
+	err := inventory.GetByComposit(ctx, tx)
+	if err != nil {
+		return err
+	}
+
+	stmt, err := tx.PrepareContext(ctx, queryDetail)
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx, d.Product.ID, d.Code, d.Shelve.ID, d.ID, u.ID)
+	if err != nil {
+		return err
+	}
+
+	inventory.ProductID = d.Product.ID
+	inventory.ProductCode = d.Code
+	inventory.ShelveID = d.Shelve.ID
+
+	return inventory.Update(ctx, tx)
 }
 
 func (u *Receive) removeDetail(ctx context.Context, tx *sql.Tx, e uint64) error {
 	const queryDetail = `DELETE FROM  good_receiving_details WHERE id = ? AND good_receiving_id = ?`
+	detail, err := u.getDetail(ctx, tx, e)
+	if err != nil {
+		return err
+	}
+
 	stmt, err := tx.PrepareContext(ctx, queryDetail)
 	if err != nil {
 		return err
@@ -493,5 +550,44 @@ func (u *Receive) removeDetail(ctx context.Context, tx *sql.Tx, e uint64) error 
 	defer stmt.Close()
 
 	_, err = stmt.ExecContext(ctx, e, u.ID)
-	return err
+
+	inventory := new(Inventory)
+	inventory.ProductID = detail.Product.ID
+	inventory.ProductCode = detail.Code
+	inventory.TransactionID = u.ID
+	inventory.Type = "GR"
+	inventory.CompanyID = ctx.Value(api.Ctx("auth")).(User).Company.ID
+	inventory.BranchID = ctx.Value(api.Ctx("auth")).(User).Branch.ID
+	return inventory.DeleteByComposit(ctx, tx)
+}
+
+func (u *Receive) getProductCode(ctx context.Context, tx *sql.Tx, productID uint64) (string, error) {
+	var code string
+	var err error
+	var codeInt int
+
+	prefix := time.Now().Format("200601")
+
+	query := `
+		SELECT good_receiving_details.code 
+		FROM good_receiving_details 
+		JOIN good_receivings ON good_receiving_details.good_receiving_id = good_receivings.id
+		WHERE good_receivings.company_id = ? AND good_receiving_details.code LIKE ? AND good_receiving_details.product_id = ? 
+		ORDER BY good_receiving_details.code DESC LIMIT 1
+	`
+	err = tx.QueryRowContext(ctx, query, ctx.Value(api.Ctx("auth")).(User).Company.ID, prefix+"%", productID).Scan(&code)
+
+	if err != nil && err != sql.ErrNoRows {
+		return code, err
+	}
+
+	if len(code) > 0 {
+		runes := []rune(code)
+		codeInt, err = strconv.Atoi(string(runes[6:]))
+		if err != nil {
+			return code, err
+		}
+	}
+
+	return prefix + fmt.Sprintf("%014d", codeInt+1), nil
 }
