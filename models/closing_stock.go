@@ -15,14 +15,25 @@ type ClosingStock struct {
 
 // Closing stock
 func (u *ClosingStock) Closing(ctx context.Context, db *sql.DB) error {
-	var closingResult int
 	q := `
-		SELECT closing_stocks(lastClosing.month, lastClosing.year)
-		FROM (
-			SELECT year, month
-			FROM saldo_stocks 
-			WHERE company_id=? 
-			ORDER BY CAST(CONCAT(year, month) AS UNSIGNED) DESC LIMIT 1 ) lastClosing
+		SELECT year, month
+		FROM saldo_stocks 
+		WHERE company_id=? 
+		ORDER BY CAST(CONCAT(year, month) AS UNSIGNED) DESC LIMIT 1 
 	`
-	return db.QueryRowContext(ctx, q, ctx.Value(api.Ctx("auth")).(User).Company.ID).Scan(&closingResult)
+	err := db.QueryRowContext(ctx, q, ctx.Value(api.Ctx("auth")).(User).Company.ID).Scan(&u.Year, &u.Month)
+	if err != nil {
+		return err
+	}
+
+	q = `call closing_stocks(?, ?, ?)`
+	stmt, err := db.PrepareContext(ctx, q)
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx, ctx.Value(api.Ctx("auth")).(User).Company.ID, u.Month, u.Year)
+	return err
 }
