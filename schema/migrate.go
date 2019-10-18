@@ -426,46 +426,6 @@ SET GLOBAL log_bin_trust_function_creators = 1;
 	},
 	{
 		Version:     24,
-		Description: "Add Closing Stocks",
-		Script: `
-CREATE FUNCTION closing_stocks(companyID int, curMonth int, curYear int)
-RETURNS INTEGER
-BEGIN
-
-	DECLARE nextYear int;
-	DECLARE nextMonth int;
-	
-	SET nextYear = curYear;
-	SET nextMonth = curMonth + 1;
-	
-	IF curMonth = 12 THEN 
-		SET nextYear = curYear+1;
-		SET nextMonth = 1;
-	END IF;
-	
-	INSERT INTO saldo_stocks (company_id, product_id, qty, year, month)
-	SELECT saldo.id AS product_id, IF(transaction.qty IS NULL, saldo.qty, saldo.qty+transaction.qty) AS qty, nextYear AS year, nextMonth AS month 
-	FROM (
-		SELECT products.id, IF(saldo_stocks.qty IS NULL, 0, saldo_stocks.qty) AS qty
-		FROM products
-		LEFT JOIN saldo_stocks ON products.id = saldo_stocks.product_id AND products.company_id=saldo_stocks.company_id AND saldo_stocks.year=curYear AND saldo_stocks.month=curMonth
-		WHERE products.company_id=companyID
-	) AS saldo
-	LEFT JOIN (
-		SELECT tr.product_id, SUM(tr.qty) AS qty
-		FROM (
-			select inventories.product_id, if(inventories.in_out, qty, -qty) as qty   
-			from inventories
-			WHERE MONTH(inventories.transaction_date)=curMonth AND YEAR(inventories.transaction_date)=curYear AND inventories.company_id=companyID
-		) as tr
-		GROUP BY tr.product_id
-	) as transaction ON saldo.id=transaction.product_id;
-
-RETURN 1;
-END;`,
-	},
-	{
-		Version:     25,
 		Description: "Add Good Receiving",
 		Script: `
 CREATE TABLE good_receivings (
@@ -495,7 +455,7 @@ CREATE TABLE good_receivings (
 );`,
 	},
 	{
-		Version:     26,
+		Version:     25,
 		Description: "Add Good Receiving Details",
 		Script: `
 CREATE TABLE good_receiving_details (
@@ -515,6 +475,140 @@ CREATE TABLE good_receiving_details (
 	CONSTRAINT fk_good_receiving_details_to_products FOREIGN KEY (product_id) REFERENCES products(id),
 	CONSTRAINT fk_good_receiving_details_to_shelves FOREIGN KEY (shelve_id) REFERENCES shelves(id)
 );`,
+	},
+	{
+		Version:     26,
+		Description: "Add Saldo Stock Details",
+		Script: `
+CREATE TABLE saldo_stock_details (
+	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	saldo_stock_id	BIGINT(20) UNSIGNED NOT NULL,
+	branch_id INT(10) UNSIGNED NOT NULL,
+	code CHAR(20) NOT NULL,
+	PRIMARY KEY (id),
+	KEY saldo_stock_details_saldo_stock_id (saldo_stock_id),
+	KEY saldo_stock_details_branch_id (branch_id),
+	UNIQUE KEY saldo_stock_details_code (code, saldo_stock_id),
+	CONSTRAINT fk_saldo_stock_details_to_saldo_stocks FOREIGN KEY (saldo_stock_id) REFERENCES saldo_stocks(id) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT fk_saldo_stock_details_to_branches FOREIGN KEY (branch_id) REFERENCES branches(id)
+);`,
+	},
+	{
+		Version:     27,
+		Description: "Add Closing Stock Details",
+		Script: `
+CREATE PROCEDURE closing_stock_details(companyID int, curYear int, curMonth int)
+BEGIN
+
+	DECLARE nextYear int;
+	DECLARE nextMonth int;
+	
+	IF curYear = 0 THEN
+		SET curYear = year(now());
+	END IF;
+	
+	IF curMonth = 0 THEN 
+		SET curMonth = month(now());
+	END IF;
+	
+	SET nextYear = curYear;
+	SET nextMonth = curMonth + 1;
+	
+	IF curMonth = 12 THEN 
+		SET nextYear = curYear+1;
+		SET nextMonth = 1;
+	END IF;
+	
+	INSERT INTO saldo_stock_details (saldo_stock_id, branch_id, code)
+	SELECT 
+		saldo_stocks.id saldo_stock_id,
+		ifnull(inventories.branch_id, group_inventories.branch_id) branch_id,
+		ifnull(inventories.product_code, group_inventories.product_code) code
+	FROM (
+		SELECT 
+			MAX(union_inventories.id) id, 
+			MAX(union_inventories.company_id) company_id, 
+			MAX(union_inventories.branch_id) branch_id, 
+			MAX(union_inventories.product_id) product_id, 
+			MAX(union_inventories.product_code) product_code, 
+			SUM(union_inventories.qty) qty
+		FROM (
+			(SELECT 
+				0 id,
+				saldo_stocks.company_id, 
+				saldo_stock_details.branch_id,
+				saldo_stocks.product_id, 
+				saldo_stock_details.code product_code,
+				1 qty  
+			FROM saldo_stocks
+			JOIN saldo_stock_details ON saldo_stocks.id = saldo_stock_details.saldo_stock_id
+			WHERE saldo_stocks.year = curYear AND saldo_stocks.month = curMonth and saldo_stocks.company_id = companyID)
+			union
+			(SELECT 
+				inventories.id,
+				inventories.company_id,
+				inventories.branch_id,
+				inventories.product_id,
+				inventories.product_code,
+				if(inventories.in_out, qty, -qty) as qty
+			FROM inventories
+			where month(inventories.transaction_date)=curMonth and year(inventories.transaction_date)=curYear and inventories.company_id = companyID)
+		) union_inventories
+		GROUP BY union_inventories.company_id, union_inventories.product_id, union_inventories.product_code
+	) group_inventories
+	left join inventories ON group_inventories.id = inventories.id and inventories.company_id = companyID
+	join saldo_stocks ON ifnull(inventories.company_id, group_inventories.company_id)=saldo_stocks.company_id and ifnull(inventories.product_id, group_inventories.product_id)=saldo_stocks.product_id and saldo_stocks.year = nextYear and saldo_stocks.month = nextMonth and saldo_stocks.company_id = companyID
+	WHERE group_inventories.qty > 0;
+
+END;`,
+	},
+	{
+		Version:     28,
+		Description: "Add Closing Stock Details",
+		Script: `
+CREATE PROCEDURE closing_stocks(companyID int, curMonth int, curYear int)
+BEGIN
+
+	DECLARE nextYear int;
+	DECLARE nextMonth int;
+	
+	IF curYear = 0 THEN
+		SET curYear = year(now());
+	END IF;
+	
+	IF curMonth = 0 THEN 
+		SET curMonth = month(now());
+	END IF;
+	
+	SET nextYear = curYear;
+	SET nextMonth = curMonth + 1;
+	
+	IF curMonth = 12 THEN 
+		SET nextYear = curYear+1;
+		SET nextMonth = 1;
+	END IF;
+	
+	INSERT INTO saldo_stocks (company_id, product_id, qty, year, month)
+	SELECT companyID, saldo.id AS product_id, IF(transaction.qty IS NULL, saldo.qty, saldo.qty+transaction.qty) AS qty, nextYear AS year, nextMonth AS month 
+	FROM (
+		SELECT products.id, IF(saldo_stocks.qty IS NULL, 0, saldo_stocks.qty) AS qty
+		FROM products
+		LEFT JOIN saldo_stocks ON products.id = saldo_stocks.product_id AND products.company_id=saldo_stocks.company_id AND saldo_stocks.year=curYear AND saldo_stocks.month=curMonth
+		WHERE products.company_id=companyID
+	) AS saldo
+	LEFT JOIN (
+		SELECT tr.product_id, SUM(tr.qty) AS qty
+		FROM (
+			select inventories.product_id, if(inventories.in_out, qty, -qty) as qty   
+			from inventories
+			WHERE MONTH(inventories.transaction_date)=curMonth AND YEAR(inventories.transaction_date)=curYear AND inventories.company_id=companyID
+		) as tr
+		GROUP BY tr.product_id
+	) as transaction ON saldo.id=transaction.product_id;
+
+call closing_stock_details(companyID, curYear, curMonth);
+
+END`,
 	},
 }
 
