@@ -383,7 +383,9 @@ CREATE TABLE purchase_return_details (
 CREATE TABLE inventories (
 	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
 	company_id	INT(10) UNSIGNED NOT NULL,
+	branch_id INT(10) UNSIGNED NOT NULL,
 	product_id BIGINT(20) UNSIGNED NOT NULL,
+	product_code CHAR(20) NOT NULL,
 	transaction_id BIGINT(20) UNSIGNED NOT NULL,
 	code CHAR(20) NOT NULL,
 	transaction_date DATE NOT NULL,
@@ -564,7 +566,7 @@ END;`,
 	},
 	{
 		Version:     28,
-		Description: "Add Closing Stock Details",
+		Description: "Add Closing Stock",
 		Script: `
 CREATE PROCEDURE closing_stocks(companyID int, curMonth int, curYear int)
 BEGIN
@@ -609,6 +611,275 @@ BEGIN
 call closing_stock_details(companyID, curYear, curMonth);
 
 END`,
+	},
+	{
+		Version:     29,
+		Description: "Add Stock function",
+		Script: `
+CREATE FUNCTION stock (companyID int, productID int) RETURNS int(11)
+BEGIN
+
+declare stock int;
+
+select SUM(union_stocks.qty) into stock
+from (
+	(select saldo_stocks.company_id, saldo_stocks.product_id, saldo_stocks.qty
+	FROM saldo_stocks
+	WHERE saldo_stocks.year=year(now()) and saldo_stocks.month=month(now()) and saldo_stocks.company_id = companyID and saldo_stocks.product_id = productID)
+	union 
+	(select inventories.company_id, inventories.product_id, if(inventories.in_out, qty, -qty) as qty 
+	from inventories
+	where month(inventories.transaction_date)=month(now()) and year(inventories.transaction_date)=year(now()) and inventories.company_id = companyID and product_id = productID )
+) union_stocks
+where union_stocks.company_id = companyID and union_stocks.product_id = productID
+group by union_stocks.company_id, union_stocks.product_id;
+
+RETURN stock;
+END;`,
+	},
+	{
+		Version:     30,
+		Description: "Add Stock Branch function",
+		Script: `
+CREATE FUNCTION stock_branch(companyID int, branchID int, productID int) RETURNS int(11)
+BEGIN
+
+declare stock int;
+declare curYear int;
+declare curMonth int;
+
+SET curYear = year(now());
+SET curMonth = month(now());
+
+select count(stocks.code) into stock
+from ( 
+	SELECT 
+		ifnull(inventories.company_id, group_inventories.company_id) company_id,
+		ifnull(inventories.product_id, group_inventories.product_id) product_id,
+		ifnull(inventories.branch_id, group_inventories.branch_id) branch_id,
+		ifnull(inventories.product_code, group_inventories.product_code) code
+	FROM (
+		SELECT 
+			MAX(union_inventories.id) id, 
+			MAX(union_inventories.company_id) company_id, 
+			MAX(union_inventories.branch_id) branch_id, 
+			MAX(union_inventories.product_id) product_id, 
+			MAX(union_inventories.product_code) product_code, 
+			SUM(union_inventories.qty) qty
+		FROM (
+			(SELECT 
+				0 id,
+				saldo_stocks.company_id, 
+				saldo_stock_details.branch_id,
+				saldo_stocks.product_id, 
+				saldo_stock_details.code product_code,
+				1 qty  
+			FROM saldo_stocks
+			JOIN saldo_stock_details ON saldo_stocks.id = saldo_stock_details.saldo_stock_id
+			WHERE saldo_stocks.year = curYear AND saldo_stocks.month = curMonth and saldo_stocks.company_id = companyID)
+			union
+			(SELECT 
+				inventories.id,
+				inventories.company_id,
+				inventories.branch_id,
+				inventories.product_id,
+				inventories.product_code,
+				if(inventories.in_out, qty, -qty) as qty
+			FROM inventories
+			where month(inventories.transaction_date)=curMonth and year(inventories.transaction_date)=curYear and inventories.company_id = companyID)
+		) union_inventories
+		GROUP BY union_inventories.company_id, union_inventories.product_id, union_inventories.product_code
+	) group_inventories
+	left join inventories ON group_inventories.id = inventories.id and inventories.company_id = companyID
+		WHERE group_inventories.qty > 0
+) stocks
+where stocks.company_id = companyID and stocks.branch_id = branchID and stocks.product_id = productID
+group by stocks.company_id, stocks.branch_id, stocks.product_id;
+
+RETURN stock;
+END;`,
+	},
+	{
+		Version:     31,
+		Description: "Add Stock Procedure",
+		Script: `
+CREATE PROCEDURE stocks(companyID int)
+BEGIN
+
+select union_stocks.product_id, SUM(union_stocks.qty) stock 
+from (
+	(select saldo_stocks.company_id, saldo_stocks.product_id, saldo_stocks.qty
+	FROM saldo_stocks
+	WHERE saldo_stocks.year=year(now()) and saldo_stocks.month=month(now()) and saldo_stocks.company_id=companyID)
+	union 
+	(select inventories.company_id, inventories.product_id, if(inventories.in_out, qty, -qty) as qty 
+	from inventories
+	where month(inventories.transaction_date)=month(now()) and year(inventories.transaction_date)=year(now()) and inventories.company_id=companyID )
+) union_stocks
+where union_stocks.company_id = companyID
+group by union_stocks.company_id, union_stocks.product_id;
+
+END;`,
+	},
+	{
+		Version:     32,
+		Description: "Add Branch Stocks Procedure",
+		Script: `
+CREATE PROCEDURE branch_stocks(companyID int, branchID int)
+BEGIN
+
+declare curYear int;
+declare curMonth int;
+
+SET curYear = year(now());
+SET curMonth = month(now());
+
+select stocks.product_id, count(stocks.code) stock
+from ( 
+	SELECT 
+		ifnull(inventories.company_id, group_inventories.company_id) company_id,
+		ifnull(inventories.product_id, group_inventories.product_id) product_id,
+		ifnull(inventories.branch_id, group_inventories.branch_id) branch_id,
+		ifnull(inventories.product_code, group_inventories.product_code) code
+	FROM (
+		SELECT 
+			MAX(union_inventories.id) id, 
+			MAX(union_inventories.company_id) company_id, 
+			MAX(union_inventories.branch_id) branch_id, 
+			MAX(union_inventories.product_id) product_id, 
+			MAX(union_inventories.product_code) product_code, 
+			SUM(union_inventories.qty) qty
+		FROM (
+			(SELECT 
+				0 id,
+				saldo_stocks.company_id, 
+				saldo_stock_details.branch_id,
+				saldo_stocks.product_id, 
+				saldo_stock_details.code product_code,
+				1 qty  
+			FROM saldo_stocks
+			JOIN saldo_stock_details ON saldo_stocks.id = saldo_stock_details.saldo_stock_id
+			WHERE saldo_stocks.year = curYear AND saldo_stocks.month = curMonth and saldo_stocks.company_id = companyID)
+			union
+			(SELECT 
+				inventories.id,
+				inventories.company_id,
+				inventories.branch_id,
+				inventories.product_id,
+				inventories.product_code,
+				if(inventories.in_out, qty, -qty) as qty
+			FROM inventories
+			where month(inventories.transaction_date)=curMonth and year(inventories.transaction_date)=curYear and inventories.company_id = companyID)
+		) union_inventories
+		GROUP BY union_inventories.company_id, union_inventories.product_id, union_inventories.product_code
+	) group_inventories
+	left join inventories ON group_inventories.id = inventories.id and inventories.company_id = companyID
+		WHERE group_inventories.qty > 0
+) stocks
+where stocks.company_id = companyID and stocks.branch_id = branchID
+group by stocks.company_id, stocks.branch_id, stocks.product_id;
+
+END;`,
+	},
+	{
+		Version:     33,
+		Description: "Add Branch Stock details Procedure",
+		Script: `
+CREATE PROCEDURE branch_stock_details(companyID int, branchID int, productID int)
+BEGIN
+
+declare curYear int;
+declare curMonth int;
+
+SET curYear = year(now());
+SET curMonth = month(now());
+
+select stocks.product_id, stocks.code
+from ( 
+	SELECT 
+		ifnull(inventories.company_id, group_inventories.company_id) company_id,
+		ifnull(inventories.product_id, group_inventories.product_id) product_id,
+		ifnull(inventories.branch_id, group_inventories.branch_id) branch_id,
+		ifnull(inventories.product_code, group_inventories.product_code) code
+	FROM (
+		SELECT 
+			MAX(union_inventories.id) id, 
+			MAX(union_inventories.company_id) company_id, 
+			MAX(union_inventories.branch_id) branch_id, 
+			MAX(union_inventories.product_id) product_id, 
+			MAX(union_inventories.product_code) product_code, 
+			SUM(union_inventories.qty) qty
+		FROM (
+			(SELECT 
+				0 id,
+				saldo_stocks.company_id, 
+				saldo_stock_details.branch_id,
+				saldo_stocks.product_id, 
+				saldo_stock_details.code product_code,
+				1 qty  
+			FROM saldo_stocks
+			JOIN saldo_stock_details ON saldo_stocks.id = saldo_stock_details.saldo_stock_id
+			WHERE saldo_stocks.year = curYear AND saldo_stocks.month = curMonth and saldo_stocks.company_id = companyID)
+			union
+			(SELECT 
+				inventories.id,
+				inventories.company_id,
+				inventories.branch_id,
+				inventories.product_id,
+				inventories.product_code,
+				if(inventories.in_out, qty, -qty) as qty
+			FROM inventories
+			where month(inventories.transaction_date)=curMonth and year(inventories.transaction_date)=curYear and inventories.company_id = companyID)
+		) union_inventories
+		GROUP BY union_inventories.company_id, union_inventories.product_id, union_inventories.product_code
+	) group_inventories
+	left join inventories ON group_inventories.id = inventories.id and inventories.company_id = companyID
+		WHERE group_inventories.qty > 0
+) stocks
+where stocks.company_id = companyID and stocks.branch_id = branchID;
+
+END;`,
+	},
+	{
+		Version:     34,
+		Description: "Add Return Receive",
+		Script: `
+CREATE TABLE receiving_returns (
+	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	company_id	INT(20) UNSIGNED NOT NULL,
+	branch_id INT(10) UNSIGNED NOT NULL,
+	good_receiving_id BIGINT(20) UNSIGNED NOT NULL,
+	date DATE NOT NULL,
+	code CHAR(13) NOT NULL,
+	remark BIGINT(20) UNSIGNED NOT NULL,
+	created TIMESTAMP
+	PRIMARY KEY (id),
+	KEY receiving_returns_company_id (company_id),
+	KEY receiving_returns_branch_id (branch_id),
+	KEY receiving_returns_good_receiving_id (good_receiving_id),
+	UNIQUE KEY receiving_returns_code (code, company_id),
+	CONSTRAINT fk_receiving_returns_to_companies FOREIGN KEY (company_id) REFERENCES companies(id),
+	CONSTRAINT fk_receiving_returns_to_branches FOREIGN KEY (branch_id) REFERENCES branches(id),
+	CONSTRAINT fk_receiving_returns_to_good_receivings FOREIGN KEY (good_receiving_id) REFERENCES good_receivings(id)
+);`,
+	},
+	{
+		Version:     35,
+		Description: "Add Receiving Return Details",
+		Script: `
+CREATE TABLE receiving_return_details (
+	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	receiving_return_id	INT(20) UNSIGNED NOT NULL,
+	product_id BIGINT(20) UNSIGNED NOT NULL,
+	code CHAR(20) NOT NULL,
+	qty MEDIUMINT(8) UNSIGNED NOT NULL,
+	PRIMARY KEY (id),
+	KEY receiving_return_details_receiving_return_id (receiving_return_id),
+	KEY receiving_return_details_product_id (product_id),
+	UNIQUE KEY receiving_return_details_code (code, product_id),
+	CONSTRAINT fk_receiving_return_details_to_receiving_returns FOREIGN KEY (receiving_return_id) REFERENCES receiving_returns(id) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT fk_receiving_return_details_to_products FOREIGN KEY (product_id) REFERENCES products(id)
+);`,
 	},
 }
 
