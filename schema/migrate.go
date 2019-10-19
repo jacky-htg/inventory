@@ -852,15 +852,22 @@ CREATE TABLE receiving_returns (
 	date DATE NOT NULL,
 	code CHAR(13) NOT NULL,
 	remark BIGINT(20) UNSIGNED NOT NULL,
-	created TIMESTAMP
+	created TIMESTAMP NOT NULL DEFAULT NOW(),
+	updated TIMESTAMP NOT NULL DEFAULT NOW(),
+	created_by BIGINT(20) UNSIGNED NOT NULL,
+	updated_by BIGINT(20) UNSIGNED NOT NULL, 
 	PRIMARY KEY (id),
 	KEY receiving_returns_company_id (company_id),
 	KEY receiving_returns_branch_id (branch_id),
 	KEY receiving_returns_good_receiving_id (good_receiving_id),
+	KEY receiving_returns_created_by (created_by),
+	KEY receiving_returns_updated_by (updated_by),
 	UNIQUE KEY receiving_returns_code (code, company_id),
 	CONSTRAINT fk_receiving_returns_to_companies FOREIGN KEY (company_id) REFERENCES companies(id),
 	CONSTRAINT fk_receiving_returns_to_branches FOREIGN KEY (branch_id) REFERENCES branches(id),
-	CONSTRAINT fk_receiving_returns_to_good_receivings FOREIGN KEY (good_receiving_id) REFERENCES good_receivings(id)
+	CONSTRAINT fk_receiving_returns_to_good_receivings FOREIGN KEY (good_receiving_id) REFERENCES good_receivings(id),
+	CONSTRAINT fk_receiving_returns_to_users_created_by FOREIGN KEY (created_by) REFERENCES users(id),
+	CONSTRAINT fk_receiving_returns_to_users_updated_by FOREIGN KEY (updated_by) REFERENCES users(id)
 );`,
 	},
 	{
@@ -869,7 +876,7 @@ CREATE TABLE receiving_returns (
 		Script: `
 CREATE TABLE receiving_return_details (
 	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-	receiving_return_id	INT(20) UNSIGNED NOT NULL,
+	receiving_return_id	BIGINT(20) UNSIGNED NOT NULL,
 	product_id BIGINT(20) UNSIGNED NOT NULL,
 	code CHAR(20) NOT NULL,
 	qty MEDIUMINT(8) UNSIGNED NOT NULL,
