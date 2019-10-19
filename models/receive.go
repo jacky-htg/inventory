@@ -550,6 +550,9 @@ func (u *Receive) removeDetail(ctx context.Context, tx *sql.Tx, e uint64) error 
 	defer stmt.Close()
 
 	_, err = stmt.ExecContext(ctx, e, u.ID)
+	if err != nil {
+		return err
+	}
 
 	inventory := new(Inventory)
 	inventory.ProductID = detail.Product.ID
