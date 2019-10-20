@@ -19,16 +19,16 @@ type ReceiveResponse struct {
 }
 
 // Transform from Receive model to Receive response
-func (u *ReceiveResponse) Transform(Receive *models.Receive) {
-	u.ID = Receive.ID
-	u.Code = Receive.Code
-	u.Date = Receive.Date
-	u.Remark = Receive.Remark
-	u.Purchase.Transform(&Receive.Purchase)
-	u.Company.Transform(&Receive.Company)
-	u.Branch.Transform(&Receive.Branch)
+func (u *ReceiveResponse) Transform(receive *models.Receive) {
+	u.ID = receive.ID
+	u.Code = receive.Code
+	u.Date = receive.Date
+	u.Remark = receive.Remark
+	u.Purchase.Transform(&receive.Purchase)
+	u.Company.Transform(&receive.Company)
+	u.Branch.Transform(&receive.Branch)
 
-	for _, d := range Receive.ReceiveDetails {
+	for _, d := range receive.ReceiveDetails {
 		var p ReceiveDetailResponse
 		p.Transform(&d)
 		u.ReceiveDetails = append(u.ReceiveDetails, p)
@@ -47,14 +47,14 @@ type ReceiveListResponse struct {
 }
 
 // Transform from Receive model to Receive List response
-func (u *ReceiveListResponse) Transform(Receive *models.Receive) {
-	u.ID = Receive.ID
-	u.Code = Receive.Code
-	u.Date = Receive.Date
-	u.Remark = Receive.Remark
-	u.Purchase.Transform(&Receive.Purchase)
-	u.Company.Transform(&Receive.Company)
-	u.Branch.Transform(&Receive.Branch)
+func (u *ReceiveListResponse) Transform(receive *models.Receive) {
+	u.ID = receive.ID
+	u.Code = receive.Code
+	u.Date = receive.Date
+	u.Remark = receive.Remark
+	u.Purchase.Transform(&receive.Purchase)
+	u.Company.Transform(&receive.Company)
+	u.Branch.Transform(&receive.Branch)
 }
 
 // ReceiveDetailResponse : format json response for Receive detail
