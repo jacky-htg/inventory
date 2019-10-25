@@ -29,7 +29,7 @@ This application is under development. You can follow the progress of project in
 - [x] Transaction of purchase
 - [x] Transaction of purchase return
 - [x] Transaction of good receiving
-- [ ] Transaction of good receiving return
+- [x] Transaction of good receiving return
 - [ ] Transaction of sales order
 - [ ] Transaction of sales order return
 - [ ] Transaction of delivery order
