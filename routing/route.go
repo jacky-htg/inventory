@@ -161,6 +161,15 @@ func API(db *sql.DB, log *log.Logger) http.Handler {
 		app.Handle(http.MethodPut, "/receives/:id", receives.Update)
 	}
 
+	// Shelves Routing
+	{
+		shelves := controllers.Shelves{Db: db, Log: log}
+		app.Handle(http.MethodGet, "/shelves", shelves.List)
+		app.Handle(http.MethodPost, "/shelves", shelves.Create)
+		app.Handle(http.MethodGet, "/shelves/:id", shelves.View)
+		app.Handle(http.MethodPut, "/shelves/:id", shelves.Update)
+		app.Handle(http.MethodDelete, "/shelves/:id", shelves.Delete)
+	}
 	// Receives Return Routing
 	{
 		receiveReturns := controllers.ReceiveReturns{Db: db, Log: log}
