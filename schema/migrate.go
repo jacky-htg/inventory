@@ -545,7 +545,7 @@ BEGIN
 			FROM saldo_stocks
 			JOIN saldo_stock_details ON saldo_stocks.id = saldo_stock_details.saldo_stock_id
 			WHERE saldo_stocks.year = curYear AND saldo_stocks.month = curMonth and saldo_stocks.company_id = companyID)
-			union
+			union all
 			(SELECT 
 				inventories.id,
 				inventories.company_id,
@@ -626,7 +626,7 @@ from (
 	(select saldo_stocks.company_id, saldo_stocks.product_id, saldo_stocks.qty
 	FROM saldo_stocks
 	WHERE saldo_stocks.year=year(now()) and saldo_stocks.month=month(now()) and saldo_stocks.company_id = companyID and saldo_stocks.product_id = productID)
-	union 
+	union all
 	(select inventories.company_id, inventories.product_id, if(inventories.in_out, qty, -qty) as qty 
 	from inventories
 	where month(inventories.transaction_date)=month(now()) and year(inventories.transaction_date)=year(now()) and inventories.company_id = companyID and product_id = productID )
@@ -677,7 +677,7 @@ from (
 			FROM saldo_stocks
 			JOIN saldo_stock_details ON saldo_stocks.id = saldo_stock_details.saldo_stock_id
 			WHERE saldo_stocks.year = curYear AND saldo_stocks.month = curMonth and saldo_stocks.company_id = companyID)
-			union
+			union all
 			(SELECT 
 				inventories.id,
 				inventories.company_id,
@@ -711,7 +711,7 @@ from (
 	(select saldo_stocks.company_id, saldo_stocks.product_id, saldo_stocks.qty
 	FROM saldo_stocks
 	WHERE saldo_stocks.year=year(now()) and saldo_stocks.month=month(now()) and saldo_stocks.company_id=companyID)
-	union 
+	union all
 	(select inventories.company_id, inventories.product_id, if(inventories.in_out, qty, -qty) as qty 
 	from inventories
 	where month(inventories.transaction_date)=month(now()) and year(inventories.transaction_date)=year(now()) and inventories.company_id=companyID )
@@ -760,7 +760,7 @@ from (
 			FROM saldo_stocks
 			JOIN saldo_stock_details ON saldo_stocks.id = saldo_stock_details.saldo_stock_id
 			WHERE saldo_stocks.year = curYear AND saldo_stocks.month = curMonth and saldo_stocks.company_id = companyID)
-			union
+			union all
 			(SELECT 
 				inventories.id,
 				inventories.company_id,
@@ -820,7 +820,7 @@ from (
 			FROM saldo_stocks
 			JOIN saldo_stock_details ON saldo_stocks.id = saldo_stock_details.saldo_stock_id
 			WHERE saldo_stocks.year = curYear AND saldo_stocks.month = curMonth and saldo_stocks.company_id = companyID)
-			union
+			union all
 			(SELECT 
 				inventories.id,
 				inventories.company_id,
@@ -851,7 +851,7 @@ CREATE TABLE receiving_returns (
 	good_receiving_id BIGINT(20) UNSIGNED NOT NULL,
 	date DATE NOT NULL,
 	code CHAR(13) NOT NULL,
-	remark BIGINT(20) UNSIGNED NOT NULL,
+	remark VARCHAR(255) NOT NULL,
 	created TIMESTAMP NOT NULL DEFAULT NOW(),
 	updated TIMESTAMP NOT NULL DEFAULT NOW(),
 	created_by BIGINT(20) UNSIGNED NOT NULL,

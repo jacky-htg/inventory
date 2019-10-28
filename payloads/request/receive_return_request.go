@@ -75,7 +75,7 @@ func (u *ReceiveReturnRequest) Transform(p *models.ReceiveReturn) *models.Receiv
 type ReceiveReturnDetailRequest struct {
 	ID        uint64 `json:"id"`
 	ProductID uint64 `json:"product"`
-	code      string `json:"code"`
+	Code      string `json:"code"`
 }
 
 // Transform ReceiveReturnDetailRequest to ReceiveReturnDetail
@@ -84,7 +84,7 @@ func (u *ReceiveReturnDetailRequest) Transform() models.ReceiveReturnDetail {
 	pd.ID = u.ID
 	pd.Qty = 1
 	pd.Product.ID = u.ProductID
-	pd.Code = u.code
+	pd.Code = u.Code
 
 	return pd
 }
