@@ -16,6 +16,7 @@ This application is under development. You can follow the progress of project in
 - [ ] Company registration and verifications 
 - [x] Multi regions. One region can be assigned to many branches.
 - [x] Multi branches/shops/warehouses
+- [x] Master Shelves
 - [x] Multi users, multi roles and multi access
 - [x] Role Base Access Control (RBAC)
 - [x] One user can be assigned multi roles
