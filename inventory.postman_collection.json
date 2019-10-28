@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "53d24725-3a25-4292-8a51-33c70723b213",
+		"_postman_id": "0340201e-3737-47d4-8547-973b820586e6",
 		"name": "inventory",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1530,6 +1530,167 @@
 										"1"
 									]
 								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Shelves",
+					"item": [
+						{
+							"name": "shelves",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/shelves",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"shelves"
+									]
+								},
+								"description": "GET LIST Shelves"
+							},
+							"response": []
+						},
+						{
+							"name": "shelves/:id",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"id\": 1,\n\t\"code\": \"SHVE-01\",\n\t\"capacity\": 1100\n}"
+								},
+								"url": {
+									"raw": "{{url}}/shelves/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"shelves",
+										"1"
+									]
+								},
+								"description": "Update Shelves by id"
+							},
+							"response": []
+						},
+						{
+							"name": "shelves/:id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/shelves/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"shelves",
+										"1"
+									]
+								},
+								"description": "Get One Shelve by id"
+							},
+							"response": []
+						},
+						{
+							"name": "shelves",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"code\": \"SHVE-02\",\n\t\"capacity\": 1200\n}"
+								},
+								"url": {
+									"raw": "{{url}}/shelves",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"shelves"
+									]
+								},
+								"description": "POST a Shelve"
+							},
+							"response": []
+						},
+						{
+							"name": "shelves",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/shelves/2",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"shelves",
+										"2"
+									]
+								},
+								"description": "Delete a Shelve"
 							},
 							"response": []
 						}
