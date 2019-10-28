@@ -155,7 +155,7 @@ func (u *ReceiveReturn) Get(ctx context.Context, tx *sql.Tx) error {
 		JSON_ARRAYAGG(products.sale_price)
 	FROM receiving_returns
 	JOIN receiving_return_details ON receiving_returns.id = receiving_return_details.receiving_return_id
-	JOIN good_receivings ON receiving_returns.good_receiving_id = good_receiving.id
+	JOIN good_receivings ON receiving_returns.good_receiving_id = good_receivings.id
 	JOIN companies ON receiving_returns.company_id = companies.id
 	JOIN branches ON receiving_returns.branch_id = branches.id
 	JOIN products ON receiving_return_details.product_id = products.id 
