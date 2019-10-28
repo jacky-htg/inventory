@@ -33,8 +33,8 @@ func (u *Inventory) Create(ctx context.Context, tx *sql.Tx) error {
 	userLogin := ctx.Value(api.Ctx("auth")).(User)
 
 	const queryDetail = `
-		INSERT INTO inventories (company_id, branch_id, shelve_id, product_id, product_code, transaction_id, code, transaction_date, type, in_out, qty, created, updated)
-		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, NOW(), NOW())
+		INSERT INTO inventories (company_id, branch_id, product_id, product_code, transaction_id, code, transaction_date, type, in_out, qty, created, updated)
+		VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 1, NOW(), NOW())
 	`
 	stmt, err := tx.PrepareContext(ctx, queryDetail)
 	if err != nil {
@@ -46,7 +46,6 @@ func (u *Inventory) Create(ctx context.Context, tx *sql.Tx) error {
 	_, err = stmt.ExecContext(ctx,
 		userLogin.Company.ID,
 		userLogin.Branch.ID,
-		u.ShelveID,
 		u.ProductID,
 		u.ProductCode,
 		u.TransactionID,
@@ -65,8 +64,7 @@ func (u *Inventory) Update(ctx context.Context, tx *sql.Tx) error {
 
 	const queryUpdate = `
 		UPDATE inventories
-		SET shelve_id = ?, 
-			product_id = ?, 
+		SET product_id = ?, 
 			product_code = ?, 
 			transaction_id = ?, 
 			code = ?, 
@@ -82,7 +80,6 @@ func (u *Inventory) Update(ctx context.Context, tx *sql.Tx) error {
 	defer stmt.Close()
 
 	_, err = stmt.ExecContext(ctx,
-		u.ShelveID,
 		u.ProductID,
 		u.ProductCode,
 		u.TransactionID,

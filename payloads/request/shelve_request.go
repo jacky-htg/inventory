@@ -18,7 +18,7 @@ func (r *NewShelveRequest) Transform() models.Shelve {
 
 // ShelveRequest is json request for update
 type ShelveRequest struct {
-	ID       uint64 `json:"id validate:"required"`
+	ID       uint64 `json:"id" validate:"required"`
 	Code     string `json:"code"`
 	Capacity uint   `json:"capacity"`
 }

@@ -158,7 +158,7 @@ type Shelve struct {
 	Capacity uint
 }
 
-const qShelve = `SELECT id, code, capacity from shelves`
+const qShelve = `SELECT id, code, capacity from shelves `
 
 // List all shelves by branches id
 func (s *Shelve) List(ctx context.Context, tx *sql.Tx) ([]Shelve, error) {
@@ -220,9 +220,7 @@ func (s *Shelve) Create(ctx context.Context, tx *sql.Tx) error {
 func (s *Shelve) Update(ctx context.Context, tx *sql.Tx) error {
 	stmt, err := tx.PrepareContext(
 		ctx,
-		`UPDATE shelves
-		SET code=?, capacity=?
-		WHERE id=? AND branch_id=?`,
+		`UPDATE shelves SET code = ?, capacity = ? WHERE id = ? AND branch_id = ?`,
 	)
 	if err != nil {
 		return err
@@ -231,7 +229,6 @@ func (s *Shelve) Update(ctx context.Context, tx *sql.Tx) error {
 	defer stmt.Close()
 
 	_, err = stmt.ExecContext(ctx, s.Code, s.Capacity, s.ID, ctx.Value(api.Ctx("auth")).(User).Branch.ID)
-
 	return err
 }
 
