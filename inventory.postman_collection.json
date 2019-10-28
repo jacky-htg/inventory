@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "53d24725-3a25-4292-8a51-33c70723b213",
+		"_postman_id": "bb8afe80-23bb-4830-aab3-90af9461b5b6",
 		"name": "inventory",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -11,6 +11,34 @@
 				{
 					"name": "Users",
 					"item": [
+						{
+							"name": "users/{id}",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/users/2",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"users",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
 						{
 							"name": "users",
 							"request": {
@@ -39,34 +67,6 @@
 							"response": []
 						},
 						{
-							"name": "users/{id}",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Token",
-										"value": "{{token}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "{{url}}/users/1",
-									"host": [
-										"{{url}}"
-									],
-									"path": [
-										"users",
-										"1"
-									]
-								}
-							},
-							"response": []
-						},
-						{
 							"name": "users",
 							"request": {
 								"method": "POST",
@@ -85,7 +85,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\t\t\"username\": \"peterpan\",\n\t\t\t\"email\": \"peterpan@gmail.com\", \n\t\t\t\"password\": \"1234\", \n\t\t\t\"re_password\": \"1234\", \n\t\t\t\"is_active\": true,\n\t\t\t\"branch\" : 1,\n\t\t\t\"roles\": [\n\t\t\t\t{\n\t\t\t\t\t\"id\": 1\n\t\t\t\t}\n\t\t\t]\n\t\t}"
+									"raw": "{\n\t\t\t\"username\": \"peterpan\",\n\t\t\t\"email\": \"peterpan@gmail.com\", \n\t\t\t\"password\": \"1234\", \n\t\t\t\"re_password\": \"1234\", \n\t\t\t\"is_active\": true\n\t\t}"
 								},
 								"url": {
 									"raw": "{{url}}/users",
@@ -118,7 +118,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"id\": 2,\n    \"username\": \"gatholoco\",\n    \"email\": \"gatholoco@gmail.com\",\n    \"password\": \"1234\",\n    \"re_password\": \"1234\",\n    \"is_active\": true,\n    \"roles\": [\n        {\n            \"id\": 1\n        }\n    ]\n}"
+									"raw": "{\n\t\"id\": 2,\n\t\"username\": \"gatholoco\",\n\t\"email\": \"gatholoco@gmail.com\", \n\t\"password\": \"1234\", \n\t\"re_password\": \"1234\", \n\t\"is_active\": true\n}"
 								},
 								"url": {
 									"raw": "{{url}}/users/2",
@@ -136,7 +136,7 @@
 						{
 							"name": "users/{id}",
 							"request": {
-								"method": "DELETE",
+								"method": "GET",
 								"header": [
 									{
 										"key": "Token",
@@ -149,13 +149,13 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{url}}/users/2",
+									"raw": "{{url}}/users/1",
 									"host": [
 										"{{url}}"
 									],
 									"path": [
 										"users",
-										"2"
+										"1"
 									]
 								}
 							},
@@ -228,6 +228,122 @@
 							"response": []
 						},
 						{
+							"name": "roles/{id}/access/{access_id}",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/roles/2/access/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"roles",
+										"2",
+										"access",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "roles/{id}",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/roles/3",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"roles",
+										"3"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "roles/{id}",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/roles/2",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"roles",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "roles/{id}/access/{access_id}",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/roles/2/access/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"roles",
+										"2",
+										"access",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "roles",
 							"request": {
 								"method": "POST",
@@ -263,34 +379,6 @@
 						{
 							"name": "roles/{id}",
 							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Token",
-										"value": "{{token}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "{{url}}/roles/2",
-									"host": [
-										"{{url}}"
-									],
-									"path": [
-										"roles",
-										"2"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "roles/{id}",
-							"request": {
 								"method": "PUT",
 								"header": [
 									{
@@ -317,94 +405,6 @@
 									"path": [
 										"roles",
 										"2"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "roles/{id}",
-							"request": {
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Token",
-										"value": "{{token}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "{{url}}/roles/3",
-									"host": [
-										"{{url}}"
-									],
-									"path": [
-										"roles",
-										"3"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "roles/{id}/access/{access_id}",
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Token",
-										"value": "{{token}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "{{url}}/roles/2/access/1",
-									"host": [
-										"{{url}}"
-									],
-									"path": [
-										"roles",
-										"2",
-										"access",
-										"1"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "roles/{id}/access/{access_id}",
-							"request": {
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Token",
-										"value": "{{token}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "{{url}}/roles/2/access/1",
-									"host": [
-										"{{url}}"
-									],
-									"path": [
-										"roles",
-										"2",
-										"access",
-										"1"
 									]
 								}
 							},
@@ -546,69 +546,9 @@
 					"name": "Products",
 					"item": [
 						{
-							"name": "products",
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Token",
-										"value": "{{token}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"code\": \"PROD-300\",\n    \"name\": \"Tes\",\n    \"price\": 1,\n    \"brand\": \"1\",\n    \"product_category\": \"1\",\n    \"minimum_stock\": \"100\"\n}"
-								},
-								"url": {
-									"raw": "{{url}}/products",
-									"host": [
-										"{{url}}"
-									],
-									"path": [
-										"products"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "products",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Token",
-										"value": "{{token}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "{{url}}/products",
-									"host": [
-										"{{url}}"
-									],
-									"path": [
-										"products"
-									]
-								}
-							},
-							"response": []
-						},
-						{
 							"name": "products/:id",
 							"request": {
-								"method": "GET",
+								"method": "DELETE",
 								"header": [
 									{
 										"key": "Token",
@@ -628,6 +568,33 @@
 									"path": [
 										"products",
 										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "products",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/products",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"products"
 									]
 								}
 							},
@@ -652,7 +619,7 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"id\": 1,\n\t\"name\": \"Test\",\n\t\"price\": 2,\n\t\"brand\": \"1\",\n\t\"product_category\": \"1\",\n\t\"minimum_stock\": \"50\"\n}"
+									"raw": "{\n\t\"id\": 1,\n\t\"name\": \"Test\",\n\t\"price\": 2\n}"
 								},
 								"url": {
 									"raw": "{{url}}/products/1",
@@ -668,9 +635,42 @@
 							"response": []
 						},
 						{
+							"name": "products",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\t\t\"code\": \"PROD-1\",\n\t\t\t\"name\": \"Tes\",\n\t\t\t\"price\": 1\n\t\t}"
+								},
+								"url": {
+									"raw": "{{url}}/products",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
 							"name": "products/:id",
 							"request": {
-								"method": "DELETE",
+								"method": "GET",
 								"header": [
 									{
 										"key": "Token",
@@ -701,61 +701,6 @@
 				{
 					"name": "Regions",
 					"item": [
-						{
-							"name": "regions",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Token",
-										"value": "{{token}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "{{url}}/regions",
-									"host": [
-										"{{url}}"
-									],
-									"path": [
-										"regions"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "regions/:id",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Token",
-										"value": "{{token}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "{{url}}/regions/1",
-									"host": [
-										"{{url}}"
-									],
-									"path": [
-										"regions",
-										"1"
-									]
-								}
-							},
-							"response": []
-						},
 						{
 							"name": "regions",
 							"request": {
@@ -826,6 +771,34 @@
 						{
 							"name": "regions/:id",
 							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/regions/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"regions",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "regions/:id",
+							"request": {
 								"method": "DELETE",
 								"header": [
 									{
@@ -916,48 +889,9 @@
 								}
 							},
 							"response": []
-						}
-					],
-					"_postman_isSubFolder": true
-				},
-				{
-					"name": "Customers",
-					"item": [
-						{
-							"name": "customers",
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Token",
-										"value": "{{token}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n\t\"name\": \"Jacky\",\n\t\"email\": \"jacky@chan.com\",\n\t\"address\": \"alamatku\",\n\t\"hp\": \"hpku\"\n}"
-								},
-								"url": {
-									"raw": "{{url}}/customers",
-									"host": [
-										"{{url}}"
-									],
-									"path": [
-										"customers"
-									]
-								}
-							},
-							"response": []
 						},
 						{
-							"name": "customers/:id",
+							"name": "regions",
 							"request": {
 								"method": "GET",
 								"header": [
@@ -972,13 +906,45 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{url}}/customers/2",
+									"raw": "{{url}}/regions",
 									"host": [
 										"{{url}}"
 									],
 									"path": [
-										"customers",
-										"2"
+										"regions"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Customers",
+					"item": [
+						{
+							"name": "customers",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/customers",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"customers"
 									]
 								}
 							},
@@ -1004,6 +970,34 @@
 								"body": {
 									"mode": "raw",
 									"raw": "{\n\t\n}"
+								},
+								"url": {
+									"raw": "{{url}}/customers/2",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"customers",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "customers/:id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
 								},
 								"url": {
 									"raw": "{{url}}/customers/2",
@@ -1049,17 +1043,23 @@
 						{
 							"name": "customers",
 							"request": {
-								"method": "GET",
+								"method": "POST",
 								"header": [
 									{
 										"key": "Token",
 										"value": "{{token}}",
 										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": ""
+									"raw": "{\n\t\"name\": \"Jacky\",\n\t\"email\": \"jacky@chan.com\",\n\t\"address\": \"alamatku\",\n\t\"hp\": \"hpku\"\n}"
 								},
 								"url": {
 									"raw": "{{url}}/customers",
@@ -1080,71 +1080,9 @@
 					"name": "Branches",
 					"item": [
 						{
-							"name": "branches",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Token",
-										"value": "{{token}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "{{url}}/branches",
-									"host": [
-										"{{url}}"
-									],
-									"path": [
-										"branches"
-									]
-								},
-								"description": "get all branches"
-							},
-							"response": []
-						},
-						{
-							"name": "branches",
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Token",
-										"value": "{{token}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n\t\"code\": \"123\",\n\t\"name\": \"toko bagus\",\n\t\"type\": \"s\",\n\t\"address\": \"jalan sultan iskandar\"\n}"
-								},
-								"url": {
-									"raw": "{{url}}/branches",
-									"host": [
-										"{{url}}"
-									],
-									"path": [
-										"branches"
-									]
-								},
-								"description": "add branch"
-							},
-							"response": []
-						},
-						{
 							"name": "branches/:id",
 							"request": {
-								"method": "GET",
+								"method": "DELETE",
 								"header": [
 									{
 										"key": "Token",
@@ -1157,16 +1095,16 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{url}}/branches/1",
+									"raw": "{{url}}/branches/2",
 									"host": [
 										"{{url}}"
 									],
 									"path": [
 										"branches",
-										"1"
+										"2"
 									]
 								},
-								"description": "get branch by id"
+								"description": "delete branch by id"
 							},
 							"response": []
 						},
@@ -1206,31 +1144,43 @@
 							"response": []
 						},
 						{
+							"name": "branches",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/branches",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"branches"
+									],
+									"query": [
+										{
+											"key": "",
+											"value": ""
+										}
+									]
+								},
+								"description": "get all branches"
+							},
+							"response": []
+						},
+						{
 							"name": "branches/:id",
 							"request": {
 								"method": "GET",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": ""
-								},
-								"description": "delete branch by id"
-							},
-							"response": []
-						}
-					],
-					"_postman_isSubFolder": true
-				},
-				{
-					"name": "Brands",
-					"item": [
-						{
-							"name": "brands",
-							"request": {
-								"method": "GET",
 								"header": [
 									{
 										"key": "Token",
@@ -1243,19 +1193,21 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{url}}/brands",
+									"raw": "{{url}}/branches/1",
 									"host": [
 										"{{url}}"
 									],
 									"path": [
-										"brands"
+										"branches",
+										"1"
 									]
-								}
+								},
+								"description": "get branch by id"
 							},
 							"response": []
 						},
 						{
-							"name": "brands",
+							"name": "branches",
 							"request": {
 								"method": "POST",
 								"header": [
@@ -1273,22 +1225,29 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"code\": \"BRAND-1\",\n    \"name\": \"Tes\"\n}"
+									"raw": "{\n\t\"code\": \"123\",\n\t\"name\": \"toko bagus\",\n\t\"type\": \"s\",\n\t\"address\": \"jalan sultan iskandar\"\n}"
 								},
 								"url": {
-									"raw": "{{url}}/brands",
+									"raw": "{{url}}/branches",
 									"host": [
 										"{{url}}"
 									],
 									"path": [
-										"brands"
+										"branches"
 									]
-								}
+								},
+								"description": "add branch"
 							},
 							"response": []
-						},
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Shelves",
+					"item": [
 						{
-							"name": "brands/:id",
+							"name": "shelves",
 							"request": {
 								"method": "GET",
 								"header": [
@@ -1303,20 +1262,49 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{url}}/brands/1",
+									"raw": "{{url}}/shelves",
 									"host": [
 										"{{url}}"
 									],
 									"path": [
-										"brands",
-										"1"
+										"shelves"
 									]
-								}
+								},
+								"description": "GET LIST Shelves"
 							},
 							"response": []
 						},
 						{
-							"name": "brands/:id",
+							"name": "shelves/:id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/shelves/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"shelves",
+										"1"
+									]
+								},
+								"description": "Get One Shelve by id"
+							},
+							"response": []
+						},
+						{
+							"name": "shelves/:id",
 							"request": {
 								"method": "PUT",
 								"header": [
@@ -1334,84 +1322,24 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"id\": 1,\n    \"name\": \"Test\"\n}"
+									"raw": "{\n\t\"id\": 1,\n\t\"code\": \"SHVE-01\",\n\t\"capacity\": 1100\n}"
 								},
 								"url": {
-									"raw": "{{url}}/brands/1",
+									"raw": "{{url}}/shelves/1",
 									"host": [
 										"{{url}}"
 									],
 									"path": [
-										"brands",
+										"shelves",
 										"1"
 									]
-								}
+								},
+								"description": "Update Shelves by id"
 							},
 							"response": []
 						},
 						{
-							"name": "brands/:id",
-							"request": {
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Token",
-										"value": "{{token}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "{{url}}/brands/1",
-									"host": [
-										"{{url}}"
-									],
-									"path": [
-										"brands",
-										"1"
-									]
-								}
-							},
-							"response": []
-						}
-					],
-					"_postman_isSubFolder": true
-				},
-				{
-					"name": "Product Categories",
-					"item": [
-						{
-							"name": "product_categories",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Token",
-										"value": "{{token}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "{{url}}/product_categories",
-									"host": [
-										"{{url}}"
-									],
-									"path": [
-										"product_categories"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "product_categories",
+							"name": "shelves",
 							"request": {
 								"method": "POST",
 								"header": [
@@ -1429,84 +1357,23 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"name\": \"Lemari\",\n    \"category\": 1\n}"
+									"raw": "{\n\t\"code\": \"SHVE-02\",\n\t\"capacity\": 1200\n}"
 								},
 								"url": {
-									"raw": "{{url}}/product_categories",
+									"raw": "{{url}}/shelves",
 									"host": [
 										"{{url}}"
 									],
 									"path": [
-										"product_categories"
+										"shelves"
 									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "product_categories/:id",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Token",
-										"value": "{{token}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
 								},
-								"url": {
-									"raw": "{{url}}/product_categories/1",
-									"host": [
-										"{{url}}"
-									],
-									"path": [
-										"product_categories",
-										"1"
-									]
-								}
+								"description": "POST a Shelve"
 							},
 							"response": []
 						},
 						{
-							"name": "product_categories/:id",
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Token",
-										"value": "{{token}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"id\": 1,\n    \"name\": \"Bed\"\n}"
-								},
-								"url": {
-									"raw": "{{url}}/product_categories/1",
-									"host": [
-										"{{url}}"
-									],
-									"path": [
-										"product_categories",
-										"1"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "product_categories/:id",
+							"name": "shelves",
 							"request": {
 								"method": "DELETE",
 								"header": [
@@ -1521,19 +1388,21 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{url}}/product_categories/1",
+									"raw": "{{url}}/shelves/2",
 									"host": [
 										"{{url}}"
 									],
 									"path": [
-										"product_categories",
-										"1"
+										"shelves",
+										"2"
 									]
-								}
+								},
+								"description": "Delete a Shelve"
 							},
 							"response": []
 						}
 					],
+					"description": "master shelves",
 					"_postman_isSubFolder": true
 				}
 			]
@@ -1545,27 +1414,34 @@
 					"name": "Purchase",
 					"item": [
 						{
-							"name": "purchases",
+							"name": "purchases/:id",
 							"request": {
-								"method": "GET",
+								"method": "PUT",
 								"header": [
 									{
 										"key": "Token",
 										"value": "{{token}}",
 										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": ""
+									"raw": "{\n\t\"date\": \"2019-09-29\",\n\t\"supplier\": 1,\n\t\"additional_disc\": 0,\n\t\"purchase_details\":[\n\t\t{\n\t\t\t\"id\": 1,\n\t\t\t\"price\": 900,\n\t\t\t\"disc\": 100,\n\t\t\t\"product\": 1\n\t\t},\n\t\t{\n\t\t\t\"price\": 500,\n\t\t\t\"disc\": 0,\n\t\t\t\"product\": 2\n\t\t}\n\t]\n}"
 								},
 								"url": {
-									"raw": "{{url}}/purchases",
+									"raw": "{{url}}/purchases/1",
 									"host": [
 										"{{url}}"
 									],
 									"path": [
-										"purchases"
+										"purchases",
+										"1"
 									]
 								}
 							},
@@ -1590,7 +1466,34 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"date\": \"2019-09-29\",\n\t\"supplier\": 1,\n\t\"additional_disc\": 0,\n\t\"purchase_details\":[\n\t\t{\n\t\t\t\"price\": 900,\n\t\t\t\"disc\": 100,\n\t\t\t\"product\": 1,\n\t\t\t\"qty\": 1\n\t\t},\n\t\t{\n\t\t\t\"price\": 500,\n\t\t\t\"disc\": 0,\n\t\t\t\"product\": 2,\n\t\t\t\"qty\": 2\n\t\t}\n\t]\n}"
+									"raw": "{\n\t\"date\": \"2019-09-29\",\n\t\"supplier\": 1,\n\t\"additional_disc\": 0,\n\t\"purchase_details\":[\n\t\t{\n\t\t\t\"price\": 900,\n\t\t\t\"disc\": 100,\n\t\t\t\"product\": 1\n\t\t},\n\t\t{\n\t\t\t\"price\": 500,\n\t\t\t\"disc\": 0,\n\t\t\t\"product\": 2\n\t\t}\n\t]\n}"
+								},
+								"url": {
+									"raw": "{{url}}/purchases",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"purchases"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "purchases",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
 								},
 								"url": {
 									"raw": "{{url}}/purchases",
@@ -1627,168 +1530,6 @@
 									"path": [
 										"purchases",
 										"1"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "purchases/:id",
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Token",
-										"value": "{{token}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n\t\"id\": 1,\n\t\"date\": \"2019-09-29\",\n\t\"supplier\": 1,\n\t\"additional_disc\": 0,\n\t\"purchase_details\":[\n\t\t{\n\t\t\t\"id\": 1,\n\t\t\t\"price\": 900,\n\t\t\t\"disc\": 100,\n\t\t\t\"product\": 1\n\t\t},\n\t\t{\n\t\t\t\"price\": 500,\n\t\t\t\"disc\": 0,\n\t\t\t\"product\": 2,\n\t\t\t\"qty\": 4\n\t\t}\n\t]\n}"
-								},
-								"url": {
-									"raw": "{{url}}/purchases/1",
-									"host": [
-										"{{url}}"
-									],
-									"path": [
-										"purchases",
-										"1"
-									]
-								}
-							},
-							"response": []
-						}
-					],
-					"_postman_isSubFolder": true
-				},
-				{
-					"name": "Good Receiving",
-					"item": [
-						{
-							"name": "receives",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Token",
-										"type": "text",
-										"value": "{{token}}"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "{{url}}/receives",
-									"host": [
-										"{{url}}"
-									],
-									"path": [
-										"receives"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "receives",
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Token",
-										"value": "{{token}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n\t\"date\": \"2019-09-29\",\n\t\"purchase\": 1,\n\t\"remark\": \"test\",\n\t\"receive_details\":[\n\t\t{\n\t\t\t\"product\": 1,\n\t\t\t\"shelve\": 1\n\t\t},\n\t\t{\n\t\t\t\"product\": 2,\n\t\t\t\"shelve\": 1\n\t\t},\n\t\t{\n\t\t\t\"product\": 2,\n\t\t\t\"shelve\": 1\n\t\t}\n\t]\n}"
-								},
-								"url": {
-									"raw": "{{url}}/receives",
-									"host": [
-										"{{url}}"
-									],
-									"path": [
-										"receives"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "receives/:id",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Token",
-										"value": "{{token}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "{{url}}/receives/1",
-									"host": [
-										"{{url}}"
-									],
-									"path": [
-										"receives",
-										"1"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "receives/:id",
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Token",
-										"value": "{{token}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n\t\"id\": 21,\n\t\"date\": \"2019-09-29\",\n\t\"purchase\": 1,\n\t\"remark\": \"edit test\",\n\t\"receive_details\":[\n\t\t{\n\t\t\t\"id\": 35,\n\t\t\t\"product\": 1,\n\t\t\t\"shelve\": 1\n\t\t}\n\t]\n}"
-								},
-								"url": {
-									"raw": "{{url}}/receives/21",
-									"host": [
-										"{{url}}"
-									],
-									"path": [
-										"receives",
-										"21"
 									]
 								}
 							},
@@ -1800,94 +1541,6 @@
 				{
 					"name": "Purchase Returns ",
 					"item": [
-						{
-							"name": "purchase_returns",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Token",
-										"value": "{{token}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "{{url}}/purchase_returns",
-									"host": [
-										"{{url}}"
-									],
-									"path": [
-										"purchase_returns"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "purchase_returns",
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Token",
-										"value": "{{token}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"date\": \"2019-09-29\",\n    \"additional_disc\": 0,\n    \"purchase\": 1,\n    \"purchase_return_details\": [\n        {\n            \"price\": 900,\n            \"disc\": 100,\n            \"product\": 1\n        },\n        {\n            \"price\": 500,\n            \"disc\": 0,\n            \"product\": 2\n        }\n    ]\n}"
-								},
-								"url": {
-									"raw": "{{url}}/purchase_returns",
-									"host": [
-										"{{url}}"
-									],
-									"path": [
-										"purchase_returns"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "purchase_returns/:id",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Token",
-										"value": "{{token}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "{{url}}/purchase_returns/1",
-									"host": [
-										"{{url}}"
-									],
-									"path": [
-										"purchase_returns",
-										"1"
-									]
-								}
-							},
-							"response": []
-						},
 						{
 							"name": "purchase_returns/:id",
 							"request": {
@@ -1921,82 +1574,49 @@
 								}
 							},
 							"response": []
-						}
-					],
-					"_postman_isSubFolder": true
-				},
-				{
-					"name": "Receiving Returns",
-					"item": [
-						{
-							"name": "receiving_returns",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Token",
-										"type": "text",
-										"value": "{{token}}"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "{{url}}/receive_returns",
-									"host": [
-										"{{url}}"
-									],
-									"path": [
-										"receive_returns"
-									]
-								}
-							},
-							"response": []
 						},
 						{
-							"name": "receiving_returns",
+							"name": "purchase_returns",
 							"request": {
 								"method": "POST",
 								"header": [
 									{
 										"key": "Token",
-										"type": "text",
-										"value": "{{token}}"
+										"value": "{{token}}",
+										"type": "text"
 									},
 									{
 										"key": "Content-Type",
 										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
+										"value": "application/json",
+										"type": "text"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n    \"date\": \"2019-09-29\",\n    \"additional_disc\": 0,\n    \"purchase\": 1,\n    \"purchase_return_details\": [\n        {\n            \"price\": 900,\n            \"disc\": 100,\n            \"product\": 1\n        },\n        {\n            \"price\": 500,\n            \"disc\": 0,\n            \"product\": 2\n        }\n    ]\n}"
+									"raw": "{\n    \"date\": \"2019-09-29\",\n    \"addition_disc\": 0,\n    \"purchase\": 1,\n    \"purchase_return_details\": [\n        {\n            \"price\": 900,\n            \"disc\": 100,\n            \"product\": 1\n        },\n        {\n            \"price\": 500,\n            \"disc\": 0,\n            \"product\": 2\n        }\n    ]\n}"
 								},
 								"url": {
-									"raw": "{{url}}/receive_returns",
+									"raw": "{{url}}/purchase_returns",
 									"host": [
 										"{{url}}"
 									],
 									"path": [
-										"receive_returns"
+										"purchase_returns"
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "receiving_returns/:id",
+							"name": "purchase_returns",
 							"request": {
 								"method": "GET",
 								"header": [
 									{
 										"key": "Token",
-										"type": "text",
-										"value": "{{token}}"
+										"value": "{{token}}",
+										"type": "text"
 									}
 								],
 								"body": {
@@ -2004,46 +1624,39 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{url}}/receive_returns/1",
+									"raw": "{{url}}/purchase_returns",
 									"host": [
 										"{{url}}"
 									],
 									"path": [
-										"receive_returns",
-										"1"
+										"purchase_returns"
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "receiving_returns/:id",
+							"name": "purchase_returns/:id",
 							"request": {
-								"method": "PUT",
+								"method": "GET",
 								"header": [
 									{
 										"key": "Token",
-										"type": "text",
-										"value": "{{token}}"
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
+										"value": "{{token}}",
+										"type": "text"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"id\": 1,\n    \"date\": \"2019-10-25\",\n    \"receive\": 1,\n    \"receive_return_details\": [\n        {\n        \t\"id\": 1,\n            \"product\": 1,\n            \"code\": \"20191000000000000001\"\n        }\n    ]\n}"
+									"raw": ""
 								},
 								"url": {
-									"raw": "{{url}}/receive_returns/1",
+									"raw": "{{url}}/purchase_returns/1",
 									"host": [
 										"{{url}}"
 									],
 									"path": [
-										"receive_returns",
+										"purchase_returns",
 										"1"
 									]
 								}
