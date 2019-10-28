@@ -155,7 +155,7 @@ func (u *ReceiveReturn) Get(ctx context.Context, tx *sql.Tx) error {
 		JSON_ARRAYAGG(products.sale_price)
 	FROM receiving_returns
 	JOIN receiving_return_details ON receiving_returns.id = receiving_return_details.receiving_return_id
-	JOIN good_receivings ON receiving_returns.good_receiving_id = good_receiving.id
+	JOIN good_receivings ON receiving_returns.good_receiving_id = good_receivings.id
 	JOIN companies ON receiving_returns.company_id = companies.id
 	JOIN branches ON receiving_returns.branch_id = branches.id
 	JOIN products ON receiving_return_details.product_id = products.id 
@@ -374,10 +374,10 @@ func (u *ReceiveReturn) Update(ctx context.Context, tx *sql.Tx) error {
 				return err
 			}
 		} else {
-			err = u.updateDetail(ctx, tx, d)
+			/*err = u.updateDetail(ctx, tx, d)
 			if err != nil {
 				return err
-			}
+			}*/
 
 			var arrUint64 array.ArrUint64
 			existingDetails = arrUint64.Remove(existingDetails, d.ID)
@@ -434,14 +434,15 @@ func (u *ReceiveReturn) storeDetail(ctx context.Context, tx *sql.Tx, d ReceiveRe
 	// 1. valid detail Receive return is only product in Receive detail list.
 	userLogin := ctx.Value(api.Ctx("auth")).(User)
 	var code string
+	var shelveID uint64
 	err := tx.QueryRowContext(ctx, `
-		SELECT good_receiving_details.code
+		SELECT good_receiving_details.code, good_receiving_details.shelve_id 
 		FROM good_receiving_details
 		JOIN good_receivings ON good_receiving_details.good_receiving_id = good_receivings.id AND good_receivings.company_id = ? AND good_receivings.branch_id = ?
 		LEFT JOIN receiving_returns ON receiving_returns.company_id = good_receivings.company_id AND receiving_returns.branch_id = good_receivings.branch_id AND receiving_returns.good_receiving_id = good_receivings.id
 		LEFT JOIN receiving_return_details ON receiving_returns.id = receiving_return_details.receiving_return_id AND receiving_return_details.product_id = good_receiving_details.product_id AND receiving_return_details.code = good_receiving_details.code
-		WHERE good_receiving_details.product_id = ? AND good_receiving_details.code = ? AND receiving_return_details.code is null  
-	`, userLogin.Company.ID, userLogin.Branch.ID, d.Product.ID, d.Code).Scan(&code)
+		WHERE good_receiving_details.product_id = ? AND good_receiving_details.code = ? AND receiving_return_details.code is null 
+	`, userLogin.Company.ID, userLogin.Branch.ID, d.Product.ID, d.Code).Scan(&code, &shelveID)
 
 	if err != nil {
 		return err
@@ -481,13 +482,14 @@ func (u *ReceiveReturn) storeDetail(ctx context.Context, tx *sql.Tx, d ReceiveRe
 	inventory.Type = "RR"
 	inventory.InOut = false
 	inventory.Qty = 1
+	inventory.ShelveID = shelveID
 	return inventory.Create(ctx, tx)
 }
 
-func (u *ReceiveReturn) updateDetail(ctx context.Context, tx *sql.Tx, d ReceiveReturnDetail) error {
+/*func (u *ReceiveReturn) updateDetail(ctx context.Context, tx *sql.Tx, d ReceiveReturnDetail) error {
 	const queryDetail = `
-		UPDATE receiving_return_details 
-		SET product_id = ?, 
+		UPDATE receiving_return_details
+		SET product_id = ?,
 			code = ?,
 			qty = ?
 		WHERE id = ?
@@ -519,7 +521,7 @@ func (u *ReceiveReturn) updateDetail(ctx context.Context, tx *sql.Tx, d ReceiveR
 	inventory.ProductID = d.Product.ID
 	inventory.ProductCode = d.Code
 	return inventory.Update(ctx, tx)
-}
+}*/
 
 func (u *ReceiveReturn) removeDetail(ctx context.Context, tx *sql.Tx, e uint64) error {
 	const queryDetail = `DELETE FROM  receiving_return_details WHERE id = ? AND receiving_return_id = ?`

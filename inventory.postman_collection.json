@@ -1095,18 +1095,12 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{url}}/branches?=",
+									"raw": "{{url}}/branches",
 									"host": [
 										"{{url}}"
 									],
 									"path": [
 										"branches"
-									],
-									"query": [
-										{
-											"key": "",
-											"value": ""
-										}
 									]
 								},
 								"description": "get all branches"
@@ -1922,6 +1916,134 @@
 									],
 									"path": [
 										"purchase_returns",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Receiving Returns",
+					"item": [
+						{
+							"name": "receiving_returns",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"type": "text",
+										"value": "{{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/receive_returns",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"receive_returns"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "receiving_returns",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Token",
+										"type": "text",
+										"value": "{{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"date\": \"2019-09-29\",\n    \"additional_disc\": 0,\n    \"purchase\": 1,\n    \"purchase_return_details\": [\n        {\n            \"price\": 900,\n            \"disc\": 100,\n            \"product\": 1\n        },\n        {\n            \"price\": 500,\n            \"disc\": 0,\n            \"product\": 2\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{url}}/receive_returns",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"receive_returns"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "receiving_returns/:id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"type": "text",
+										"value": "{{token}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}/receive_returns/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"receive_returns",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "receiving_returns/:id",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Token",
+										"type": "text",
+										"value": "{{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"id\": 1,\n    \"date\": \"2019-10-25\",\n    \"receive\": 1,\n    \"receive_return_details\": [\n        {\n        \t\"id\": 1,\n            \"product\": 1,\n            \"code\": \"20191000000000000001\"\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{url}}/receive_returns/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"receive_returns",
 										"1"
 									]
 								}
