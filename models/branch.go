@@ -18,13 +18,6 @@ type Branch struct {
 	Shelves []Shelve
 }
 
-// Shelve struct
-type Shelve struct {
-	ID       uint64
-	Code     string
-	Capacity uint
-}
-
 const qBranches = `
 SELECT 	branches.id, 
 	branches.code, 
@@ -156,4 +149,103 @@ func (b *Branch) Delete(ctx context.Context, tx *sql.Tx) error {
 	_, err = stmt.ExecContext(ctx, b.ID, ctx.Value(api.Ctx("auth")).(User).Company.ID)
 
 	return nil
+}
+
+// Shelve struct
+type Shelve struct {
+	ID       uint64
+	Code     string
+	Capacity uint
+}
+
+const qShelve = `SELECT id, code, capacity from shelves`
+
+// List all shelves by branches id
+func (s *Shelve) List(ctx context.Context, tx *sql.Tx) ([]Shelve, error) {
+	var list []Shelve
+
+	rows, err := tx.QueryContext(ctx, qShelve+"WHERE branch_id=?", ctx.Value(api.Ctx("auth")).(User).Branch.ID)
+	if err != nil {
+		return list, err
+	}
+	defer rows.Close()
+
+	for rows.Next() {
+		var sh Shelve
+		err = rows.Scan(&sh.ID, &sh.Code, &sh.Capacity)
+		if err != nil {
+			return list, err
+		}
+
+		list = append(list, sh)
+	}
+
+	return list, rows.Err()
+}
+
+// View shelve by id
+func (s *Shelve) View(ctx context.Context, tx *sql.Tx) error {
+	return tx.QueryRowContext(
+		ctx,
+		qShelve+"WHERE id=? AND branch_id=?",
+		s.ID,
+		ctx.Value(api.Ctx("auth")).(User).Branch.ID,
+	).Scan(&s.ID, &s.Code, &s.Capacity)
+}
+
+// Create new shelve
+func (s *Shelve) Create(ctx context.Context, tx *sql.Tx) error {
+	stmt, err := tx.PrepareContext(
+		ctx,
+		`INSERT INTO shelves (branch_id, code, capacity) VALUES (?,?,?)`,
+	)
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	res, err := stmt.ExecContext(ctx, ctx.Value(api.Ctx("auth")).(User).Branch.ID, s.Code, s.Capacity)
+
+	if err != nil {
+		return err
+	}
+
+	id, err := res.LastInsertId()
+	s.ID = uint64(id)
+	return err
+}
+
+// Update shelve
+func (s *Shelve) Update(ctx context.Context, tx *sql.Tx) error {
+	stmt, err := tx.PrepareContext(
+		ctx,
+		`UPDATE shelves
+		SET code=?, capacity=?
+		WHERE id=? AND branch_id=?`,
+	)
+	if err != nil {
+		return err
+	}
+
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx, s.Code, s.Capacity, s.ID, ctx.Value(api.Ctx("auth")).(User).Branch.ID)
+
+	return err
+}
+
+// Delete Shelve
+func (s *Shelve) Delete(ctx context.Context, tx *sql.Tx) error {
+	stmt, err := tx.PrepareContext(
+		ctx,
+		`DELETE FROM shelves WHERE id=? AND branch_id=?`,
+	)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	_, err = stmt.ExecContext(ctx, s.ID, ctx.Value(api.Ctx("auth")).(User).Branch.ID)
+	return err
 }
