@@ -1208,14 +1208,27 @@
 						{
 							"name": "branches/:id",
 							"request": {
-								"method": "GET",
-								"header": [],
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
 								"body": {
 									"mode": "raw",
 									"raw": ""
 								},
 								"url": {
-									"raw": ""
+									"raw": "{{url}}/branches/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"branches",
+										"1"
+									]
 								},
 								"description": "delete branch by id"
 							},
