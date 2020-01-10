@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "0340201e-3737-47d4-8547-973b820586e6",
+		"_postman_id": "53d24725-3a25-4292-8a51-33c70723b213",
 		"name": "inventory",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -22,10 +22,6 @@
 										"type": "text"
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "{{url}}/users",
 									"host": [
@@ -49,10 +45,6 @@
 										"type": "text"
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "{{url}}/users/1",
 									"host": [
@@ -162,6 +154,7 @@
 							"response": []
 						}
 					],
+					"protocolProfileBehavior": {},
 					"_postman_isSubFolder": true
 				},
 				{
@@ -178,10 +171,6 @@
 										"type": "text"
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "{{url}}/access",
 									"host": [
@@ -195,6 +184,7 @@
 							"response": []
 						}
 					],
+					"protocolProfileBehavior": {},
 					"_postman_isSubFolder": true
 				},
 				{
@@ -211,10 +201,6 @@
 										"type": "text"
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "{{url}}/roles",
 									"host": [
@@ -271,10 +257,6 @@
 										"type": "text"
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "{{url}}/roles/2",
 									"host": [
@@ -411,6 +393,7 @@
 							"response": []
 						}
 					],
+					"protocolProfileBehavior": {},
 					"_postman_isSubFolder": true
 				},
 				{
@@ -441,7 +424,8 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "Master",
@@ -460,10 +444,6 @@
 										"type": "text"
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "{{url}}/companies/1",
 									"host": [
@@ -540,6 +520,7 @@
 							"response": []
 						}
 					],
+					"protocolProfileBehavior": {},
 					"_postman_isSubFolder": true
 				},
 				{
@@ -589,10 +570,6 @@
 										"type": "text"
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "{{url}}/products",
 									"host": [
@@ -616,10 +593,6 @@
 										"type": "text"
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "{{url}}/products/1",
 									"host": [
@@ -696,6 +669,7 @@
 							"response": []
 						}
 					],
+					"protocolProfileBehavior": {},
 					"_postman_isSubFolder": true
 				},
 				{
@@ -712,10 +686,6 @@
 										"type": "text"
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "{{url}}/regions",
 									"host": [
@@ -739,10 +709,6 @@
 										"type": "text"
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "{{url}}/regions/1",
 									"host": [
@@ -918,6 +884,7 @@
 							"response": []
 						}
 					],
+					"protocolProfileBehavior": {},
 					"_postman_isSubFolder": true
 				},
 				{
@@ -967,10 +934,6 @@
 										"type": "text"
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "{{url}}/customers/2",
 									"host": [
@@ -1057,10 +1020,6 @@
 										"type": "text"
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "{{url}}/customers",
 									"host": [
@@ -1074,6 +1033,7 @@
 							"response": []
 						}
 					],
+					"protocolProfileBehavior": {},
 					"_postman_isSubFolder": true
 				},
 				{
@@ -1090,17 +1050,19 @@
 										"type": "text"
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
-									"raw": "{{url}}/branches",
+									"raw": "{{url}}/branches?=",
 									"host": [
 										"{{url}}"
 									],
 									"path": [
 										"branches"
+									],
+									"query": [
+										{
+											"key": "",
+											"value": ""
+										}
 									]
 								},
 								"description": "get all branches"
@@ -1152,10 +1114,6 @@
 										"type": "text"
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "{{url}}/branches/1",
 									"host": [
@@ -1208,33 +1166,17 @@
 						{
 							"name": "branches/:id",
 							"request": {
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Token",
-										"value": "{{token}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
+								"method": "GET",
+								"header": [],
 								"url": {
-									"raw": "{{url}}/branches/1",
-									"host": [
-										"{{url}}"
-									],
-									"path": [
-										"branches",
-										"1"
-									]
+									"raw": ""
 								},
 								"description": "delete branch by id"
 							},
 							"response": []
 						}
 					],
+					"protocolProfileBehavior": {},
 					"_postman_isSubFolder": true
 				},
 				{
@@ -1251,10 +1193,6 @@
 										"type": "text"
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "{{url}}/brands",
 									"host": [
@@ -1311,10 +1249,6 @@
 										"type": "text"
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "{{url}}/brands/1",
 									"host": [
@@ -1373,10 +1307,6 @@
 										"type": "text"
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "{{url}}/brands/1",
 									"host": [
@@ -1391,6 +1321,7 @@
 							"response": []
 						}
 					],
+					"protocolProfileBehavior": {},
 					"_postman_isSubFolder": true
 				},
 				{
@@ -1407,10 +1338,6 @@
 										"type": "text"
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "{{url}}/product_categories",
 									"host": [
@@ -1467,10 +1394,6 @@
 										"type": "text"
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "{{url}}/product_categories/1",
 									"host": [
@@ -1529,10 +1452,6 @@
 										"type": "text"
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "{{url}}/product_categories/1",
 									"host": [
@@ -1547,13 +1466,14 @@
 							"response": []
 						}
 					],
+					"protocolProfileBehavior": {},
 					"_postman_isSubFolder": true
 				},
 				{
-					"name": "Shelves",
+					"name": "suppliers",
 					"item": [
 						{
-							"name": "shelves",
+							"name": "/suppliers",
 							"request": {
 								"method": "GET",
 								"header": [
@@ -1563,96 +1483,27 @@
 										"type": "text"
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
-									"raw": "{{url}}/shelves",
+									"raw": "{{url}}/suppliers",
 									"host": [
 										"{{url}}"
 									],
 									"path": [
-										"shelves"
+										"suppliers"
 									]
-								},
-								"description": "GET LIST Shelves"
+								}
 							},
 							"response": []
 						},
 						{
-							"name": "shelves/:id",
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Token",
-										"value": "{{token}}",
-										"type": "text"
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"value": "application/json",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n\t\"id\": 1,\n\t\"code\": \"SHVE-01\",\n\t\"capacity\": 1100\n}"
-								},
-								"url": {
-									"raw": "{{url}}/shelves/1",
-									"host": [
-										"{{url}}"
-									],
-									"path": [
-										"shelves",
-										"1"
-									]
-								},
-								"description": "Update Shelves by id"
-							},
-							"response": []
-						},
-						{
-							"name": "shelves/:id",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Token",
-										"value": "{{token}}",
-										"type": "text"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "{{url}}/shelves/1",
-									"host": [
-										"{{url}}"
-									],
-									"path": [
-										"shelves",
-										"1"
-									]
-								},
-								"description": "Get One Shelve by id"
-							},
-							"response": []
-						},
-						{
-							"name": "shelves",
+							"name": "/suppliers",
 							"request": {
 								"method": "POST",
 								"header": [
 									{
 										"key": "Token",
-										"value": "{{token}}",
-										"type": "text"
+										"type": "text",
+										"value": "{{token}}"
 									},
 									{
 										"key": "Content-Type",
@@ -1663,54 +1514,118 @@
 								],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n\t\"code\": \"SHVE-02\",\n\t\"capacity\": 1200\n}"
+									"raw": "{\n\t\"code\": \"SUP-02\",\n\t\"name\": \"Supplier kedua\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
 								},
 								"url": {
-									"raw": "{{url}}/shelves",
+									"raw": "{{url}}/suppliers",
 									"host": [
 										"{{url}}"
 									],
 									"path": [
-										"shelves"
+										"suppliers"
 									]
-								},
-								"description": "POST a Shelve"
+								}
 							},
 							"response": []
 						},
 						{
-							"name": "shelves",
+							"name": "/suppliers/:id",
 							"request": {
-								"method": "DELETE",
+								"method": "GET",
 								"header": [
 									{
 										"key": "Token",
-										"value": "{{token}}",
+										"type": "text",
+										"value": "{{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/suppliers/2",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"suppliers",
+										"2"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/suppliers/:id",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Token",
+										"type": "text",
+										"value": "{{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
 										"type": "text"
 									}
 								],
 								"body": {
 									"mode": "raw",
-									"raw": ""
+									"raw": "{\n\t\"id\": 2,\n\t\"name\" : \"Supplier kedua edited\",\n\t\"address\": \"Koala\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
 								},
 								"url": {
-									"raw": "{{url}}/shelves/2",
+									"raw": "{{url}}/suppliers/2",
 									"host": [
 										"{{url}}"
 									],
 									"path": [
-										"shelves",
+										"suppliers",
 										"2"
 									]
-								},
-								"description": "Delete a Shelve"
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/suppliers/:id",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Token",
+										"type": "text",
+										"value": "{{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/suppliers/2",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"suppliers",
+										"2"
+									]
+								}
 							},
 							"response": []
 						}
 					],
+					"protocolProfileBehavior": {},
 					"_postman_isSubFolder": true
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "transactions",
@@ -1729,10 +1644,6 @@
 										"type": "text"
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "{{url}}/purchases",
 									"host": [
@@ -1789,10 +1700,6 @@
 										"type": "text"
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "{{url}}/purchases/1",
 									"host": [
@@ -1841,6 +1748,7 @@
 							"response": []
 						}
 					],
+					"protocolProfileBehavior": {},
 					"_postman_isSubFolder": true
 				},
 				{
@@ -1857,10 +1765,6 @@
 										"value": "{{token}}"
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "{{url}}/receives",
 									"host": [
@@ -1917,10 +1821,6 @@
 										"type": "text"
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "{{url}}/receives/1",
 									"host": [
@@ -1969,6 +1869,7 @@
 							"response": []
 						}
 					],
+					"protocolProfileBehavior": {},
 					"_postman_isSubFolder": true
 				},
 				{
@@ -1985,10 +1886,6 @@
 										"type": "text"
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "{{url}}/purchase_returns",
 									"host": [
@@ -2045,10 +1942,6 @@
 										"type": "text"
 									}
 								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
 								"url": {
 									"raw": "{{url}}/purchase_returns/1",
 									"host": [
@@ -2097,134 +1990,7 @@
 							"response": []
 						}
 					],
-					"_postman_isSubFolder": true
-				},
-				{
-					"name": "Receiving Returns",
-					"item": [
-						{
-							"name": "receiving_returns",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Token",
-										"type": "text",
-										"value": "{{token}}"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "{{url}}/receive_returns",
-									"host": [
-										"{{url}}"
-									],
-									"path": [
-										"receive_returns"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "receiving_returns",
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Token",
-										"type": "text",
-										"value": "{{token}}"
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n    \"date\": \"2019-09-29\",\n    \"additional_disc\": 0,\n    \"purchase\": 1,\n    \"purchase_return_details\": [\n        {\n            \"price\": 900,\n            \"disc\": 100,\n            \"product\": 1\n        },\n        {\n            \"price\": 500,\n            \"disc\": 0,\n            \"product\": 2\n        }\n    ]\n}"
-								},
-								"url": {
-									"raw": "{{url}}/receive_returns",
-									"host": [
-										"{{url}}"
-									],
-									"path": [
-										"receive_returns"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "receiving_returns/:id",
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Token",
-										"type": "text",
-										"value": "{{token}}"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": ""
-								},
-								"url": {
-									"raw": "{{url}}/receive_returns/1",
-									"host": [
-										"{{url}}"
-									],
-									"path": [
-										"receive_returns",
-										"1"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "receiving_returns/:id",
-							"request": {
-								"method": "PUT",
-								"header": [
-									{
-										"key": "Token",
-										"type": "text",
-										"value": "{{token}}"
-									},
-									{
-										"key": "Content-Type",
-										"name": "Content-Type",
-										"type": "text",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n\t\"id\": 1,\n    \"date\": \"2019-10-25\",\n    \"receive\": 1,\n    \"receive_return_details\": [\n        {\n        \t\"id\": 1,\n            \"product\": 1,\n            \"code\": \"20191000000000000001\"\n        }\n    ]\n}"
-								},
-								"url": {
-									"raw": "{{url}}/receive_returns/1",
-									"host": [
-										"{{url}}"
-									],
-									"path": [
-										"receive_returns",
-										"1"
-									]
-								}
-							},
-							"response": []
-						}
-					],
+					"protocolProfileBehavior": {},
 					"_postman_isSubFolder": true
 				},
 				{
@@ -2254,17 +2020,14 @@
 					},
 					"response": []
 				}
-			]
+			],
+			"protocolProfileBehavior": {}
 		},
 		{
 			"name": "health",
 			"request": {
 				"method": "GET",
 				"header": [],
-				"body": {
-					"mode": "raw",
-					"raw": ""
-				},
 				"url": {
 					"raw": "{{url}}/health",
 					"host": [
@@ -2277,5 +2040,6 @@
 			},
 			"response": []
 		}
-	]
+	],
+	"protocolProfileBehavior": {}
 }
