@@ -122,6 +122,16 @@ func API(db *sql.DB, log *log.Logger) http.Handler {
 		app.Handle(http.MethodDelete, "/customers/:id", customers.Delete)
 	}
 
+	// Suppliers Routing
+	{
+		suppliers := controllers.Suppliers{Db: db, Log: log}
+		app.Handle(http.MethodGet, "/suppliers", suppliers.List)
+		app.Handle(http.MethodPost, "/suppliers", suppliers.Create)
+		app.Handle(http.MethodGet, "/suppliers/:id", suppliers.View)
+		app.Handle(http.MethodPut, "/suppliers/:id", suppliers.Update)
+		app.Handle(http.MethodDelete, "/suppliers/:id", suppliers.Delete)
+	}
+
 	// Branches Routing
 	{
 		branches := controllers.Branches{Db: db, Log: log}
