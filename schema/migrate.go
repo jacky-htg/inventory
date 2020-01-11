@@ -889,6 +889,22 @@ CREATE TABLE receiving_return_details (
 	CONSTRAINT fk_receiving_return_details_to_products FOREIGN KEY (product_id) REFERENCES products(id)
 );`,
 	},
+	{
+		Version:     36,
+		Description: "Add Salesmen",
+		Script: `
+CREATE TABLE salesmen (
+	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	company_id	INT(10) UNSIGNED NOT NULL,
+	name VARCHAR(100) NOT NULL,
+	email VARCHAR(100) NOT NULL UNIQUE,
+	address VARCHAR(255) NOT NULL,
+	hp CHAR(15) NOT NULL,
+	PRIMARY KEY (id),
+	KEY salesmen_company_id (company_id),
+	CONSTRAINT fk_salesmen_to_companies FOREIGN KEY (company_id) REFERENCES companies(id)
+);`,
+	},
 }
 
 // Migrate attempts to bring the schema for db up to date with the migrations
