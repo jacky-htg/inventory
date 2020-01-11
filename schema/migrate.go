@@ -900,6 +900,8 @@ CREATE TABLE salesmen (
 	email VARCHAR(100) NOT NULL UNIQUE,
 	address VARCHAR(255) NOT NULL,
 	hp CHAR(15) NOT NULL,
+	created TIMESTAMP NOT NULL DEFAULT NOW(),
+	updated TIMESTAMP NOT NULL DEFAULT NOW(),
 	PRIMARY KEY (id),
 	KEY salesmen_company_id (company_id),
 	CONSTRAINT fk_salesmen_to_companies FOREIGN KEY (company_id) REFERENCES companies(id)
