@@ -26,7 +26,7 @@ This application is under development. You can follow the progress of project in
 - [x] Master brands (brand of products)
 - [x] Master customers
 - [x] Master suppliers
-- [ ] Master salesman
+- [x] Master salesman
 - [x] Transaction of purchase
 - [x] Transaction of purchase return
 - [x] Transaction of good receiving
