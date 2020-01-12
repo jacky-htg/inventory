@@ -1037,6 +1037,159 @@
 					"_postman_isSubFolder": true
 				},
 				{
+					"name": "Salesmen",
+					"item": [
+						{
+							"name": "/salesmen",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Token",
+										"type": "text",
+										"value": "{{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\": \"Jacky\",\n\t\"email\": \"jacky@chan.com\",\n\t\"address\": \"alamatku\",\n\t\"hp\": \"hpku\"\n}"
+								},
+								"url": {
+									"raw": "{{url}}/salesmen",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"salesmen"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/salesmen/:id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}//salesmen/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"",
+										"salesmen",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/salesmen/:id",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\"id\":1\t\n}"
+								},
+								"url": {
+									"raw": "{{url}}//salesmen/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"",
+										"salesmen",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/salesmen/:id",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{url}}//salesmen/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"",
+										"salesmen",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "/salesmen",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}//salesmen",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"",
+										"salesmen"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
 					"name": "Branches",
 					"item": [
 						{
