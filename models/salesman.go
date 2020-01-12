@@ -20,10 +20,10 @@ type Salesman struct {
 const qSalesmen = `SELECT id, name, email, address, hp FROM salesmen`
 
 // List of salesmen
-func (u *Salesman) List(ctx context.Context, tx *sql.Tx) ([]Salesman, error) {
+func (u *Salesman) List(ctx context.Context, db *sql.DB) ([]Salesman, error) {
 	var list []Salesman
 
-	rows, err := tx.QueryContext(ctx, qSalesmen+" WHERE company_id=?", ctx.Value(api.Ctx("auth")).(User).Company.ID)
+	rows, err := db.QueryContext(ctx, qSalesmen+" WHERE company_id=?", ctx.Value(api.Ctx("auth")).(User).Company.ID)
 	if err != nil {
 		return list, err
 	}
@@ -45,8 +45,8 @@ func (u *Salesman) List(ctx context.Context, tx *sql.Tx) ([]Salesman, error) {
 }
 
 // Create new salesman
-func (u *Salesman) Create(ctx context.Context, tx *sql.Tx) error {
-	stmt, err := tx.PrepareContext(ctx, `INSERT INTO salesmen (company_id, name, email, address, hp, created) VALUES (?, ?, ?, ?, ?, NOW())`)
+func (u *Salesman) Create(ctx context.Context, db *sql.DB) error {
+	stmt, err := db.PrepareContext(ctx, `INSERT INTO salesmen (company_id, name, email, address, hp, created) VALUES (?, ?, ?, ?, ?, NOW())`)
 	if err != nil {
 		return err
 	}
@@ -68,10 +68,10 @@ func (u *Salesman) Create(ctx context.Context, tx *sql.Tx) error {
 }
 
 // Get salesman by id
-func (u *Salesman) Get(ctx context.Context, tx *sql.Tx) error {
+func (u *Salesman) Get(ctx context.Context, db *sql.DB) error {
 	u.Company = ctx.Value(api.Ctx("auth")).(User).Company
 
-	return tx.QueryRowContext(
+	return db.QueryRowContext(
 		ctx,
 		qSalesmen+" WHERE id=? AND company_id=?",
 		u.ID,
@@ -80,8 +80,8 @@ func (u *Salesman) Get(ctx context.Context, tx *sql.Tx) error {
 }
 
 // Update salesman by id
-func (u *Salesman) Update(ctx context.Context, tx *sql.Tx) error {
-	stmt, err := tx.PrepareContext(ctx, `
+func (u *Salesman) Update(ctx context.Context, db *sql.DB) error {
+	stmt, err := db.PrepareContext(ctx, `
 		UPDATE salesmen  
 		SET name = ?, 
 			email = ?, 
@@ -103,8 +103,8 @@ func (u *Salesman) Update(ctx context.Context, tx *sql.Tx) error {
 }
 
 // Delete salesman by id
-func (u *Salesman) Delete(ctx context.Context, tx *sql.Tx) error {
-	stmt, err := tx.PrepareContext(ctx, `DELETE FROM salesmen WHERE id = ? AND company_id = ?`)
+func (u *Salesman) Delete(ctx context.Context, db *sql.DB) error {
+	stmt, err := db.PrepareContext(ctx, `DELETE FROM salesmen WHERE id = ? AND company_id = ?`)
 	if err != nil {
 		return err
 	}
