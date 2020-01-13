@@ -907,6 +907,57 @@ CREATE TABLE salesmen (
 	CONSTRAINT fk_salesmen_to_companies FOREIGN KEY (company_id) REFERENCES companies(id)
 );`,
 	},
+	{
+		Version:     37,
+		Description: "Add SalesOrders",
+		Script: `
+CREATE TABLE sales_orders (
+	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	company_id	INT(10) UNSIGNED NOT NULL,
+	branch_id INT(10) UNSIGNED NOT NULL,
+	salesman_id BIGINT(20) UNSIGNED NOT NULL,
+	customer_id BIGINT(20) UNSIGNED NOT NULL,
+	code	CHAR(13) NOT NULL,
+	date	DATE NOT NULL,
+	disc DOUBLE NOT NULL DEFAULT 0,
+	created TIMESTAMP NOT NULL DEFAULT NOW(),
+	updated TIMESTAMP NOT NULL DEFAULT NOW(),
+	created_by BIGINT(20) UNSIGNED NOT NULL,
+	updated_by BIGINT(20) UNSIGNED NOT NULL,
+	PRIMARY KEY (id),
+	UNIQUE KEY sales_orders_code (company_id, code),
+	KEY sales_orders_company_id (company_id),
+	KEY sales_orders_branch_id (branch_id),
+	KEY sales_orders_salesman_id (salesman_id),
+	KEY sales_orders_customer_id (customer_id),
+	KEY sales_orders_created_by (created_by),
+	KEY sales_orders_updated_by (updated_by),
+	CONSTRAINT fk_sales_orders_to_companies FOREIGN KEY (company_id) REFERENCES companies(id),
+	CONSTRAINT fk_sales_orders_to_branches FOREIGN KEY (branch_id) REFERENCES branches(id),
+	CONSTRAINT fk_sales_orders_to_salesmen FOREIGN KEY (salesman_id) REFERENCES salesmen(id),
+	CONSTRAINT fk_sales_orders_to_customers FOREIGN KEY (customer_id) REFERENCES customers(id),
+	CONSTRAINT fk_sales_orders_to_users_created_by FOREIGN KEY (created_by) REFERENCES users(id),
+	CONSTRAINT fk_sales_orders_to_users_updated_by FOREIGN KEY (updated_by) REFERENCES users(id)
+);`,
+	},
+	{
+		Version:     38,
+		Description: "Add SalesOrders Details",
+		Script: `
+CREATE TABLE sales_oder_details (
+	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	sales_oder_id	BIGINT(20) UNSIGNED NOT NULL,
+	product_id BIGINT(20) UNSIGNED NOT NULL,
+	price DOUBLE UNSIGNED NOT NULL,
+	disc	DOUBLE UNSIGNED NOT NULL,
+	qty MEDIUMINT(8) UNSIGNED NOT NULL,
+	PRIMARY KEY (id),
+	KEY sales_oder_details_sales_order_id (sales_order_id),
+	KEY sales_oder_details_product_id (product_id),
+	CONSTRAINT fk_sales_oder_details_to_sales_oders FOREIGN KEY (sales_oder_id) REFERENCES sales_oders(id) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT fk_sales_oder_details_to_products FOREIGN KEY (product_id) REFERENCES products(id)
+);`,
+	},
 }
 
 // Migrate attempts to bring the schema for db up to date with the migrations
