@@ -990,7 +990,7 @@ CREATE TABLE sales_order_returns (
 );`,
 	},
 	{
-		Version:     20,
+		Version:     40,
 		Description: "Add SalesOrder Return Details",
 		Script: `
 CREATE TABLE sales_order_return_details (
