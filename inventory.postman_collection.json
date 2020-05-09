@@ -2264,6 +2264,127 @@
 					"_postman_isSubFolder": true
 				},
 				{
+					"name": "Sales Order Returns",
+					"item": [
+						{
+							"name": "sales-order-returns",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/sales-order-returns",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"sales-order-returns"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "sales-order-returns",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"date\": \"2019-09-29\",\n    \"additional_disc\": 0,\n    \"sales_order\": 1,\n    \"sales_order_return_details\": [\n        {\n            \"price\": 900,\n            \"disc\": 100,\n            \"product\": 1\n        },\n        {\n            \"price\": 500,\n            \"disc\": 0,\n            \"product\": 2\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{url}}/sales-order-returns",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"sales-order-returns"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "sales-order-returns/:id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/sales-order-returns/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"sales-order-returns",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "sales-order-returns/:id",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"id\": 1,\n    \"date\": \"2019-09-29\",\n    \"addition_disc\": 0,\n    \"sales_order\": 1,\n    \"sales_order_return_details\": [\n        {\n            \"price\": 900,\n            \"disc\": 100,\n            \"product\": 1\n        },\n        {\n            \"price\": 500,\n            \"disc\": 0,\n            \"product\": 2\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{url}}/sales-order-returns/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"sales-order-returns",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
 					"name": "Good Receiving Returns",
 					"item": [
 						{
