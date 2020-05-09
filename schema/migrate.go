@@ -944,18 +944,18 @@ CREATE TABLE sales_orders (
 		Version:     38,
 		Description: "Add SalesOrders Details",
 		Script: `
-CREATE TABLE sales_oder_details (
+CREATE TABLE sales_order_details (
 	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
-	sales_oder_id	BIGINT(20) UNSIGNED NOT NULL,
+	sales_order_id	BIGINT(20) UNSIGNED NOT NULL,
 	product_id BIGINT(20) UNSIGNED NOT NULL,
 	price DOUBLE UNSIGNED NOT NULL,
 	disc	DOUBLE UNSIGNED NOT NULL,
 	qty MEDIUMINT(8) UNSIGNED NOT NULL,
 	PRIMARY KEY (id),
-	KEY sales_oder_details_sales_order_id (sales_order_id),
-	KEY sales_oder_details_product_id (product_id),
-	CONSTRAINT fk_sales_oder_details_to_sales_oders FOREIGN KEY (sales_oder_id) REFERENCES sales_oders(id) ON DELETE CASCADE ON UPDATE CASCADE,
-	CONSTRAINT fk_sales_oder_details_to_products FOREIGN KEY (product_id) REFERENCES products(id)
+	KEY sales_order_details_sales_order_id (sales_order_id),
+	KEY sales_order_details_product_id (product_id),
+	CONSTRAINT fk_sales_order_details_to_sales_orders FOREIGN KEY (sales_order_id) REFERENCES sales_orders(id) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT fk_sales_order_details_to_products FOREIGN KEY (product_id) REFERENCES products(id)
 );`,
 	},
 }
