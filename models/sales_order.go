@@ -68,6 +68,7 @@ func (u *SalesOrder) List(ctx context.Context, tx *sql.Tx) ([]SalesOrder, error)
 		SUM(sales_order_details.disc),
 		sales_orders.disc
 	FROM sales_orders
+	JOIN customers ON sales_orders.customer_id = customers.id
 	JOIN companies ON sales_orders.company_id = companies.id
 	JOIN salesmen ON sales_orders.salesman_id = salesmen.id
 	JOIN branches ON sales_orders.branch_id = branches.id
