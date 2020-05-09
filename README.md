@@ -32,7 +32,7 @@ This application is under development. You can follow the progress of project in
 - [x] Transaction of good receiving
 - [x] Transaction of good receiving return
 - [x] Transaction of sales order
-- [ ] Transaction of sales order return
+- [x] Transaction of sales order return
 - [ ] Transaction of delivery order
 - [ ] Transaction of delivery order return
 - [ ] Transaction of internal warehouse mutations
