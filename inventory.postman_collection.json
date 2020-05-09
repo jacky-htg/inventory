@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "53d24725-3a25-4292-8a51-33c70723b213",
+		"_postman_id": "304c0517-e324-4972-9ce6-61c3291270af",
 		"name": "inventory",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -1084,12 +1084,11 @@
 									}
 								],
 								"url": {
-									"raw": "{{url}}//salesmen/1",
+									"raw": "{{url}}/salesmen/1",
 									"host": [
 										"{{url}}"
 									],
 									"path": [
-										"",
 										"salesmen",
 										"1"
 									]
@@ -1119,12 +1118,11 @@
 									"raw": "{\n\"id\":1\t\n}"
 								},
 								"url": {
-									"raw": "{{url}}//salesmen/1",
+									"raw": "{{url}}/salesmen/1",
 									"host": [
 										"{{url}}"
 									],
 									"path": [
-										"",
 										"salesmen",
 										"1"
 									]
@@ -1148,12 +1146,11 @@
 									"raw": ""
 								},
 								"url": {
-									"raw": "{{url}}//salesmen/1",
+									"raw": "{{url}}/salesmen/1",
 									"host": [
 										"{{url}}"
 									],
 									"path": [
-										"",
 										"salesmen",
 										"1"
 									]
@@ -1173,12 +1170,11 @@
 									}
 								],
 								"url": {
-									"raw": "{{url}}//salesmen",
+									"raw": "{{url}}/salesmen",
 									"host": [
 										"{{url}}"
 									],
 									"path": [
-										"",
 										"salesmen"
 									]
 								}
@@ -1481,7 +1477,7 @@
 					"name": "Product Categories",
 					"item": [
 						{
-							"name": "product_categories",
+							"name": "product-categories",
 							"request": {
 								"method": "GET",
 								"header": [
@@ -1492,19 +1488,19 @@
 									}
 								],
 								"url": {
-									"raw": "{{url}}/product_categories",
+									"raw": "{{url}}/product-categories",
 									"host": [
 										"{{url}}"
 									],
 									"path": [
-										"product_categories"
+										"product-categories"
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "product_categories",
+							"name": "product-categories",
 							"request": {
 								"method": "POST",
 								"header": [
@@ -1525,19 +1521,19 @@
 									"raw": "{\n    \"name\": \"Lemari\",\n    \"category\": 1\n}"
 								},
 								"url": {
-									"raw": "{{url}}/product_categories",
+									"raw": "{{url}}/product-categories",
 									"host": [
 										"{{url}}"
 									],
 									"path": [
-										"product_categories"
+										"product-categories"
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "product_categories/:id",
+							"name": "product-categories/:id",
 							"request": {
 								"method": "GET",
 								"header": [
@@ -1548,12 +1544,12 @@
 									}
 								],
 								"url": {
-									"raw": "{{url}}/product_categories/1",
+									"raw": "{{url}}/product-categories/1",
 									"host": [
 										"{{url}}"
 									],
 									"path": [
-										"product_categories",
+										"product-categories",
 										"1"
 									]
 								}
@@ -1561,7 +1557,7 @@
 							"response": []
 						},
 						{
-							"name": "product_categories/:id",
+							"name": "product-categories/:id",
 							"request": {
 								"method": "PUT",
 								"header": [
@@ -1582,12 +1578,12 @@
 									"raw": "{\n    \"id\": 1,\n    \"name\": \"Bed\"\n}"
 								},
 								"url": {
-									"raw": "{{url}}/product_categories/1",
+									"raw": "{{url}}/product-categories/1",
 									"host": [
 										"{{url}}"
 									],
 									"path": [
-										"product_categories",
+										"product-categories",
 										"1"
 									]
 								}
@@ -1595,7 +1591,7 @@
 							"response": []
 						},
 						{
-							"name": "product_categories/:id",
+							"name": "product-categories/:id",
 							"request": {
 								"method": "DELETE",
 								"header": [
@@ -1606,12 +1602,12 @@
 									}
 								],
 								"url": {
-									"raw": "{{url}}/product_categories/1",
+									"raw": "{{url}}/product-categories/1",
 									"host": [
 										"{{url}}"
 									],
 									"path": [
-										"product_categories",
+										"product-categories",
 										"1"
 									]
 								}
@@ -1905,6 +1901,127 @@
 					"_postman_isSubFolder": true
 				},
 				{
+					"name": "Sales Orders",
+					"item": [
+						{
+							"name": "sales_orders",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"type": "text",
+										"value": "{{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/sales_orders",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"sales_orders"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "sales-orders",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"date\": \"2019-09-29\",\n\t\"salesman\": 1,\n\t\"customer\": 1,\n\t\"additional_disc\": 0,\n\t\"sales_order_details\":[\n\t\t{\n\t\t\t\"price\": 900,\n\t\t\t\"disc\": 100,\n\t\t\t\"product\": 1,\n\t\t\t\"qty\": 1\n\t\t},\n\t\t{\n\t\t\t\"price\": 500,\n\t\t\t\"disc\": 0,\n\t\t\t\"product\": 2,\n\t\t\t\"qty\": 2\n\t\t}\n\t]\n}"
+								},
+								"url": {
+									"raw": "{{url}}/sales-orders",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"sales-orders"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "sales-orders/:id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/sales-orders/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"sales-orders",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "sales-orders/:id",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"id\": 1,\n\t\"date\": \"2019-09-29\",\n\t\"salesman\": 1,\n\t\"customer\": 1,\n\t\"additional_disc\": 0,\n\t\"sales_order_details\":[\n\t\t{\n\t\t\t\"id\": 1,\n\t\t\t\"price\": 900,\n\t\t\t\"disc\": 100,\n\t\t\t\"product\": 1\n\t\t},\n\t\t{\n\t\t\t\"price\": 500,\n\t\t\t\"disc\": 0,\n\t\t\t\"product\": 2,\n\t\t\t\"qty\": 4\n\t\t}\n\t]\n}"
+								},
+								"url": {
+									"raw": "{{url}}/sales-orders/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"sales-orders",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
 					"name": "Good Receiving",
 					"item": [
 						{
@@ -2029,7 +2146,7 @@
 					"name": "Purchase Returns ",
 					"item": [
 						{
-							"name": "purchase_returns",
+							"name": "purchase-returns",
 							"request": {
 								"method": "GET",
 								"header": [
@@ -2040,19 +2157,19 @@
 									}
 								],
 								"url": {
-									"raw": "{{url}}/purchase_returns",
+									"raw": "{{url}}/purchase-returns",
 									"host": [
 										"{{url}}"
 									],
 									"path": [
-										"purchase_returns"
+										"purchase-returns"
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "purchase_returns",
+							"name": "purchase-returns",
 							"request": {
 								"method": "POST",
 								"header": [
@@ -2073,19 +2190,19 @@
 									"raw": "{\n    \"date\": \"2019-09-29\",\n    \"additional_disc\": 0,\n    \"purchase\": 1,\n    \"purchase_return_details\": [\n        {\n            \"price\": 900,\n            \"disc\": 100,\n            \"product\": 1\n        },\n        {\n            \"price\": 500,\n            \"disc\": 0,\n            \"product\": 2\n        }\n    ]\n}"
 								},
 								"url": {
-									"raw": "{{url}}/purchase_returns",
+									"raw": "{{url}}/purchase-returns",
 									"host": [
 										"{{url}}"
 									],
 									"path": [
-										"purchase_returns"
+										"purchase-returns"
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "purchase_returns/:id",
+							"name": "purchase-returns/:id",
 							"request": {
 								"method": "GET",
 								"header": [
@@ -2096,12 +2213,12 @@
 									}
 								],
 								"url": {
-									"raw": "{{url}}/purchase_returns/1",
+									"raw": "{{url}}/purchase-returns/1",
 									"host": [
 										"{{url}}"
 									],
 									"path": [
-										"purchase_returns",
+										"purchase-returns",
 										"1"
 									]
 								}
@@ -2109,7 +2226,7 @@
 							"response": []
 						},
 						{
-							"name": "purchase_returns/:id",
+							"name": "purchase-returns/:id",
 							"request": {
 								"method": "PUT",
 								"header": [
@@ -2130,12 +2247,12 @@
 									"raw": "{\n\t\"id\": 1,\n    \"date\": \"2019-09-29\",\n    \"addition_disc\": 0,\n    \"purchase\": 1,\n    \"purchase_return_details\": [\n        {\n            \"price\": 900,\n            \"disc\": 100,\n            \"product\": 1\n        },\n        {\n            \"price\": 500,\n            \"disc\": 0,\n            \"product\": 2\n        }\n    ]\n}"
 								},
 								"url": {
-									"raw": "{{url}}/purchase_returns/1",
+									"raw": "{{url}}/purchase-returns/1",
 									"host": [
 										"{{url}}"
 									],
 									"path": [
-										"purchase_returns",
+										"purchase-returns",
 										"1"
 									]
 								}
@@ -2147,14 +2264,135 @@
 					"_postman_isSubFolder": true
 				},
 				{
-					"name": "closing_stocks",
+					"name": "Good Receiving Returns",
+					"item": [
+						{
+							"name": "receive-returns",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"type": "text",
+										"value": "{{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/receive-returns",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"receive-returns"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "receive-returns",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"date\": \"2019-09-29\",\n    \"remark\": \"tes return\",\n    \"receive\": 1,\n    \"receive_return_details\": [\n        {\n            \"code\": \"100\",\n            \"product\": 1\n        },\n        {\n            \"code\": \"0\",\n            \"product\": 2\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{url}}/receive-returns",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"receive-returns"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "receive-returns/:id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/receive-returns/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"receive-returns",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "receive-returns/:id",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"id\": 1,\n    \"date\": \"2019-09-29\",\n    \"remark\": \"edit testing return\",\n    \"receive\": 1,\n    \"receive_return_details\": [\n        {\n            \"id\": 1,\n            \"code\": \"900\",\n            \"product\": 1\n        },\n        {\n            \"id\": 2,\n            \"code\": \"7\",\n            \"product\": 2\n        }\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{url}}/receive-returns/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"receive-returns",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "closing-stocks",
 					"request": {
 						"method": "POST",
 						"header": [
 							{
 								"key": "Token",
-								"value": "{{token}}",
-								"type": "text"
+								"type": "text",
+								"value": "{{token}}"
 							}
 						],
 						"body": {
@@ -2162,12 +2400,12 @@
 							"raw": ""
 						},
 						"url": {
-							"raw": "{{url}}/closing_stocks",
+							"raw": "{{url}}/closing-stocks",
 							"host": [
 								"{{url}}"
 							],
 							"path": [
-								"closing_stocks"
+								"closing-stocks"
 							]
 						}
 					},
