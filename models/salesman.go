@@ -11,13 +11,14 @@ import (
 type Salesman struct {
 	ID      uint64
 	Company Company
+	Code    string
 	Name    string
 	Email   string
 	Address string
 	Hp      string
 }
 
-const qSalesmen = `SELECT id, name, email, address, hp FROM salesmen`
+const qSalesmen = `SELECT id, code, name, email, address, hp FROM salesmen`
 
 // List of salesmen
 func (u *Salesman) List(ctx context.Context, db *sql.DB) ([]Salesman, error) {
@@ -33,7 +34,7 @@ func (u *Salesman) List(ctx context.Context, db *sql.DB) ([]Salesman, error) {
 	for rows.Next() {
 		var c Salesman
 		c.Company = ctx.Value(api.Ctx("auth")).(User).Company
-		err = rows.Scan(&c.ID, &c.Name, &c.Email, &c.Address, &c.Hp)
+		err = rows.Scan(&c.ID, &c.Code, &c.Name, &c.Email, &c.Address, &c.Hp)
 		if err != nil {
 			return list, err
 		}
@@ -46,7 +47,7 @@ func (u *Salesman) List(ctx context.Context, db *sql.DB) ([]Salesman, error) {
 
 // Create new salesman
 func (u *Salesman) Create(ctx context.Context, db *sql.DB) error {
-	stmt, err := db.PrepareContext(ctx, `INSERT INTO salesmen (company_id, name, email, address, hp, created) VALUES (?, ?, ?, ?, ?, NOW())`)
+	stmt, err := db.PrepareContext(ctx, `INSERT INTO salesmen (company_id, code, name, email, address, hp, created) VALUES (?, ?, ?, ?, ?, ?, NOW())`)
 	if err != nil {
 		return err
 	}
@@ -54,7 +55,7 @@ func (u *Salesman) Create(ctx context.Context, db *sql.DB) error {
 	defer stmt.Close()
 
 	userLogin := ctx.Value(api.Ctx("auth")).(User)
-	res, err := stmt.ExecContext(ctx, userLogin.Company.ID, u.Name, u.Email, u.Address, u.Hp)
+	res, err := stmt.ExecContext(ctx, userLogin.Company.ID, u.Code, u.Name, u.Email, u.Address, u.Hp)
 
 	if err != nil {
 		return err
@@ -68,15 +69,15 @@ func (u *Salesman) Create(ctx context.Context, db *sql.DB) error {
 }
 
 // Get salesman by id
-func (u *Salesman) Get(ctx context.Context, db *sql.DB) error {
+func (u *Salesman) Get(ctx context.Context, tx *sql.Tx) error {
 	u.Company = ctx.Value(api.Ctx("auth")).(User).Company
 
-	return db.QueryRowContext(
+	return tx.QueryRowContext(
 		ctx,
 		qSalesmen+" WHERE id=? AND company_id=?",
 		u.ID,
 		ctx.Value(api.Ctx("auth")).(User).Company.ID,
-	).Scan(&u.ID, &u.Name, &u.Email, &u.Address, &u.Hp)
+	).Scan(&u.ID, &u.Code, &u.Name, &u.Email, &u.Address, &u.Hp)
 }
 
 // Update salesman by id

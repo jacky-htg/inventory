@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -77,12 +78,22 @@ func (u *Salesmen) View(w http.ResponseWriter, r *http.Request) {
 
 	var salesman models.Salesman
 	salesman.ID = uint64(id)
-	err = salesman.Get(ctx, u.Db)
+
+	tx, err := u.Db.Begin()
 	if err != nil {
+		u.Log.Printf("ERROR : %+v", err)
+		api.ResponseError(w, fmt.Errorf("Begin tx: %v", err))
+		return
+	}
+
+	err = salesman.Get(ctx, tx)
+	if err != nil {
+		tx.Rollback()
 		u.Log.Printf("Get salesman: %v", err)
 		api.ResponseError(w, err)
 		return
 	}
+	tx.Commit()
 
 	var res response.SalesmanResponse
 	res.Transform(&salesman)
@@ -110,12 +121,22 @@ func (u *Salesmen) Update(w http.ResponseWriter, r *http.Request) {
 
 	var salesman models.Salesman
 	salesman.ID = uint64(id)
-	err = salesman.Get(ctx, u.Db)
+
+	tx, err := u.Db.Begin()
 	if err != nil {
+		u.Log.Printf("ERROR : %+v", err)
+		api.ResponseError(w, fmt.Errorf("Begin tx: %v", err))
+		return
+	}
+
+	err = salesman.Get(ctx, tx)
+	if err != nil {
+		tx.Rollback()
 		u.Log.Printf("Get salesman: %v", err)
 		api.ResponseError(w, err)
 		return
 	}
+	tx.Commit()
 
 	salesmanUpdate := salesmanRequest.Transform(&salesman)
 
@@ -144,12 +165,22 @@ func (u *Salesmen) Delete(w http.ResponseWriter, r *http.Request) {
 
 	var salesman models.Salesman
 	salesman.ID = uint64(id)
-	err = salesman.Get(ctx, u.Db)
+
+	tx, err := u.Db.Begin()
 	if err != nil {
+		u.Log.Printf("ERROR : %+v", err)
+		api.ResponseError(w, fmt.Errorf("Begin tx: %v", err))
+		return
+	}
+
+	err = salesman.Get(ctx, tx)
+	if err != nil {
+		tx.Rollback()
 		u.Log.Printf("Get salesman: %v", err)
 		api.ResponseError(w, err)
 		return
 	}
+	tx.Commit()
 
 	err = salesman.Delete(ctx, u.Db)
 	if err != nil {
