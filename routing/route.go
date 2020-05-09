@@ -100,10 +100,10 @@ func API(db *sql.DB, log *log.Logger) http.Handler {
 	// Purchase Returns Routing
 	{
 		purchaseReturns := controllers.PurchaseReturns{Db: db, Log: log}
-		app.Handle(http.MethodGet, "/purchase_returns", purchaseReturns.List)
-		app.Handle(http.MethodGet, "/purchase_returns/:id", purchaseReturns.View)
-		app.Handle(http.MethodPost, "/purchase_returns", purchaseReturns.Create)
-		app.Handle(http.MethodPut, "/purchase_returns/:id", purchaseReturns.Update)
+		app.Handle(http.MethodGet, "/purchase-returns", purchaseReturns.List)
+		app.Handle(http.MethodGet, "/purchase-returns/:id", purchaseReturns.View)
+		app.Handle(http.MethodPost, "/purchase-returns", purchaseReturns.Create)
+		app.Handle(http.MethodPut, "/purchase-returns/:id", purchaseReturns.Update)
 	}
 
 	// Closing Stock Routing
@@ -165,11 +165,11 @@ func API(db *sql.DB, log *log.Logger) http.Handler {
 	// ProductCategories Routing
 	{
 		productCategories := controllers.ProductCategories{Db: db, Log: log}
-		app.Handle(http.MethodGet, "/product_categories", productCategories.List)
-		app.Handle(http.MethodPost, "/product_categories", productCategories.Create)
-		app.Handle(http.MethodGet, "/product_categories/:id", productCategories.View)
-		app.Handle(http.MethodPut, "/product_categories/:id", productCategories.Update)
-		app.Handle(http.MethodDelete, "/product_categories/:id", productCategories.Delete)
+		app.Handle(http.MethodGet, "/product-categories", productCategories.List)
+		app.Handle(http.MethodPost, "/product-categories", productCategories.Create)
+		app.Handle(http.MethodGet, "/product-categories/:id", productCategories.View)
+		app.Handle(http.MethodPut, "/product-categories/:id", productCategories.Update)
+		app.Handle(http.MethodDelete, "/product-categories/:id", productCategories.Delete)
 	}
 
 	// Receives Routing
@@ -193,10 +193,10 @@ func API(db *sql.DB, log *log.Logger) http.Handler {
 	// Receives Return Routing
 	{
 		receiveReturns := controllers.ReceiveReturns{Db: db, Log: log}
-		app.Handle(http.MethodGet, "/receive_returns", receiveReturns.List)
-		app.Handle(http.MethodGet, "/receive_returns/:id", receiveReturns.View)
-		app.Handle(http.MethodPost, "/receive_returns", receiveReturns.Create)
-		app.Handle(http.MethodPut, "/receive_returns/:id", receiveReturns.Update)
+		app.Handle(http.MethodGet, "/receive-returns", receiveReturns.List)
+		app.Handle(http.MethodGet, "/receive-returns/:id", receiveReturns.View)
+		app.Handle(http.MethodPost, "/receive-returns", receiveReturns.Create)
+		app.Handle(http.MethodPut, "/receive-returns/:id", receiveReturns.Update)
 	}
 
 	// SalesOrder Routing
