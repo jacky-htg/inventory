@@ -1058,6 +1058,54 @@ CREATE TABLE delivery_details (
 	CONSTRAINT fk_delivery_details_to_shelves FOREIGN KEY (shelve_id) REFERENCES shelves(id)
 );`,
 	},
+	{
+		Version:     43,
+		Description: "Add Return Delivery",
+		Script: `
+CREATE TABLE delivery_returns (
+	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	company_id	INT(20) UNSIGNED NOT NULL,
+	branch_id INT(10) UNSIGNED NOT NULL,
+	delivery_id BIGINT(20) UNSIGNED NOT NULL,
+	date DATE NOT NULL,
+	code CHAR(13) NOT NULL,
+	remark VARCHAR(255) NOT NULL,
+	created TIMESTAMP NOT NULL DEFAULT NOW(),
+	updated TIMESTAMP NOT NULL DEFAULT NOW(),
+	created_by BIGINT(20) UNSIGNED NOT NULL,
+	updated_by BIGINT(20) UNSIGNED NOT NULL, 
+	PRIMARY KEY (id),
+	KEY delivery_returns_company_id (company_id),
+	KEY delivery_returns_branch_id (branch_id),
+	KEY delivery_returns_delivery_id (delivery_id),
+	KEY delivery_returns_created_by (created_by),
+	KEY delivery_returns_updated_by (updated_by),
+	UNIQUE KEY delivery_returns_code (code, company_id),
+	CONSTRAINT fk_delivery_returns_to_companies FOREIGN KEY (company_id) REFERENCES companies(id),
+	CONSTRAINT fk_delivery_returns_to_branches FOREIGN KEY (branch_id) REFERENCES branches(id),
+	CONSTRAINT fk_delivery_returns_to_deliveries FOREIGN KEY (delivery_id) REFERENCES deliveries(id),
+	CONSTRAINT fk_delivery_returns_to_users_created_by FOREIGN KEY (created_by) REFERENCES users(id),
+	CONSTRAINT fk_delivery_returns_to_users_updated_by FOREIGN KEY (updated_by) REFERENCES users(id)
+);`,
+	},
+	{
+		Version:     44,
+		Description: "Add Delivery Return Details",
+		Script: `
+CREATE TABLE delivery_return_details (
+	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	delivery_return_id	BIGINT(20) UNSIGNED NOT NULL,
+	product_id BIGINT(20) UNSIGNED NOT NULL,
+	code CHAR(20) NOT NULL,
+	qty MEDIUMINT(8) UNSIGNED NOT NULL,
+	PRIMARY KEY (id),
+	KEY delivery_return_details_delivery_return_id (delivery_return_id),
+	KEY delivery_return_details_product_id (product_id),
+	UNIQUE KEY delivery_return_details_code (code, product_id),
+	CONSTRAINT fk_delivery_return_details_to_delivery_returns FOREIGN KEY (delivery_return_id) REFERENCES delivery_returns(id) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT fk_delivery_return_details_to_products FOREIGN KEY (product_id) REFERENCES products(id)
+);`,
+	},
 }
 
 // Migrate attempts to bring the schema for db up to date with the migrations
