@@ -217,5 +217,14 @@ func API(db *sql.DB, log *log.Logger) http.Handler {
 		app.Handle(http.MethodPut, "/sales-order-returns/:id", salesOrderReturns.Update)
 	}
 
+	// Deliveries Routing
+	{
+		deliveries := controllers.Deliveries{Db: db, Log: log}
+		app.Handle(http.MethodGet, "/deliveries", deliveries.List)
+		app.Handle(http.MethodGet, "/deliveries/:id", deliveries.View)
+		app.Handle(http.MethodPost, "/deliveries", deliveries.Create)
+		app.Handle(http.MethodPut, "/deliveries/:id", deliveries.Update)
+	}
+
 	return app
 }
