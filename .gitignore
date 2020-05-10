@@ -3,3 +3,5 @@ go.mod
 go.sum
 inventory.code-workspace
 .idea/*
+inventory-api
+inventory-cli
