@@ -1007,6 +1007,57 @@ CREATE TABLE sales_order_return_details (
 	CONSTRAINT fk_sales_order_return_details_to_products FOREIGN KEY (product_id) REFERENCES products(id)
 );`,
 	},
+	{
+		Version:     41,
+		Description: "Add Delivery Order",
+		Script: `
+CREATE TABLE deliveries (
+	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	company_id	INT(10) UNSIGNED NOT NULL,
+	branch_id INT(10) UNSIGNED NOT NULL,
+	sales_order_id BIGINT(20) UNSIGNED NOT NULL,
+	code	CHAR(13) NOT NULL,
+	date	DATE NOT NULL,
+	remark VARCHAR(255) NOT NULL,
+	created TIMESTAMP NOT NULL DEFAULT NOW(),
+	updated TIMESTAMP NOT NULL DEFAULT NOW(),
+	created_by BIGINT(20) UNSIGNED NOT NULL,
+	updated_by BIGINT(20) UNSIGNED NOT NULL,
+	PRIMARY KEY (id),
+	UNIQUE KEY deliveries_code (company_id, code),
+	KEY deliveries_company_id (company_id),
+	KEY deliveries_branch_id (branch_id),
+	KEY deliveries_sales_order_id (sales_order_id),
+	KEY deliveries_created_by (created_by),
+	KEY deliveries_updated_by (updated_by),
+	CONSTRAINT fk_deliveries_to_companies FOREIGN KEY (company_id) REFERENCES companies(id),
+	CONSTRAINT fk_deliveries_to_branches FOREIGN KEY (branch_id) REFERENCES branches(id),
+	CONSTRAINT fk_deliveries_to_sales_orders FOREIGN KEY (sales_order_id) REFERENCES sales_orders(id),
+	CONSTRAINT fk_deliveries_to_users_created_by FOREIGN KEY (created_by) REFERENCES users(id),
+	CONSTRAINT fk_deliveries_to_users_updated_by FOREIGN KEY (updated_by) REFERENCES users(id)
+);`,
+	},
+	{
+		Version:     42,
+		Description: "Add Delivery Details",
+		Script: `
+CREATE TABLE delivery_details (
+	id   BIGINT(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+	delivery_id	BIGINT(20) UNSIGNED NOT NULL,
+	product_id BIGINT(20) UNSIGNED NOT NULL,
+	qty MEDIUMINT(8) UNSIGNED NOT NULL,
+	code CHAR(20) NOT NULL,
+	shelve_id BIGINT(20) UNSIGNED NOT NULL,
+	PRIMARY KEY (id),
+	KEY delivery_details_delivery_id (delivery_id),
+	KEY delivery_details_product_id (product_id),
+	KEY delivery_details_shelve_id (shelve_id),
+	UNIQUE KEY delivery_details_code (code, product_id),
+	CONSTRAINT fk_delivery_details_to_deliveries FOREIGN KEY (delivery_id) REFERENCES deliveries(id) ON DELETE CASCADE ON UPDATE CASCADE,
+	CONSTRAINT fk_delivery_details_to_products FOREIGN KEY (product_id) REFERENCES products(id),
+	CONSTRAINT fk_delivery_details_to_shelves FOREIGN KEY (shelve_id) REFERENCES shelves(id)
+);`,
+	},
 }
 
 // Migrate attempts to bring the schema for db up to date with the migrations
