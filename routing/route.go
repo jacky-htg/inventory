@@ -190,6 +190,7 @@ func API(db *sql.DB, log *log.Logger) http.Handler {
 		app.Handle(http.MethodPut, "/shelves/:id", shelves.Update)
 		app.Handle(http.MethodDelete, "/shelves/:id", shelves.Delete)
 	}
+
 	// Receives Return Routing
 	{
 		receiveReturns := controllers.ReceiveReturns{Db: db, Log: log}
@@ -224,6 +225,15 @@ func API(db *sql.DB, log *log.Logger) http.Handler {
 		app.Handle(http.MethodGet, "/deliveries/:id", deliveries.View)
 		app.Handle(http.MethodPost, "/deliveries", deliveries.Create)
 		app.Handle(http.MethodPut, "/deliveries/:id", deliveries.Update)
+	}
+
+	// Deliveries Return Routing
+	{
+		deliveryReturns := controllers.DeliveryReturns{Db: db, Log: log}
+		app.Handle(http.MethodGet, "/delivery-returns", deliveryReturns.List)
+		app.Handle(http.MethodGet, "/delivery-returns/:id", deliveryReturns.View)
+		app.Handle(http.MethodPost, "/delivery-returns", deliveryReturns.Create)
+		app.Handle(http.MethodPut, "/delivery-returns/:id", deliveryReturns.Update)
 	}
 
 	return app
