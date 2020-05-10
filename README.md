@@ -103,3 +103,6 @@ You can read sample of [add new master](https://github.com/jacky-htg/inventory/b
 
 ## API Documentation and Specification Program
 You can read [API documentation and specification program](https://github.com/jacky-htg/inventory/wiki) in wiki inventory. 
+
+## License
+The license of application is GPL-3.0, You can use this apllication for commercial use, distribution or modification. But there is no liability and warranty. Please read the [inventory license](https://github.com/jacky-htg/inventory/blob/master/LICENSE) details carefully.
