@@ -36,7 +36,7 @@ To see the direction of developing this application, you can follow the [kanban 
 - [x] Transaction of sales order
 - [x] Transaction of sales order return
 - [x] Transaction of delivery order
-- [ ] Transaction of delivery order return
+- [x] Transaction of delivery order return
 - [ ] Transaction of internal warehouse mutations
 - [ ] Transaction of external warehouse mutations
 - [ ] Transaction of stock opname
