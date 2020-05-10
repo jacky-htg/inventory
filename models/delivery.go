@@ -491,7 +491,7 @@ func (u *Delivery) storeDetail(ctx context.Context, tx *sql.Tx, d DeliveryDetail
 	inventory.Code = u.Code
 	inventory.TransactionDate = u.Date
 	inventory.Type = "DO"
-	inventory.InOut = true
+	inventory.InOut = false
 	inventory.Qty = 1
 	return inventory.Create(ctx, tx)
 }
