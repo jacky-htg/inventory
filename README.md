@@ -8,7 +8,9 @@ Is an open source Inventory API
 - SQL : database/sql
 
 ## Disclaimer
-This application is under development. You can follow the progress of project in [inventory project](https://github.com/jacky-htg/inventory/projects/1). You also can view of [milestones](https://github.com/jacky-htg/inventory/milestones). This application only provides Inventory API, if you need the frontend application in desktop/web based/mobile android/mobile ios you can contact me by email : rijal.asep.nugroho@gmail.com
+This application only provides Inventory API, if you need the frontend application in desktop/web based/mobile android/mobile ios you can make it your self, or you can contact me by email : rijal.asep.nugroho@gmail.com
+
+To see the direction of developing this application, you can follow the [kanban inventory project](https://github.com/jacky-htg/inventory/projects/1).
 
 ## Features
 - [x] Multi companies
