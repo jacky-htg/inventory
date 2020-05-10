@@ -2143,6 +2143,127 @@
 					"_postman_isSubFolder": true
 				},
 				{
+					"name": "Delivery Order",
+					"item": [
+						{
+							"name": "deliveries",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"type": "text",
+										"value": "{{token}}"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/deliveries",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"deliveries"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "deliveries",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"date\": \"2019-09-29\",\n\t\"sales_order\": 1,\n\t\"remark\": \"test\",\n\t\"receive_details\":[\n\t\t{\n\t\t\t\"product\": 1,\n\t\t\t\"shelve\": 1\n\t\t},\n\t\t{\n\t\t\t\"product\": 2,\n\t\t\t\"shelve\": 1\n\t\t},\n\t\t{\n\t\t\t\"product\": 2,\n\t\t\t\"shelve\": 1\n\t\t}\n\t]\n}"
+								},
+								"url": {
+									"raw": "{{url}}/deliveries",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"deliveries"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "deliveries/:id",
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Token",
+										"value": "{{token}}",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "{{url}}/deliveries/1",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"deliveries",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "deliveries/:id",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Token",
+										"type": "text",
+										"value": "{{token}}"
+									},
+									{
+										"key": "Content-Type",
+										"name": "Content-Type",
+										"type": "text",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"id\": 21,\n\t\"date\": \"2019-09-29\",\n\t\"sales_order\": 1,\n\t\"remark\": \"edit test\",\n\t\"delivery_details\":[\n\t\t{\n\t\t\t\"id\": 35,\n\t\t\t\"product\": 1,\n\t\t\t\"shelve\": 1\n\t\t}\n\t]\n}"
+								},
+								"url": {
+									"raw": "{{url}}/deliveries/21",
+									"host": [
+										"{{url}}"
+									],
+									"path": [
+										"deliveries",
+										"21"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
 					"name": "Purchase Returns ",
 					"item": [
 						{
