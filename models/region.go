@@ -3,7 +3,6 @@ package models
 import (
 	"context"
 	"database/sql"
-	"errors"
 
 	"github.com/jacky-htg/inventory/libraries/api"
 )
@@ -53,9 +52,9 @@ func (u *Region) List(ctx context.Context, db *sql.DB) ([]Region, error) {
 		return list, err
 	}
 
-	if len(list) <= 0 {
+	/*if len(list) <= 0 {
 		return list, errors.New("Region not found")
-	}
+	}*/
 
 	return list, nil
 }
